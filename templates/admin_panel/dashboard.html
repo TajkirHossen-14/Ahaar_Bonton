@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Admin Dashboard - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="welcome-banner">
+        <h2>Admin Dashboard 🛠</h2>
+        <p>Logged in as {{ user.full_name }}</p>
+    </div>
+</section>
+
+<section class="container">
+    <div class="stats-grid">
+        <article class="stat-card">
+            <div class="stat-icon">👥</div>
+            <h4>Total Users</h4>
+            <p>{{ total_users }}</p>
+        </article>
+        <article class="stat-card">
+            <div class="stat-icon" style="background:var(--green-700);">🥗</div>
+            <h4>Available Food</h4>
+            <p style="color:var(--green-700);">{{ stats.available }}</p>
+        </article>
+        <article class="stat-card">
+            <div class="stat-icon" style="background:var(--teal-700);">✅</div>
+            <h4>Deliveries Done</h4>
+            <p style="color:var(--teal-700);">{{ completed_deliveries }}</p>
+        </article>
+        <article class="stat-card">
+            <div class="stat-icon" style="background:#6b7280;">⌛</div>
+            <h4>Expired Posts</h4>
+            <p style="color:#6b7280;">{{ stats.expired }}</p>
+        </article>
+    </div>
+</section>
+
+<section class="container">
+    <div class="admin-middle-row">
+        <article class="card" style="padding:0;">
+            <div class="card-table-header">
+                <h3>Recent Food Posts</h3>
+            </div>
+            <table class="requests-table admin-mobile-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Donor</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Expiry</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in recent_posts %}
+                        <tr>
+                            <td data-label="Title">{{ post.title }}</td>
+                            <td data-label="Donor">{{ post.donor.full_name }}</td>
+                            <td data-label="Category">{{ post.get_category_display }}</td>
+                            <td data-label="Status">
+                                {% if post.status == 'available' %}
+                                    <span class="badge-available">Available</span>
+                                {% elif post.status == 'claimed' %}
+                                    <span class="badge-claimed">Claimed</span>
+                                {% elif post.status == 'delivered' %}
+                                    <span class="badge-delivered">Delivered</span>
+                                {% else %}
+                                    <span class="badge-expired">Expired</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Expiry">{{ post.expiry_time|date:"d M Y, h:i A" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5">No recent posts.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </article>
+
+        <aside class="admin-right-col">
+            <article class="card">
+                <h4>User Breakdown</h4>
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <small>Donors ({{ donor_count }})</small>
+                        <div class="bar-track"><div class="bar-fill" style="width: {{ donor_percent }}%; background: var(--green-600);"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <small>NGOs ({{ ngo_count }})</small>
+                        <div class="bar-track"><div class="bar-fill" style="width: {{ ngo_percent }}%; background: var(--teal-700);"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <small>Volunteers ({{ volunteer_count }})</small>
+                        <div class="bar-track"><div class="bar-fill" style="width: {{ volunteer_percent }}%; background: var(--amber-700);"></div></div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card">
+                <h4>Food Post Status</h4>
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <small>Available</small>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:{% widthratio stats.available stats.total 100 %}%; background:var(--green-600);"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <small>Claimed</small>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:{% widthratio stats.claimed stats.total 100 %}%; background:var(--amber-700);"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <small>Delivered</small>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:{% widthratio stats.delivered stats.total 100 %}%; background:var(--teal-700);"></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card">
+                <h4>Delivery Stats</h4>
+                <div class="delivery-stat-row">
+                    <p>Total: <strong>{{ total_deliveries }}</strong></p>
+                    <p style="color:var(--green-700);">Completed: <strong>{{ completed_deliveries }}</strong></p>
+                </div>
+            </article>
+
+            <article class="card admin-control-card">
+                <h4>Manual Controls</h4>
+                <form method="post" action="{% url 'admin_expire_food' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary btn-full" onclick="return confirm('Run auto-expire now?')">🔄 Run Auto-Expire</button>
+                </form>
+            </article>
+        </aside>
+    </div>
+</section>
+
+{% if expiring_posts %}
+<section class="container">
+    <article class="card expiring-card">
+        <h3>Expiring Soon</h3>
+        <table class="requests-table admin-mobile-table">
+            <thead>
+                <tr>
+                    <th>Food</th>
+                    <th>Donor</th>
+                    <th>Location</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in expiring_posts %}
+                    <tr>
+                        <td data-label="Food">{{ post.title }}</td>
+                        <td data-label="Donor">{{ post.donor.full_name }}</td>
+                        <td data-label="Location">{{ post.location|truncatechars:38 }}</td>
+                        <td data-label="Time" style="color:var(--amber-700); font-weight:700;">{{ post.expiry_time|date:"d M Y, h:i A" }}</td>
+                        <td data-label="Status">
+                            {% if post.status == 'available' %}
+                                <span class="badge-available">Available</span>
+                            {% elif post.status == 'claimed' %}
+                                <span class="badge-claimed">Claimed</span>
+                            {% elif post.status == 'delivered' %}
+                                <span class="badge-delivered">Delivered</span>
+                            {% else %}
+                                <span class="badge-expired">Expired</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+</section>
+{% endif %}
+
+{% if recent_requests %}
+<section class="container recent-requests-section">
+    <article class="card">
+        <h3>Recent Requests</h3>
+        <table class="requests-table admin-mobile-table">
+            <thead>
+                <tr>
+                    <th>Food</th>
+                    <th>NGO</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in recent_requests %}
+                    <tr>
+                        <td data-label="Food">{{ req.food_post.title }}</td>
+                        <td data-label="NGO">{{ req.ngo.full_name }}</td>
+                        <td data-label="Date">{{ req.requested_at|date:"d M Y, h:i A" }}</td>
+                        <td data-label="Status">
+                            {% if req.status == 'pending' %}
+                                <span class="badge-pending">Pending</span>
+                            {% elif req.status == 'approved' %}
+                                <span class="badge-approved">Approved</span>
+                            {% elif req.status == 'completed' %}
+                                <span class="badge-delivered">Completed</span>
+                            {% else %}
+                                <span class="badge-rejected">Rejected</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Edit Food - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <header class="page-header">
+        <div>
+            <h2>Edit Food Post</h2>
+            <p>Updating <strong>{{ post.title }}</strong></p>
+        </div>
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm">Back</a>
+    </header>
+
+    <div class="add-food-layout">
+        <div class="card">
+            <form method="post" enctype="multipart/form-data" action="{% url 'edit_food' post.pk %}">
+                {% csrf_token %}
+
+                <div>
+                    <label for="id_title">Title</label>
+                    <input type="text" id="id_title" name="title" value="{{ form.title.value|default:post.title }}" required>
+                    {% if form.title.errors %}<p class="location-error">{{ form.title.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label for="id_description">Description</label>
+                    <textarea id="id_description" name="description" required>{{ form.description.value|default:post.description }}</textarea>
+                    {% if form.description.errors %}<p class="location-error">{{ form.description.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="id_quantity">Quantity</label>
+                        <input type="number" id="id_quantity" name="quantity" min="1" value="{{ form.quantity.value|default:post.quantity }}" required>
+                        {% if form.quantity.errors %}<p class="location-error">{{ form.quantity.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label for="id_category">Category</label>
+                        {% with selected_category=form.category.value|default:post.category %}
+                        <select id="id_category" name="category" required>
+                            <option value="cooked" {% if selected_category == 'cooked' %}selected{% endif %}>🍛 Cooked</option>
+                            <option value="raw" {% if selected_category == 'raw' %}selected{% endif %}>🥦 Raw</option>
+                            <option value="packaged" {% if selected_category == 'packaged' %}selected{% endif %}>📦 Packaged</option>
+                            <option value="bakery" {% if selected_category == 'bakery' %}selected{% endif %}>🥖 Bakery</option>
+                        </select>
+                        {% endwith %}
+                        {% if form.category.errors %}<p class="location-error">{{ form.category.errors.0 }}</p>{% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <label for="id_location">Location</label>
+                    <div class="location-field-wrapper">
+                        <input type="text" id="id_location" name="location" value="{{ form.location.value|default:post.location }}" required>
+                        <button type="button" id="detectLocationBtn" onclick="detectLocation()" class="btn btn-ghost location-detect-btn">📍 Use My Location</button>
+                    </div>
+                    <input type="hidden" id="id_latitude" name="latitude" value="{{ post.latitude|default:'' }}">
+                    <input type="hidden" id="id_longitude" name="longitude" value="{{ post.longitude|default:'' }}">
+                    <div id="locationMapPreview" class="location-map-preview"></div>
+                    <p id="locationCoords" class="location-coords"></p>
+                    <p class="form-hint">Click Use My Location to auto-fill address using GPS</p>
+                    {% if form.location.errors %}<p class="location-error">{{ form.location.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label for="id_expiry_time">Expiry Time</label>
+                    {% if form.expiry_time.value %}
+                        <input type="datetime-local" id="id_expiry_time" name="expiry_time" value="{{ form.expiry_time.value }}" required>
+                    {% else %}
+                        <input type="datetime-local" id="id_expiry_time" name="expiry_time" value="{{ post.expiry_time|date:'Y-m-d\\TH:i' }}" required>
+                    {% endif %}
+                    {% if form.expiry_time.errors %}<p class="location-error">{{ form.expiry_time.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label for="id_image">Image</label>
+                    <input type="file" id="id_image" name="image" accept="image/*">
+                    {% if form.image.errors %}<p class="location-error">{{ form.image.errors.0 }}</p>{% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <p class="location-error">{{ form.non_field_errors.0 }}</p>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+            </form>
+        </div>
+
+        <aside class="preview-panel">
+            <div class="preview-box card">
+                <div id="previewPlaceholder" class="preview-placeholder {% if post.image %}hidden{% endif %}">Image preview appears here</div>
+                {% if post.image %}
+                    <img id="previewImg" src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% else %}
+                    <img id="previewImg" class="hidden" alt="{{ post.title }}">
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <h4>Status Overview</h4>
+                <p>
+                    {% if post.status == 'available' %}
+                        <span class="badge-available">Available</span>
+                    {% elif post.status == 'claimed' %}
+                        <span class="badge-claimed">Claimed</span>
+                    {% elif post.status == 'delivered' %}
+                        <span class="badge-delivered">Delivered</span>
+                    {% elif post.status == 'expired' %}
+                        <span class="badge-expired">Expired</span>
+                    {% endif %}
+                </p>
+                <p class="food-meta">Time remaining: {{ post.time_remaining }}</p>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

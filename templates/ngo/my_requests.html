@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block page_title %}My Requests - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <header class="page-header">
+        <div>
+            <h2>My Requests</h2>
+            <p>Track all your food requests in one place.</p>
+        </div>
+        <a href="{% url 'ngo_dashboard' %}" class="btn btn-ghost btn-sm">Back</a>
+    </header>
+
+    {% if my_requests %}
+        <div class="card">
+            <table class="requests-table ngo-requests-table">
+                <thead>
+                    <tr>
+                        <th>Food</th>
+                        <th>Donor</th>
+                        <th>Location</th>
+                        <th>Requested</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for req in my_requests %}
+                <tr>
+                    <td data-label="Food">
+                        <strong>{{ req.food_post.title }}</strong>
+                        <div style="font-size:0.78rem;
+                                    color:var(--muted);">
+                            {{ req.food_post.quantity }}
+                        </div>
+                    </td>
+                    <td data-label="Donor" style="font-size:0.875rem;">
+                        {{ req.food_post.donor.full_name }}
+                    </td>
+                    <td data-label="Location" style="font-size:0.82rem;
+                               color:var(--muted);">
+                        {{ req.food_post.location|truncatechars:35 }}
+                    </td>
+                    <td data-label="Requested" style="font-size:0.82rem;
+                               color:var(--muted);">
+                        {{ req.requested_at|date:"M d, Y" }}<br>
+                        <span style="font-size:0.75rem;">
+                            {{ req.requested_at|date:"h:i A" }}
+                        </span>
+                    </td>
+                    <td data-label="Status">
+                        <span class="badge badge-{{ req.status }}">
+                            {{ req.get_status_display }}
+                        </span>
+
+                        {% if req.status == 'approved' and req.delivery %}
+
+                            {% if req.delivery.pickup_confirmed and not req.delivery.delivery_confirmed %}
+
+                            <!-- Volunteer is on the way — show delivery OTP -->
+                            <div style="margin-top:10px;
+                                        padding:12px;
+                                        background:var(--amber-50);
+                                        border:1.5px solid var(--amber-100);
+                                        border-radius:var(--radius-md);">
+                                <p style="font-size:0.78rem;
+                                           font-weight:700;
+                                           color:var(--amber-800);
+                                           margin-bottom:4px;">
+                                    🚚 Volunteer is on the way!
+                                </p>
+                                <p style="font-size:0.78rem;
+                                           color:var(--amber-800);
+                                           margin-bottom:8px;">
+                                    When volunteer arrives,
+                                    give them this OTP:
+                                </p>
+                                <span class="otp-box">
+                                    {{ req.delivery.delivery_otp }}
+                                </span>
+                            </div>
+
+                            {% elif not req.delivery.pickup_confirmed %}
+
+                            <!-- Waiting for pickup -->
+                            <div style="margin-top:6px;
+                                        font-size:0.78rem;
+                                        color:var(--muted);">
+                                ⏳ Waiting for volunteer pickup
+                            </div>
+
+                            {% endif %}
+
+                        {% elif req.status == 'completed' %}
+
+                            <div style="margin-top:6px;
+                                        font-size:0.78rem;
+                                        color:var(--green-700);
+                                        font-weight:600;">
+                                ✅ Successfully delivered
+                                {% if req.delivery.delivered_at %}
+                                <br>
+                                <span style="font-weight:400;
+                                             color:var(--muted);">
+                                    {{ req.delivery.delivered_at|date:"M d, h:i A" }}
+                                </span>
+                                {% endif %}
+                            </div>
+
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state card">
+            <h4>No requests yet</h4>
+            <p>Your submitted food requests will appear here.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

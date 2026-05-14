@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Register - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="auth-wrapper">
+    <div class="auth-card auth-card-wide">
+        <header class="auth-header">
+            <div class="auth-logo">
+                <img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt="AhaarBonton Logo">
+            </div>
+
+            <h2>Create Your Account</h2>
+            <p>Join AhaarBonton and help move surplus food to people who need it.</p>
+        </header>
+
+        <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div>
+                    <label for="id_full_name">Full Name</label>
+                    <input
+                        type="text"
+                        id="id_full_name"
+                        name="full_name"
+                        value="{{ form.full_name.value|default:'' }}"
+                        required
+                    >
+                    {% if form.full_name.errors %}
+                        <p class="location-error">{{ form.full_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="id_email">Email</label>
+                    <input
+                        type="email"
+                        id="id_email"
+                        name="email"
+                        value="{{ form.email.value|default:'' }}"
+                        required
+                    >
+                    {% if form.email.errors %}
+                        <p class="location-error">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="id_phone_number">Phone Number <span class="optional">(Optional)</span></label>
+                    <input
+                        type="text"
+                        id="id_phone_number"
+                        name="phone_number"
+                        value="{{ form.phone_number.value|default:'' }}"
+                        placeholder="+8801XXXXXXXXX"
+                    >
+                    {% if form.phone_number.errors %}
+                        <p class="location-error">{{ form.phone_number.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="id_role">Role</label>
+                    <select id="id_role" name="role" required onchange="updateRoleDescription(this.value)">
+                        <option value="">Select role</option>
+                        {% for value, label in form.role.field.choices %}
+                            <option value="{{ value }}" {% if form.role.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.role.errors %}
+                        <p class="location-error">{{ form.role.errors.0 }}</p>
+                    {% endif %}
+                    <p id="roleDescription" class="role-description" style="display:none;"></p>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="password-wrapper">
+                    <label for="id_password1">Password</label>
+                    <input type="password" id="id_password1" name="password1" required>
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        aria-label="Show password"
+                        aria-pressed="false"
+                        onclick="togglePass('id_password1', this)"
+                    >
+                        <span class="eye-icon" aria-hidden="true">&#128065;</span>
+                    </button>
+                    {% if form.password1.errors %}
+                        <p class="location-error">{{ form.password1.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div class="password-wrapper">
+                    <label for="id_password2">Confirm Password</label>
+                    <input type="password" id="id_password2" name="password2" required>
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        aria-label="Show password"
+                        aria-pressed="false"
+                        onclick="togglePass('id_password2', this)"
+                    >
+                        <span class="eye-icon" aria-hidden="true">&#128065;</span>
+                    </button>
+                    {% if form.password2.errors %}
+                        <p class="location-error">{{ form.password2.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <label for="id_profile_pic">Profile Photo <span class="optional">(Optional)</span></label>
+                <input type="file" id="id_profile_pic" name="profile_pic" accept="image/*">
+                {% if form.profile_pic.errors %}
+                    <p class="location-error">{{ form.profile_pic.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            {% if form.non_field_errors %}
+                <p class="location-error">{{ form.non_field_errors.0 }}</p>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary btn-lg btn-full">Create Account</button>
+        </form>
+
+        <footer class="auth-footer">
+            <p>Already have an account? <a href="{% url 'login' %}" class="auth-link">Login here</a></p>
+        </footer>
+    </div>
+</section>
+{% endblock %}

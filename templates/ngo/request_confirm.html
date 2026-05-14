@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Confirm Request - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <header class="page-header">
+        <div>
+            <h2>Confirm Food Request</h2>
+            <p>Review details before sending your request.</p>
+        </div>
+        <a href="{% url 'ngo_dashboard' %}" class="btn btn-ghost btn-sm">Back</a>
+    </header>
+
+    <div class="request-layout">
+        <article class="card">
+            <h3>Food Details</h3>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="request-preview-image">
+            {% endif %}
+            <h4>{{ post.title }}</h4>
+            <p>{{ post.description }}</p>
+
+            <div class="detail-list">
+                <div class="detail-row"><strong>Quantity:</strong><span>{{ post.quantity }}</span></div>
+                <div class="detail-row"><strong>Category:</strong><span>{{ post.get_category_display }}</span></div>
+                <div class="detail-row"><strong>Location:</strong><span>{{ post.location }}</span></div>
+                {% if post.has_map %}
+                    <div class="detail-row"><strong>Map:</strong><a href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}" target="_blank" rel="noopener">Open Location</a></div>
+                {% endif %}
+                <div class="detail-row"><strong>Expires:</strong><span style="color:var(--amber-700); font-weight:700;">{{ post.expiry_time|date:"d M Y, h:i A" }}</span></div>
+                <div class="detail-row"><strong>Posted By:</strong><span>{{ post.donor.full_name }}</span></div>
+            </div>
+        </article>
+
+        <article class="card">
+            <h3>Your Request</h3>
+            <form method="post" action="{% url 'request_food' post.pk %}">
+                {% csrf_token %}
+                <div>
+                    <label for="message">Message (optional)</label>
+                    <textarea id="message" name="message" placeholder="Share pickup timing or any relevant note..."></textarea>
+                </div>
+
+                <div class="info-note">
+                    <p>You can track this request anytime from <a href="{% url 'ngo_my_requests' %}">My Requests</a>.</p>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-full">Send Request</button>
+            </form>
+        </article>
+    </div>
+</section>
+{% endblock %}

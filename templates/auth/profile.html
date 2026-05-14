@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Profile Settings - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="auth-wrapper">
+    <div class="auth-card auth-card-wide profile-card">
+        <header class="auth-header">
+            <div class="auth-logo profile-logo-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.42 0-8 2.02-8 4.5V21h16v-2.5c0-2.48-3.58-4.5-8-4.5z"/>
+                </svg>
+            </div>
+            <h2>Profile Settings</h2>
+            <p>Update your name, phone number, and profile photo.</p>
+        </header>
+
+        <div class="profile-photo-block">
+            {% if request.user.profile_pic %}
+                <img src="{{ request.user.profile_pic.url }}" alt="{{ request.user.full_name }}" class="profile-photo-preview">
+            {% else %}
+                <div class="profile-photo-placeholder">
+                    {{ request.user.full_name|default:request.user.email|slice:":1"|upper }}
+                </div>
+            {% endif %}
+        </div>
+
+        <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div>
+                    <label for="id_full_name">Full Name</label>
+                    <input type="text" id="id_full_name" name="full_name" value="{{ form.full_name.value|default:'' }}" required>
+                    {% if form.full_name.errors %}
+                        <p class="location-error">{{ form.full_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="id_phone_number">Phone Number <span class="optional">(Optional)</span></label>
+                    <input type="text" id="id_phone_number" name="phone_number" value="{{ form.phone_number.value|default:'' }}" placeholder="+8801XXXXXXXXX">
+                    {% if form.phone_number.errors %}
+                        <p class="location-error">{{ form.phone_number.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <label for="id_email_display">Email</label>
+                <input type="email" id="id_email_display" value="{{ request.user.email }}" class="readonly-input" readonly>
+            </div>
+
+            <div>
+                <label for="id_profile_pic">Profile Photo <span class="optional">(Optional)</span></label>
+                <input type="file" id="id_profile_pic" name="profile_pic" accept="image/*">
+                {% if form.profile_pic.errors %}
+                    <p class="location-error">{{ form.profile_pic.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            {% if request.user.profile_pic %}
+            <label class="profile-remove">
+                <input type="checkbox" name="remove_profile_pic" id="id_remove_profile_pic">
+                Remove current photo
+            </label>
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                <p class="location-error">{{ form.non_field_errors.0 }}</p>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary btn-lg btn-full">Save Changes</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

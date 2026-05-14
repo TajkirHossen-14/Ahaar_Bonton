@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Volunteer Dashboard - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="welcome-banner">
+        <h2>Welcome, {{ user.full_name }}!</h2>
+        <p class="volunteer-tagline">Accept open deliveries and confirm handovers with OTP.</p>
+        <div class="volunteer-stats-mini">
+            <div class="mini-stat"><strong>{{ available_count }}</strong><br><small>Available</small></div>
+            <div class="mini-stat"><strong>{{ my_count }}</strong><br><small>My Deliveries</small></div>
+            <div class="mini-stat"><strong>{{ volunteer_trust_score }}</strong><br><small>Trust Score</small></div>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="volunteer-tabs" data-tab-container>
+        <div class="tab-bar">
+            <button type="button" class="tab-btn tab-available-btn active" onclick="switchTab(this)" data-target="#tab-available">
+                Available Deliveries <span class="tab-badge">{{ available_count }}</span>
+            </button>
+            <button type="button" class="tab-btn tab-mine-btn" onclick="switchTab(this)" data-target="#tab-mine">
+                My Deliveries <span class="tab-badge">{{ my_count }}</span>
+            </button>
+        </div>
+
+        <div id="tab-available" class="tab-panel active">
+            {% if available_deliveries %}
+                <div class="delivery-grid">
+                    {% for delivery in available_deliveries %}
+                        <article class="delivery-card">
+                            <div class="delivery-card-header">
+                                <h4>{{ delivery.food_request.food_post.title }}</h4>
+                                <span class="badge-available">Open</span>
+                            </div>
+                            <div class="delivery-detail-list">
+                                <div class="detail-row"><strong>Quantity:</strong><span>{{ delivery.food_request.food_post.quantity }}</span></div>
+                                <div class="detail-row"><strong>Pickup:</strong><span>{{ delivery.food_request.food_post.location|truncatechars:40 }}</span></div>
+                                <div class="detail-row"><strong>Deliver To:</strong><span>{{ delivery.food_request.ngo.full_name }}</span></div>
+                                <div class="detail-row"><strong>Donor:</strong><span>{{ delivery.food_request.food_post.donor.full_name }}</span></div>
+                                <div class="detail-row"><strong>Expires:</strong><span style="color:var(--amber-700); font-weight:700;">{{ delivery.food_request.food_post.expiry_time|date:"d M Y, h:i A" }}</span></div>
+                            </div>
+                            <form method="post" action="{% url 'accept_delivery' delivery.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary btn-full" onclick="return confirm('Accept? You will be responsible for pickup and delivery')">Accept Delivery</button>
+                            </form>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state card">
+                    <h4>No open deliveries</h4>
+                    <p>Great work. Check back soon for new assignments.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="tab-content tab-panel" id="tab-mine" style="display:none;">
+        {% if my_deliveries %}
+        <div class="delivery-grid">
+        {% for delivery in my_deliveries %}
+        <div class="delivery-card card">
+
+            <div class="delivery-card-header">
+                <h4>{{ delivery.food_request.food_post.title }}</h4>
+                {% if delivery.is_confirmed %}
+                    <span class="badge badge-delivered">Done</span>
+                {% elif delivery.pickup_confirmed %}
+                    <span class="badge badge-claimed">In Transit</span>
+                {% else %}
+                    <span class="badge badge-pending">Pending</span>
+                {% endif %}
+            </div>
+
+            <div class="delivery-detail-list">
+                <div class="delivery-detail-row">
+                    <span class="detail-label">Pickup From</span>
+                    <span>{{ delivery.food_request.food_post.location }}</span>
+                </div>
+                <div class="delivery-detail-row">
+                    <span class="detail-label">Deliver To</span>
+                    <span>{{ delivery.food_request.ngo.full_name }}</span>
+                </div>
+                <div class="delivery-detail-row">
+                    <span class="detail-label">Quantity</span>
+                    <span>{{ delivery.food_request.food_post.quantity }}</span>
+                </div>
+                {% if delivery.picked_up_at %}
+                <div class="delivery-detail-row">
+                    <span class="detail-label">Picked Up</span>
+                    <span style="color:var(--green-700);">{{ delivery.picked_up_at|date:"h:i A" }}</span>
+                </div>
+                {% endif %}
+                {% if delivery.delivered_at %}
+                <div class="delivery-detail-row">
+                    <span class="detail-label">Delivered</span>
+                    <span style="color:var(--green-700);">{{ delivery.delivered_at|date:"h:i A" }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if not delivery.is_confirmed %}
+            <div class="delivery-steps">
+                <div class="delivery-step {% if delivery.pickup_confirmed %}step-done{% else %}step-active{% endif %}">
+                    <div class="step-dot">{% if delivery.pickup_confirmed %}OK{% else %}1{% endif %}</div>
+                    <span>Pickup</span>
+                </div>
+                <div class="delivery-step-line"></div>
+                <div class="delivery-step {% if delivery.delivery_confirmed %}step-done{% elif delivery.pickup_confirmed %}step-active{% else %}step-waiting{% endif %}">
+                    <div class="step-dot">{% if delivery.delivery_confirmed %}OK{% else %}2{% endif %}</div>
+                    <span>Delivery</span>
+                </div>
+            </div>
+
+            {% if not delivery.pickup_confirmed %}
+            <div class="otp-section">
+                <p style="font-weight:700;font-size:0.875rem;margin-bottom:4px;color:var(--amber-800);">
+                    Step 1 of 2 - Confirm Pickup
+                </p>
+                <p style="font-size:0.82rem;color:var(--amber-800);margin-bottom:10px;">
+                    Get the <strong>Pickup OTP</strong> from the Donor and enter it below:
+                </p>
+                <form method="post" action="{% url 'confirm_pickup' delivery.pk %}">
+                    {% csrf_token %}
+                    <div class="otp-input-row">
+                        <input type="text" name="otp" class="otp-input" maxlength="6" minlength="6" placeholder="000000" required>
+                        <button type="submit" class="btn btn-primary">Confirm Pickup</button>
+                    </div>
+                </form>
+            </div>
+
+            {% else %}
+            <div class="alert alert-success" style="margin-bottom:0.75rem;">
+                Step 1 complete - Food picked up from donor.
+            </div>
+
+            <div class="otp-section">
+                <p style="font-weight:700;font-size:0.875rem;margin-bottom:4px;color:var(--amber-800);">
+                    Step 2 of 2 - Confirm Delivery
+                </p>
+                <p style="font-size:0.82rem;color:var(--amber-800);margin-bottom:10px;">
+                    Get the <strong>Delivery OTP</strong> from the NGO and enter it below:
+                </p>
+                <form method="post" action="{% url 'confirm_delivery' delivery.pk %}">
+                    {% csrf_token %}
+                    <div class="otp-input-row">
+                        <input type="text" name="otp" class="otp-input" maxlength="6" minlength="6" placeholder="000000" required>
+                        <button type="submit" class="btn btn-primary">Confirm Delivery</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <div class="alert alert-success">
+                Delivery fully completed.<br>
+                <small style="opacity:0.8;">Delivered at: {{ delivery.delivered_at|date:"M d, Y h:i A" }}</small>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">Delivery</div>
+            <h3>No deliveries yet</h3>
+            <p>Accept a delivery from the Available Deliveries tab.</p>
+        </div>
+        {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

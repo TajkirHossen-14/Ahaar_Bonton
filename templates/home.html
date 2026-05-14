@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <p class="hero-eyebrow">&#127793; Bangladesh's Surplus Food Redistribution Platform</p>
+            <h1>Every Meal Matters.</h1>
+            <p>
+                AhaarBonton connects donors, NGOs, volunteers, and communities to move surplus food quickly, safely, and transparently.
+            </p>
+            <div class="hero-actions">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn hero-btn-primary btn-lg">Go to Dashboard</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn hero-btn-primary btn-lg">Get Started</a>
+                    <a href="{% url 'login' %}" class="btn hero-btn-ghost btn-lg">Login</a>
+                {% endif %}
+            </div>
+            <div class="hero-mini-row">
+                <article class="hero-mini-card">
+                    <span class="hero-mini-kicker">Live Available</span>
+                    <strong>{{ stats.available }}</strong>
+                </article>
+                <article class="hero-mini-card">
+                    <span class="hero-mini-kicker">Meals Delivered</span>
+                    <strong>{{ stats.delivered }}</strong>
+                </article>
+            </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+            <img
+                src="{% static 'img/Home_Illustration.png' %}"
+                alt="AhaarBonton Illustration"
+                class="hero-illustration-plain"
+            >
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="impact-row">
+        <article class="impact-card">
+            <h3>Total Posts</h3>
+            <p>{{ stats.total }}</p>
+        </article>
+        <article class="impact-card">
+            <h3>Delivered</h3>
+            <p>{{ stats.delivered }}</p>
+        </article>
+        <article class="impact-card">
+            <h3>Available</h3>
+            <p>{{ stats.available }}</p>
+        </article>
+        <article class="impact-card">
+            <h3>Expired</h3>
+            <p>{{ stats.expired }}</p>
+        </article>
+    </div>
+</section>
+
+<section class="container home-feature-band">
+    <article class="home-feature-card">
+        <h3>&#9889; Fast Matching</h3>
+        <p>Urgent food gets priority through expiry-aware listing and quick NGO requests.</p>
+    </article>
+    <article class="home-feature-card">
+        <h3>&#128274; Safe Handover</h3>
+        <p>Pickup and delivery both use OTP confirmation, so fake completion is minimized.</p>
+    </article>
+    <article class="home-feature-card">
+        <h3>&#128202; Transparent Impact</h3>
+        <p>Everyone can see platform outcomes through public impact stats and delivery records.</p>
+    </article>
+</section>
+
+<section class="how-section container home-how-section">
+    <header class="section-head">
+        <h2 class="section-heading">How AhaarBonton Works</h2>
+        <p class="section-sub">Simple steps that turn surplus into support.</p>
+    </header>
+    <div class="steps-grid">
+        <article class="step-card">
+            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128230;</span></div>
+            <h3 class="step-title">Donors Post Food</h3>
+            <p class="step-desc">Share details, location, and expiry time for surplus items.</p>
+        </article>
+        <article class="step-card">
+            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#129309;</span></div>
+            <h3 class="step-title">NGOs Request Quickly</h3>
+            <p class="step-desc">Nearby NGOs browse and request food based on urgency.</p>
+        </article>
+        <article class="step-card">
+            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128666;</span></div>
+            <h3 class="step-title">Volunteers Deliver</h3>
+            <p class="step-desc">Volunteers pick up and complete handover using OTP confirmation.</p>
+        </article>
+        <article class="step-card">
+            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128200;</span></div>
+            <h3 class="step-title">Impact Is Tracked</h3>
+            <p class="step-desc">Every successful delivery improves transparency and accountability.</p>
+        </article>
+    </div>
+</section>
+
+{% if not request.user.is_authenticated %}
+<section class="container">
+    <div class="role-cards-grid">
+        <article class="role-card">
+            <h3>
+                <span class="role-icon role-icon-donor" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M4 7h16v2H4zM6 10h12l-1 7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2zM9 5h6v2H9z"/>
+                    </svg>
+                </span>
+                Donor
+            </h3>
+            <p>List extra food and help reduce waste from homes, events, and restaurants.</p>
+            <a href="{% url 'register' %}" class="btn btn-primary btn-sm role-join-btn">Join as Donor</a>
+        </article>
+        <article class="role-card">
+            <h3>
+                <span class="role-icon role-icon-ngo" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M3 21h18v-2H3zm2-4h4V7H5zm5 0h4V3h-4zm5 0h4V10h-4z"/>
+                    </svg>
+                </span>
+                NGO
+            </h3>
+            <p>Discover urgent available posts and request food for your communities.</p>
+            <a href="{% url 'register' %}" class="btn btn-primary btn-sm role-join-btn">Join as NGO</a>
+        </article>
+        <article class="role-card">
+            <h3>
+                <span class="role-icon role-icon-volunteer" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M3 6h11v9H3zm12 3h3l3 3v3h-6zM7 19a2 2 0 1 1 0-4 2 2 0 0 1 0 4m10 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4"/>
+                    </svg>
+                </span>
+                Volunteer
+            </h3>
+            <p>Accept delivery tasks and make sure food reaches people safely.</p>
+            <a href="{% url 'register' %}" class="btn btn-primary btn-sm role-join-btn">Join as Volunteer</a>
+        </article>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

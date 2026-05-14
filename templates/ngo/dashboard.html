@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block page_title %}NGO Dashboard - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="welcome-banner">
+        <h2>Welcome, {{ user.full_name }}!</h2>
+        <p>Browse urgent food posts and send requests to donors.</p>
+        <div class="banner-actions">
+            <a href="{% url 'ngo_my_requests' %}" class="btn btn-ghost btn-sm">📋 My Requests</a>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    {% if expiring_count > 0 %}
+        <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <span class="alert-text">{{ expiring_count }} item(s) expiring within 6 hours</span>
+        </div>
+    {% endif %}
+
+    <div class="filter-bar">
+        <button type="button" class="filter-btn active" onclick="filterPosts('all', this)">All</button>
+        <button type="button" class="filter-btn" onclick="filterPosts('expiring', this)">Expiring Soon</button>
+        <button type="button" class="filter-btn" onclick="filterPosts('cooked', this)">Cooked</button>
+        <button type="button" class="filter-btn" onclick="filterPosts('raw', this)">Raw</button>
+        <button type="button" class="filter-btn" onclick="filterPosts('packaged', this)">Packaged</button>
+        <button type="button" class="filter-btn" onclick="filterPosts('bakery', this)">Bakery</button>
+    </div>
+
+    <header class="section-header">
+        <h3 id="postCount">{{ posts|length }} food post(s) available</h3>
+    </header>
+
+    {% if posts %}
+        <div class="ngo-grid">
+            {% for post in posts %}
+                <article class="ngo-food-card" data-category="{{ post.category }}" data-expiring="no" style="display:flex;">
+                    <div class="food-media">
+                        <span class="category-badge">{{ post.get_category_display }}</span>
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                        {% else %}
+                            <div class="food-placeholder">🍱</div>
+                        {% endif %}
+                    </div>
+                    <div class="food-card-body" style="display:flex; flex-direction:column;">
+                        <h4>{{ post.title }}</h4>
+                        <p class="food-meta">Qty: {{ post.quantity }} · {{ post.get_category_display }}</p>
+                        <p class="food-meta">📍 {{ post.location|truncatechars:45 }}</p>
+                        <p class="food-card-desc">{{ post.description|truncatechars:110 }}</p>
+
+                        <div class="expiry-countdown" data-expiry="{{ post.expiry_time|date:'c' }}">
+                            {{ post.time_remaining }}
+                        </div>
+                        <p class="donor-tag">👤 {{ post.donor.full_name }}</p>
+
+                        <div class="food-card-actions">
+                            {% if post.pk in requested_post_ids %}
+                                <button type="button" class="btn btn-secondary btn-sm requested-btn" disabled>✓ Already Requested</button>
+                            {% else %}
+                                <a href="{% url 'request_food' post.pk %}" class="btn btn-primary btn-sm">Request This Food</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        <div id="noResults" class="empty-state card hidden">
+            <h4>No matching posts</h4>
+            <p>Try a different filter.</p>
+        </div>
+    {% else %}
+        <div class="empty-state card">
+            <h4>No food posts available</h4>
+            <p>Check again soon for new donor posts.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Add Food - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <header class="page-header">
+        <div>
+            <h2>Add Food Post</h2>
+            <p>Share accurate details so NGOs can request quickly.</p>
+        </div>
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm">Back</a>
+    </header>
+
+    <div class="add-food-layout">
+        <div class="card">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div>
+                    <label for="id_title">Title</label>
+                    <input type="text" id="id_title" name="title" value="{{ form.title.value|default:'' }}" required>
+                    {% if form.title.errors %}<p class="location-error">{{ form.title.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label for="id_description">Description</label>
+                    <textarea id="id_description" name="description" required>{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}<p class="location-error">{{ form.description.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="id_quantity">Quantity</label>
+                        <input type="number" id="id_quantity" name="quantity" min="1" value="{{ form.quantity.value|default:'' }}" required>
+                        {% if form.quantity.errors %}<p class="location-error">{{ form.quantity.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label for="id_category">Category</label>
+                        <select id="id_category" name="category" required>
+                            <option value="">Select category</option>
+                            <option value="cooked" {% if form.category.value == 'cooked' %}selected{% endif %}>🍛 Cooked</option>
+                            <option value="raw" {% if form.category.value == 'raw' %}selected{% endif %}>🥦 Raw</option>
+                            <option value="packaged" {% if form.category.value == 'packaged' %}selected{% endif %}>📦 Packaged</option>
+                            <option value="bakery" {% if form.category.value == 'bakery' %}selected{% endif %}>🥖 Bakery</option>
+                        </select>
+                        {% if form.category.errors %}<p class="location-error">{{ form.category.errors.0 }}</p>{% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <label for="id_location">Location</label>
+                    <div class="location-field-wrapper">
+                        <input type="text" id="id_location" name="location" value="{{ form.location.value|default:'' }}" required>
+                        <button type="button" id="detectLocationBtn" onclick="detectLocation()" class="btn btn-ghost location-detect-btn">📍 Use My Location</button>
+                    </div>
+                    <input type="hidden" id="id_latitude" name="latitude" value="">
+                    <input type="hidden" id="id_longitude" name="longitude" value="">
+                    <div id="locationMapPreview" class="location-map-preview"></div>
+                    <p id="locationCoords" class="location-coords"></p>
+                    <p class="form-hint">Click Use My Location to auto-fill address using GPS</p>
+                    {% if form.location.errors %}<p class="location-error">{{ form.location.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label for="id_expiry_time">Expiry Time</label>
+                    <input type="datetime-local" id="id_expiry_time" name="expiry_time" value="{{ form.expiry_time.value|default:'' }}" required>
+                    {% if form.expiry_time.errors %}<p class="location-error">{{ form.expiry_time.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label for="id_image">Image</label>
+                    <input type="file" id="id_image" name="image" accept="image/*" required>
+                    {% if form.image.errors %}<p class="location-error">{{ form.image.errors.0 }}</p>{% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <p class="location-error">{{ form.non_field_errors.0 }}</p>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <span class="btn-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M4 7h16v2H4zM6 10h12l-1 7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2zM9 5h6v2H9z"/>
+                        </svg>
+                    </span>
+                    <span>Post Food</span>
+                </button>
+            </form>
+        </div>
+
+        <aside class="preview-panel">
+            <div class="preview-box card">
+                <div id="previewPlaceholder" class="preview-placeholder">Image preview appears here</div>
+                <img id="previewImg" class="hidden" alt="Food preview">
+            </div>
+
+            <div class="card">
+                <h4>Preview Tips</h4>
+                <ul class="preview-tips">
+                    <li>Use a clear, well-lit photo.</li>
+                    <li>Mention freshness and packaging details.</li>
+                    <li>Set accurate quantity for better planning.</li>
+                    <li>Keep location precise for volunteers.</li>
+                    <li>Set realistic expiry to avoid waste.</li>
+                </ul>
+            </div>
+
+            <div class="card preview-encourage">
+                <h4>Every Post Matters</h4>
+                <p>Your food post can become someone’s next safe meal today.</p>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Impact - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="transparency-hero">
+        <p class="hero-eyebrow">&#128202; Transparency Dashboard</p>
+        <h1>Our Impact So Far</h1>
+        <p>Real numbers, visible progress, and community trust in action.</p>
+
+        {% with completed=completed_deliveries %}
+        <div class="counter-grid">
+            <article class="counter-item">
+                <small>Delivered Meals</small>
+                <strong data-target="{{ stats.delivered }}">0</strong>
+            </article>
+            <article class="counter-item">
+                <small>Completed Deliveries</small>
+                <strong data-target="{{ completed }}">0</strong>
+            </article>
+            <article class="counter-item">
+                <small>Total Users</small>
+                <strong data-target="{{ total_users }}">0</strong>
+            </article>
+        </div>
+        {% endwith %}
+    </div>
+</section>
+
+<section class="container">
+    <div class="impact-row">
+        <article class="impact-card">
+            <h3>Total Posts</h3>
+            <p>{{ stats.total }}</p>
+        </article>
+        <article class="impact-card">
+            <h3>Available Right Now</h3>
+            <p>{{ stats.available }}</p>
+        </article>
+        <article class="impact-card">
+            <h3>NGOs Registered</h3>
+            <p>{{ ngo_count }}</p>
+        </article>
+        <article class="impact-card">
+            <h3>Volunteers Active</h3>
+            <p>{{ volunteer_count }}</p>
+        </article>
+    </div>
+</section>
+
+<section class="container how-section recent-deliveries-section">
+    <header class="section-head">
+        <h2 class="section-heading">Recent Deliveries</h2>
+    </header>
+
+    {% if recent_deliveries %}
+        <div class="card">
+            {% for delivery in recent_deliveries %}
+                <article class="request-card recent-delivery-card">
+                    <div class="recent-delivery-main">
+                        <p class="recent-delivery-title">&#9989; {{ delivery.food_request.food_post.title }}</p>
+                        <p class="recent-delivery-route">
+                            From {{ delivery.food_request.food_post.donor.full_name }} &#8594; {{ delivery.food_request.ngo.full_name }}
+                        </p>
+                    </div>
+                    <small class="recent-delivery-time">{{ delivery.delivered_at|date:"d M Y, h:i A" }}</small>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state card">
+            <p>No recent completed deliveries yet.</p>
+        </div>
+    {% endif %}
+</section>
+
+<section class="how-section container transparency-steps-section">
+    <header class="section-head">
+        <h2 class="section-heading">How We Ensure Transparency</h2>
+    </header>
+    <div class="steps-grid">
+        <article class="step-card">
+            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128065;</span></div>
+            <h3 class="step-title">Live Status</h3>
+            <p class="step-desc">Each post moves through visible statuses from available to delivered.</p>
+        </article>
+        <article class="step-card">
+            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128274;</span></div>
+            <h3 class="step-title">OTP Confirmation</h3>
+            <p class="step-desc">Deliveries are confirmed through OTP to prevent false completions.</p>
+        </article>
+        <article class="step-card">
+            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#129513;</span></div>
+            <h3 class="step-title">Role Accountability</h3>
+            <p class="step-desc">Donors, NGOs, and volunteers each have clear responsibilities.</p>
+        </article>
+        <article class="step-card">
+            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128737;</span></div>
+            <h3 class="step-title">Admin Oversight</h3>
+            <p class="step-desc">Admins monitor expired, pending, and delivered activities centrally.</p>
+        </article>
+    </div>
+</section>
+
+{% if not request.user.is_authenticated %}
+<section class="container">
+    <div class="welcome-banner">
+        <h3>Ready to contribute?</h3>
+        <p>Register now and be part of Bangladesh's food redistribution movement.</p>
+        <a href="{% url 'register' %}" class="btn hero-btn-primary btn-lg transparency-cta-btn">Create Account</a>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

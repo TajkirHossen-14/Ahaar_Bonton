@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Requests - AhaarBonton{% endblock %}
+
+{% block content %}
+<section class="container">
+    <header class="page-header">
+        <div>
+            <h2>Incoming Requests</h2>
+            <p>Review and act on NGO requests for your food posts.</p>
+        </div>
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm">Back</a>
+    </header>
+
+    {% if pending_count > 0 %}
+        <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <span class="alert-text">You have {{ pending_count }} pending request{{ pending_count|pluralize }}.</span>
+        </div>
+    {% endif %}
+
+    {% if all_requests %}
+        <section class="how-section donor-pending-section">
+            <h3>Pending Requests</h3>
+            <div class="requests-list">
+                {% for req in pending_requests %}
+                    <article class="request-card">
+                        <div class="request-card-top">
+                            <div class="request-info">
+                                <h4>{{ req.food_post.title }}</h4>
+                                <p>Requested by {{ req.ngo.full_name }} · {{ req.requested_at|date:"d M Y, h:i A" }}</p>
+                                {% if req.message %}
+                                    <p class="request-message"><em>{{ req.message }}</em></p>
+                                {% endif %}
+                            </div>
+                            <div class="request-meta">
+                                <p><strong>Qty:</strong> {{ req.food_post.quantity }}</p>
+                                <p><strong>Expires:</strong> {{ req.food_post.expiry_time|date:"d M Y, h:i A" }}</p>
+                            </div>
+                        </div>
+                        <div class="request-actions">
+                            <form method="post" action="{% url 'handle_request' req.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="approve">
+                                <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Approve this request?')">Approve</button>
+                            </form>
+                            <form method="post" action="{% url 'handle_request' req.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="reject">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject this request?')">Reject</button>
+                            </form>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="empty-state card">
+                        <p>No pending requests.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if approved_requests %}
+        <div class="section-header" style="margin-top:1.5rem;">
+            <h3>✅ Approved</h3>
+        </div>
+        <div class="requests-table-wrapper card"
+             style="padding:0;margin-bottom:1.5rem;">
+            <table class="requests-table donor-requests-table donor-approved-table">
+                <thead>
+                    <tr>
+                        <th>Food</th>
+                        <th>NGO</th>
+                        <th>Date</th>
+                        <th>Pickup OTP</th>
+                        <th>Pickup</th>
+                        <th>Delivery</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for req in approved_requests %}
+                <tr>
+                    <td data-label="Food">
+                        <strong>{{ req.food_post.title }}</strong>
+                    </td>
+                    <td data-label="NGO">{{ req.ngo.full_name }}</td>
+                    <td data-label="Date" style="font-size:0.82rem;
+                               color:var(--muted);">
+                        {{ req.requested_at|date:"M d, Y" }}
+                    </td>
+                    <td data-label="Pickup OTP">
+                        {% if req.delivery %}
+                        <div>
+                            <p style="font-size:0.75rem;
+                                       color:var(--muted);
+                                       margin-bottom:4px;">
+                                Give to volunteer:
+                            </p>
+                            <span class="otp-box">
+                                {{ req.delivery.pickup_otp }}
+                            </span>
+                        </div>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td data-label="Pickup">
+                        {% if req.delivery.pickup_confirmed %}
+                            <span class="badge badge-approved">
+                                Picked Up ✅
+                            </span>
+                            <div style="font-size:0.75rem;
+                                        color:var(--muted);
+                                        margin-top:3px;">
+                                {{ req.delivery.picked_up_at|date:"h:i A" }}
+                            </div>
+                        {% else %}
+                            <span class="badge badge-pending">
+                                Waiting
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Delivery">
+                        {% if req.delivery.delivery_confirmed %}
+                            <span class="badge badge-delivered">
+                                Delivered ✅
+                            </span>
+                            <div style="font-size:0.75rem;
+                                        color:var(--muted);
+                                        margin-top:3px;">
+                                {{ req.delivery.delivered_at|date:"h:i A" }}
+                            </div>
+                        {% elif req.delivery.pickup_confirmed %}
+                            <span class="badge badge-claimed">
+                                In Transit 🚚
+                            </span>
+                        {% else %}
+                            <span style="font-size:0.78rem;
+                                         color:var(--muted);">
+                                Not yet
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <section class="how-section donor-completed-section">
+            <h3>Completed Requests</h3>
+            <table class="requests-table donor-requests-table donor-completed-table">
+                <thead>
+                    <tr>
+                        <th>Food</th>
+                        <th>NGO</th>
+                        <th>Delivered Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in completed_requests %}
+                        <tr>
+                            <td data-label="Food">{{ req.food_post.title }}</td>
+                            <td data-label="NGO">{{ req.ngo.full_name }}</td>
+                            <td data-label="Delivered">{% if req.delivery %}{{ req.delivery.delivered_at|date:"d M Y, h:i A" }}{% else %}N/A{% endif %}</td>
+                            <td data-label="Status"><span class="badge-delivered">Completed</span></td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No completed requests.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="how-section donor-rejected-section">
+            <h3>Rejected Requests</h3>
+            <table class="requests-table donor-requests-table donor-rejected-table">
+                <thead>
+                    <tr>
+                        <th>Food</th>
+                        <th>NGO</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in rejected_requests %}
+                        <tr>
+                            <td data-label="Food">{{ req.food_post.title }}</td>
+                            <td data-label="NGO">{{ req.ngo.full_name }}</td>
+                            <td data-label="Date">{{ req.requested_at|date:"d M Y, h:i A" }}</td>
+                            <td data-label="Status"><span class="badge-rejected">Rejected</span></td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No rejected requests.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% else %}
+        <div class="empty-state card">
+            <h4>No requests yet</h4>
+            <p>When NGOs request your posts, they will appear here.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
