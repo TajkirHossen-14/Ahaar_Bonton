@@ -21,12 +21,12 @@ This platform provides a structured, community-driven solution to that contradic
  
 ## ✨ Key Features
  
-- 🥘 **Food Donation Listings** – Donors can post surplus food with details like quantity, type, and pickup location
-- 🏢 **NGO Dashboard** – NGOs can browse available donations and claim them for redistribution
-- 🚴 **Volunteer Management** – Volunteers can register and assist with food pickup and delivery
-- 👤 **User Authentication** – Separate registration and profile management for Donors, NGOs, and Volunteers
-- 📦 **Delivery Tracking** – Manage and track the status of food deliveries
-- 🖼️ **Image Uploads** – Food listings support photo uploads via Pillow
+- 🥘 **Food Donation Listings**  –  Donors can post surplus food with details like quantity, type, and pickup location
+- 🏢 **NGO Dashboard**  –  NGOs can browse available donations and claim them for redistribution
+- 🚴 **Volunteer Management**  –  Volunteers can register and assist with food pickup and delivery
+- 👤 **User Authentication**  –  Separate registration and profile management for Donors, NGOs, and Volunteers
+- 📦 **Delivery Tracking**  –  Manage and track the status of food deliveries
+- 🖼️ **Image Uploads**  –  Food listings support photo uploads via Pillow
 ---
  
 ## 🗂️ Project Structure
