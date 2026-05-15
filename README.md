@@ -208,8 +208,3 @@ Contributions are welcome! If you'd like to improve the platform:
 4. Push to the branch (`git push origin feature/your-feature`)
 5. Open a Pull Request
  
----
- 
-## 🙏 Acknowledgements
- 
-This project was built with the goal of using technology to address real-world food insecurity and reduce waste. Inspired by grassroots food-sharing movements across Bangladesh and beyond.
