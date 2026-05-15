@@ -32,20 +32,96 @@ This platform provides a structured, community-driven solution to that contradic
 ## 🗂️ Project Structure
  
 ```
-Ahaar_Bonton/
+AhaarBonton/
 │
-├── ahaarbonton/        # Django project settings & URLs
-├── core/               # Landing page, homepage, core views
-├── food/               # Food listing, donation models & views
-├── delivery/           # Delivery assignment & tracking
-├── users/              # User registration, login, profiles
+├── ahaarbonton/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
 │
-├── templates/          # HTML templates (shared & per-app)
-├── static/             # CSS, JS, and static assets
-├── Assets/             # Project assets (banner, logos, etc.)
+├── core/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── forms.py
+│   ├── admin.py
+│   ├── backends.py
+│   ├── migrations/
+│   ├── management/
+│   │   └── commands/
+│   │       └── expire_food.py
+│   ├── services/
+│   │   ├── matching.py
+│   │   └── notification.py
+│   └── tests.py
 │
+├── users/
+│   ├── models.py
+│   ├── forms.py
+│   ├── backends.py
+│   ├── services/
+│   └── apps.py
+│
+├── food/
+│   ├── models.py
+│   ├── forms.py
+│   ├── services/
+│   │   └── matching.py
+│   └── apps.py
+│
+├── delivery/
+│   ├── models.py
+│   ├── services/
+│   │   └── notification.py
+│   └── apps.py
+│
+├── templates/
+│   ├── base.html
+│   ├── home.html
+│   ├── transparency.html
+│   ├── 403.html
+│   ├── 404.html
+│   ├── auth/
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   └── profile.html
+│   ├── donor/
+│   │   ├── dashboard.html
+│   │   ├── add_food.html
+│   │   ├── edit_food.html
+│   │   └── requests.html
+│   ├── ngo/
+│   │   ├── dashboard.html
+│   │   ├── my_requests.html
+│   │   └── request_confirm.html
+│   ├── volunteer/
+│   │   └── dashboard.html
+│   └── admin_panel/
+│       └── dashboard.html
+│
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── main.js
+│   ├── img/
+│   └── favicon/
+│
+├── media/
+│   ├── food_posts/
+│   └── profiles/
+│
+├── Assets/
+│   ├── Banner/
+│   └── Screenshots/
+│
+├── db.sqlite3
 ├── manage.py
-└── requirements.txt
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
  
 ---
