@@ -11,7 +11,9 @@
 
 </div>
 
----
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
  
 ## 📖 About the Project
  
@@ -20,7 +22,9 @@ This platform provides a structured, community-driven solution to that contradic
  
 > *"Ahaar" (আহার) means food, and "Bonton" (বণ্টন) means distribution – together, a name that speaks for itself.*
  
----
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
  
 ## ✨ Key Features
  
@@ -30,7 +34,10 @@ This platform provides a structured, community-driven solution to that contradic
 - 👤 **User Authentication**  –  Separate registration and profile management for Donors, NGOs, and Volunteers
 - 📦 **Delivery Tracking**  –  Manage and track the status of food deliveries
 - 🖼️ **Image Uploads**  –  Food listings support photo uploads via Pillow
----
+
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
  
 ## 🗂️ Project Structure
  
@@ -127,7 +134,8 @@ AhaarBonton/
 └── README.md
 ```
  
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
  
 ## 🛠️ Tech Stack
  
@@ -139,8 +147,10 @@ AhaarBonton/
 | Frontend | HTML5, CSS3, JavaScript |
 | Image Handling | Pillow 12.2.0 |
 | Templating | Django Templates |
+
  
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
  
 ## 🚀 Getting Started
  
@@ -187,9 +197,11 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
  
-Now open your browser and visit **http://127.0.0.1:8000** 🎉
+Now open your browser and visit  **http://127.0.0.1:8000**  🎉
+
  
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
  
 ## 👥 User Roles
  
@@ -199,7 +211,9 @@ Now open your browser and visit **http://127.0.0.1:8000** 🎉
 | 🏢 **NGO** | Organizations that claim food donations and manage distribution |
 | 🚴 **Volunteer** | Individuals who help with pickup and delivery of food |
  
----
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
  
 ## 🤝 Contributing
  
