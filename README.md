@@ -35,7 +35,7 @@ This platform provides a structured, community-driven solution to that contradic
 - 📦 **Delivery Tracking**  –  Manage and track the status of food deliveries
 - 🖼️ **Image Uploads**  –  Food listings support photo uploads via Pillow
 - ⭐ **Trust Score System**  –  Donors and Volunteers build credibility over time through a score based on their activity and reliability on the platform
-- 📊 **Transparency Dashboard**  —  A public-facing impact page showing real-time statistics on food saved, deliveries completed, and communities served
+- 📊 **Transparency Dashboard**  –  A public-facing impact page showing real-time statistics on food saved, deliveries completed, and communities served
 
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
