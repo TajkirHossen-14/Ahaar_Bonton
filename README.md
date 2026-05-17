@@ -40,6 +40,86 @@ This platform provides a structured, community-driven solution to that contradic
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
 
+
+# ⚙️ How AhaarBonton Works
+
+AhaarBonton follows a simple, transparent, and verified flow from food surplus to final delivery.
+
+
+### 👤 Step 1  –  Donor Posts Food
+
+A donor (restaurant, household, or event organizer) logs in and creates a food post with :
+- Food title, description, and quantity
+- Category (Cooked / Raw / Packaged / Bakery)
+- Pickup location (auto-filled via GPS)
+- Expiry date and time
+- Optional food image
+
+The post immediately becomes visible to all registered NGOs on their dashboard.
+
+### 🏢 Step 2  –  NGO Requests Food
+
+NGOs browse available food sorted by **expiry priority** (soonest expiring first).  
+They can filter by category and see a live expiry countdown on each card.
+
+When an NGO finds suitable food, they send a **collection request** with an optional message to the donor.
+
+### ✅ Step 3  –  Donor Approves the Request
+
+The donor reviews incoming requests and approves or rejects them.
+
+On **approval**, the system automatically :
+- Marks the food post as **Claimed**
+- Creates a **Delivery record**
+- Generates **two unique 6-digit OTPs**:
+  - `Pickup OTP` → visible to the Donor (given to Volunteer at pickup)
+  - `Delivery OTP` → sent to the NGO via email (given to Volunteer at delivery)
+
+### 🚚 Step 4  –  Volunteer Accepts the Delivery
+
+Volunteers browse open delivery jobs and accept one.
+
+Each job shows :
+- Pickup location (Donor's address)
+- Drop-off location (NGO name)
+- Food quantity and expiry time
+
+### 🔐 Step 5  –  Pickup Confirmed (OTP 1)
+
+The volunteer visits the donor and collects the food.  
+The **Donor shares the Pickup OTP** with the volunteer.
+
+The volunteer enters the Pickup OTP in their dashboard:
+- ✅ Correct OTP → Pickup confirmed, status updates to **Picked Up**
+- ❌ Wrong OTP → Error shown, volunteer must try again
+
+At this point, the NGO receives an email notification:  
+*"Food is on the way! Your Delivery OTP: XXXXXX"*
+
+### 🏁 Step 6  –  Delivery Confirmed (OTP 2)
+
+The volunteer arrives at the NGO and hands over the food.  
+The **NGO shares the Delivery OTP** with the volunteer.
+
+The volunteer enters the Delivery OTP in their dashboard :
+- ✅ Correct OTP → Delivery confirmed, status updates to **Delivered**
+- ❌ Wrong OTP → Error shown
+
+### 🎉 Step 7  –  Completion & Impact
+
+Once delivery is confirmed, the system automatically updates :
+
+| What | Result |
+|---|---|
+| Food Post Status | `Delivered` |
+| Food Request Status | `Completed` |
+| Donor & Volunteer Trust Score | `+5 Points` |
+| Transparency Dashboard | Updated With New Delivery |
+| Donor Notification | Email Confirmation Sent |
+
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
  
 ## 🗂️ Project Structure
  
