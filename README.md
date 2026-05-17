@@ -45,6 +45,7 @@ This platform provides a structured, community-driven solution to that contradic
 
 AhaarBonton follows a simple, transparent, and verified flow from food surplus to final delivery.
 
+<br>
 
 ### 👤 Step 1  –  Donor Posts Food
 
