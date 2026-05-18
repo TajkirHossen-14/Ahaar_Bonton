@@ -1,4 +1,5 @@
-(function () {
+(function () 
+ {
     const navToggle = document.getElementById("navToggle");
     const navMenu = document.getElementById("navMenu");
     const themeSwitcher = document.getElementById("themeSwitcher");
@@ -6,10 +7,12 @@
     const userMenu = document.getElementById("userMenu");
     const userMenuToggle = document.getElementById("userMenuToggle");
 
-    function closeUserMenu() {
+    function closeUserMenu() 
+    {
         if (!userMenu) return;
         userMenu.classList.remove("open");
-        if (typeof userMenu.removeAttribute === "function") {
+        if (typeof userMenu.removeAttribute === "function") 
+        {
             userMenu.removeAttribute("open");
         }
         if (userMenuToggle) {
