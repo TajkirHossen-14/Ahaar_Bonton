@@ -95,7 +95,7 @@ The volunteer enters the Pickup OTP in their dashboard:
 - ❌ Wrong OTP → Error shown, volunteer must try again
 
 At this point, the NGO receives an email notification:  
-*"Food is on the way! Your Delivery OTP: XXXXXX"*
+*"Food is on the way! Your Delivery OTP : XXXXXX"*
 
 ### 🏁 Step 6  –  Delivery Confirmed (OTP 2)
 
