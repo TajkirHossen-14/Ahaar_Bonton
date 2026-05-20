@@ -15,26 +15,31 @@
         {
             userMenu.removeAttribute("open");
         }
-        if (userMenuToggle) {
+        if (userMenuToggle) 
+        {
             userMenuToggle.setAttribute("aria-expanded", "false");
         }
     }
 
-    function closeThemeMenu() {
+    function closeThemeMenu() 
+    {
         if (!themeSwitcher || !themeToggleBtn) return;
         themeSwitcher.classList.remove("open");
         themeToggleBtn.setAttribute("aria-expanded", "false");
     }
 
-    function closeNav() {
+    function closeNav() 
+    {
         if (!navToggle || !navMenu) return;
         navMenu.classList.remove("open");
         navToggle.setAttribute("aria-expanded", "false");
         closeUserMenu();
     }
 
-    if (navToggle && navMenu) {
-        navToggle.addEventListener("click", function (event) {
+    if (navToggle && navMenu) 
+    {
+        navToggle.addEventListener("click", function (event) 
+        {
             event.stopPropagation();
             closeThemeMenu();
             closeUserMenu();
@@ -43,8 +48,10 @@
         });
     }
 
-    if (themeToggleBtn && themeSwitcher) {
-        themeToggleBtn.addEventListener("click", function (event) {
+    if (themeToggleBtn && themeSwitcher) 
+    {
+        themeToggleBtn.addEventListener("click", function (event) 
+        {
             event.stopPropagation();
             closeUserMenu();
             const isOpen = themeSwitcher.classList.toggle("open");
@@ -52,16 +59,21 @@
         });
     }
 
-    if (userMenuToggle && userMenu) {
-        const toggleUserMenu = function (event) {
+    if (userMenuToggle && userMenu) 
+    {
+        const toggleUserMenu = function (event) 
+        {
             event.preventDefault();
             event.stopPropagation();
             closeThemeMenu();
             const isOpen = !(userMenu.classList.contains("open") || userMenu.hasAttribute("open"));
             userMenu.classList.toggle("open", isOpen);
-            if (isOpen) {
+            if (isOpen) 
+            {
                 userMenu.setAttribute("open", "");
-            } else {
+            } 
+            else 
+            {
                 userMenu.removeAttribute("open");
             }
             userMenuToggle.setAttribute("aria-expanded", String(isOpen));
