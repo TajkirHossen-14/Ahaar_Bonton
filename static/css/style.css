@@ -1862,6 +1862,73 @@ textarea:focus {
     margin-top: 14px;
 }
 
+.transparency-charts-section {
+    margin-top: 8px;
+    margin-bottom: 6px;
+}
+
+.transparency-chart-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.chart-card {
+    position: relative;
+    overflow: hidden;
+    padding: 18px;
+}
+
+.chart-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+        150deg,
+        rgba(255, 255, 255, 0.18),
+        rgba(255, 255, 255, 0.02)
+    );
+}
+
+.chart-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.chart-card-wide {
+    grid-column: 1 / -1;
+}
+
+.chart-card-head h3 {
+    font-family: var(--font-head);
+    font-size: 1.04rem;
+    line-height: 1.35;
+}
+
+.chart-card-head p {
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.chart-canvas-wrap {
+    position: relative;
+    margin-top: 12px;
+    height: 300px;
+}
+
+.chart-canvas-wrap-donut {
+    max-width: 430px;
+    margin-inline: auto;
+}
+
+.chart-canvas-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .recent-delivery-card {
     display: flex;
     justify-content: space-between;
@@ -2388,6 +2455,10 @@ textarea:focus {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .transparency-chart-grid {
+        grid-template-columns: 1fr;
+    }
+
     .admin-middle-row {
         grid-template-columns: 1fr;
     }
@@ -2525,6 +2596,7 @@ textarea:focus {
     .food-grid,
     .ngo-grid,
     .counter-grid,
+    .transparency-chart-grid,
     .form-row {
         grid-template-columns: 1fr;
     }
@@ -2602,6 +2674,10 @@ textarea:focus {
 
     .hero h1 {
         font-size: 1.9rem;
+    }
+
+    .chart-canvas-wrap {
+        height: 260px;
     }
 
     .page-header {
@@ -3078,6 +3154,14 @@ textarea:focus {
 
 [data-theme="dark"] .transparency-hero .counter-item strong {
     color: #ffffff;
+}
+
+[data-theme="dark"] .chart-card::before {
+    background: linear-gradient(
+        150deg,
+        rgba(110, 118, 129, 0.1),
+        rgba(110, 118, 129, 0.02)
+    );
 }
 
 @media (min-width: 901px) {

@@ -49,6 +49,45 @@
     </div>
 </section>
 
+<section class="container transparency-charts-section">
+    <header class="section-head">
+        <h2 class="section-heading">Data Insights</h2>
+        <p class="section-sub">Live distribution of food categories, status, and monthly completed deliveries.</p>
+    </header>
+
+    <div class="transparency-chart-grid">
+        <article class="card chart-card">
+            <div class="chart-card-head">
+                <h3>Bar Chart - Food Category Breakdown</h3>
+                <p>Cooked, Raw, Packaged, Bakery</p>
+            </div>
+            <div class="chart-canvas-wrap">
+                <canvas id="foodCategoryBarChart" aria-label="Food category distribution bar chart"></canvas>
+            </div>
+        </article>
+
+        <article class="card chart-card">
+            <div class="chart-card-head">
+                <h3>Donut Chart - Food Status Distribution</h3>
+                <p>Available, Claimed, Delivered, Expired</p>
+            </div>
+            <div class="chart-canvas-wrap chart-canvas-wrap-donut">
+                <canvas id="foodStatusDonutChart" aria-label="Food status distribution donut chart"></canvas>
+            </div>
+        </article>
+
+        <article class="card chart-card chart-card-wide">
+            <div class="chart-card-head">
+                <h3>Line Chart - Monthly Deliveries</h3>
+                <p>Last 12 months completed delivery trend</p>
+            </div>
+            <div class="chart-canvas-wrap">
+                <canvas id="monthlyDeliveriesLineChart" aria-label="Monthly deliveries line chart"></canvas>
+            </div>
+        </article>
+    </div>
+</section>
+
 <section class="container how-section recent-deliveries-section">
     <header class="section-head">
         <h2 class="section-heading">Recent Deliveries</h2>
@@ -112,4 +151,280 @@
     </div>
 </section>
 {% endif %}
+
+{{ category_chart_labels|json_script:"categoryChartLabels" }}
+{{ category_chart_values|json_script:"categoryChartValues" }}
+{{ status_chart_labels|json_script:"statusChartLabels" }}
+{{ status_chart_values|json_script:"statusChartValues" }}
+{{ monthly_chart_labels|json_script:"monthlyChartLabels" }}
+{{ monthly_chart_values|json_script:"monthlyChartValues" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+    (function () {
+        function parseJSON(id, fallback) {
+            const node = document.getElementById(id);
+            if (!node) return fallback;
+            try {
+                return JSON.parse(node.textContent);
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        if (typeof Chart === "undefined") {
+            return;
+        }
+
+        const categoryLabels = parseJSON("categoryChartLabels", []);
+        const categoryValues = parseJSON("categoryChartValues", []);
+        const statusLabels = parseJSON("statusChartLabels", []);
+        const statusValues = parseJSON("statusChartValues", []);
+        const monthlyLabels = parseJSON("monthlyChartLabels", []);
+        const monthlyValues = parseJSON("monthlyChartValues", []);
+
+        let chartInstances = [];
+
+        function getThemeColors() {
+            const rootStyles = getComputedStyle(document.documentElement);
+            const getVar = function (name, fallback) {
+                const value = rootStyles.getPropertyValue(name).trim();
+                return value || fallback;
+            };
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+            return {
+                text: isDark ? "#c9d1d9" : "#334155",
+                muted: isDark ? "#9ca3af" : "#64748b",
+                grid: isDark ? "rgba(139, 148, 158, 0.2)" : "rgba(15, 23, 42, 0.1)",
+                tooltipBg: isDark ? "#161b22" : "#ffffff",
+                tooltipBorder: isDark ? "#30363d" : "#cbd5e1",
+                category: [
+                    getVar("--green-700", "#1A7A4A"),
+                    getVar("--teal-700", "#0D7377"),
+                    getVar("--amber-700", "#B45309"),
+                    getVar("--green-400", "#4DC887"),
+                ],
+                status: [
+                    getVar("--green-600", "#22A060"),
+                    getVar("--amber-700", "#B45309"),
+                    getVar("--teal-700", "#0D7377"),
+                    isDark ? "#6b7280" : "#9ca3af",
+                ],
+                lineStroke: getVar("--green-600", "#22A060"),
+                lineFillTop: isDark ? "rgba(34, 160, 96, 0.35)" : "rgba(34, 160, 96, 0.28)",
+                lineFillBottom: isDark ? "rgba(34, 160, 96, 0.02)" : "rgba(34, 160, 96, 0.04)",
+            };
+        }
+
+        function getSharedOptions(colors) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: colors.text,
+                            font: {
+                                family: "Poppins",
+                                size: 12,
+                                weight: "600",
+                            },
+                            usePointStyle: true,
+                            pointStyle: "circle",
+                            boxWidth: 10,
+                            boxHeight: 10,
+                        },
+                    },
+                    tooltip: {
+                        backgroundColor: colors.tooltipBg,
+                        borderColor: colors.tooltipBorder,
+                        borderWidth: 1,
+                        titleColor: colors.text,
+                        bodyColor: colors.muted,
+                        padding: 10,
+                        titleFont: {
+                            family: "Poppins",
+                            size: 12,
+                            weight: "600",
+                        },
+                        bodyFont: {
+                            family: "DM Sans",
+                            size: 12,
+                            weight: "500",
+                        },
+                    },
+                },
+            };
+        }
+
+        function destroyCharts() {
+            chartInstances.forEach(function (chart) {
+                if (chart && typeof chart.destroy === "function") {
+                    chart.destroy();
+                }
+            });
+            chartInstances = [];
+        }
+
+        function renderCharts() {
+            destroyCharts();
+
+            const barCanvas = document.getElementById("foodCategoryBarChart");
+            const donutCanvas = document.getElementById("foodStatusDonutChart");
+            const lineCanvas = document.getElementById("monthlyDeliveriesLineChart");
+            if (!barCanvas || !donutCanvas || !lineCanvas) return;
+
+            const colors = getThemeColors();
+            const shared = getSharedOptions(colors);
+
+            const barChart = new Chart(barCanvas, {
+                type: "bar",
+                data: {
+                    labels: categoryLabels,
+                    datasets: [
+                        {
+                            label: "Posts",
+                            data: categoryValues,
+                            backgroundColor: colors.category,
+                            borderRadius: 10,
+                            maxBarThickness: 48,
+                        },
+                    ],
+                },
+                options: {
+                    ...shared,
+                    plugins: {
+                        ...shared.plugins,
+                        legend: {
+                            display: false,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: colors.muted, font: { family: "DM Sans", weight: "600" } },
+                            grid: { display: false },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: colors.muted,
+                                precision: 0,
+                                stepSize: 1,
+                                font: { family: "DM Sans", weight: "600" },
+                            },
+                            grid: { color: colors.grid },
+                        },
+                    },
+                },
+            });
+
+            const hasStatusData = statusValues.some(function (value) {
+                return Number(value) > 0;
+            });
+            const safeDonutValues = hasStatusData ? statusValues : [1, 1, 1, 1];
+
+            const donutChart = new Chart(donutCanvas, {
+                type: "doughnut",
+                data: {
+                    labels: statusLabels,
+                    datasets: [
+                        {
+                            data: safeDonutValues,
+                            backgroundColor: colors.status,
+                            borderColor: "transparent",
+                            hoverOffset: 8,
+                        },
+                    ],
+                },
+                options: {
+                    ...shared,
+                    cutout: "66%",
+                    plugins: {
+                        ...shared.plugins,
+                        legend: {
+                            ...shared.plugins.legend,
+                            position: "bottom",
+                        },
+                        tooltip: {
+                            ...shared.plugins.tooltip,
+                            callbacks: {
+                                label: function (context) {
+                                    if (!hasStatusData) return context.label + ": 0";
+                                    return context.label + ": " + context.formattedValue;
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            const lineCtx = lineCanvas.getContext("2d");
+            const lineGradient = lineCtx.createLinearGradient(0, 0, 0, 320);
+            lineGradient.addColorStop(0, colors.lineFillTop);
+            lineGradient.addColorStop(1, colors.lineFillBottom);
+
+            const lineChart = new Chart(lineCanvas, {
+                type: "line",
+                data: {
+                    labels: monthlyLabels,
+                    datasets: [
+                        {
+                            label: "Completed Deliveries",
+                            data: monthlyValues,
+                            borderColor: colors.lineStroke,
+                            backgroundColor: lineGradient,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: colors.lineStroke,
+                            pointBorderColor: colors.lineStroke,
+                            borderWidth: 3,
+                            tension: 0.35,
+                        },
+                    ],
+                },
+                options: {
+                    ...shared,
+                    plugins: {
+                        ...shared.plugins,
+                        legend: {
+                            display: false,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: colors.muted, font: { family: "DM Sans", weight: "600" } },
+                            grid: { color: colors.grid },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1,
+                                color: colors.muted,
+                                font: { family: "DM Sans", weight: "600" },
+                            },
+                            grid: { color: colors.grid },
+                        },
+                    },
+                },
+            });
+
+            chartInstances.push(barChart, donutChart, lineChart);
+        }
+
+        renderCharts();
+
+        const html = document.documentElement;
+        const observer = new MutationObserver(function (mutations) {
+            const hasThemeChange = mutations.some(function (mutation) {
+                return mutation.attributeName === "data-theme";
+            });
+            if (hasThemeChange) {
+                renderCharts();
+            }
+        });
+        observer.observe(html, { attributes: true, attributeFilter: ["data-theme"] });
+    })();
+</script>
 {% endblock %}

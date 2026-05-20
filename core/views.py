@@ -1,8 +1,11 @@
+import calendar
 from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -45,6 +48,54 @@ def transparency_view(request):
         "-delivered_at"
     )[:8]
 
+    category_counts_qs = FoodPost.objects.values("category").annotate(total=Count("id"))
+    category_count_map = {row["category"]: row["total"] for row in category_counts_qs}
+    category_order = [
+        (FoodPost.CategoryChoices.COOKED, "Cooked"),
+        (FoodPost.CategoryChoices.RAW, "Raw"),
+        (FoodPost.CategoryChoices.PACKAGED, "Packaged"),
+        (FoodPost.CategoryChoices.BAKERY, "Bakery"),
+    ]
+    category_chart_labels = [label for _, label in category_order]
+    category_chart_values = [category_count_map.get(code, 0) for code, _ in category_order]
+
+    status_counts_qs = FoodPost.objects.values("status").annotate(total=Count("id"))
+    status_count_map = {row["status"]: row["total"] for row in status_counts_qs}
+    status_order = [
+        (FoodPost.StatusChoices.AVAILABLE, "Available"),
+        (FoodPost.StatusChoices.CLAIMED, "Claimed"),
+        (FoodPost.StatusChoices.DELIVERED, "Delivered"),
+        (FoodPost.StatusChoices.EXPIRED, "Expired"),
+    ]
+    status_chart_labels = [label for _, label in status_order]
+    status_chart_values = [status_count_map.get(code, 0) for code, _ in status_order]
+
+    monthly_deliveries_qs = (
+        Delivery.objects.filter(is_confirmed=True, delivered_at__isnull=False)
+        .annotate(month=TruncMonth("delivered_at"))
+        .values("month")
+        .annotate(total=Count("id"))
+        .order_by("month")
+    )
+    monthly_deliveries_map = {}
+    for row in monthly_deliveries_qs:
+        month = row.get("month")
+        if month:
+            monthly_deliveries_map[(month.year, month.month)] = row["total"]
+
+    now_local = timezone.localtime()
+    month_points = []
+    for offset in range(11, -1, -1):
+        year = now_local.year
+        month = now_local.month - offset
+        while month <= 0:
+            month += 12
+            year -= 1
+        month_points.append((year, month))
+
+    monthly_chart_labels = [f"{calendar.month_abbr[m]} {str(y)[-2:]}" for y, m in month_points]
+    monthly_chart_values = [monthly_deliveries_map.get((y, m), 0) for y, m in month_points]
+
     context = {
         "stats": stats,
         "total_users": total_users,
@@ -52,6 +103,12 @@ def transparency_view(request):
         "ngo_count": ngo_count,
         "completed_deliveries": completed_deliveries,
         "recent_deliveries": recent_deliveries,
+        "category_chart_labels": category_chart_labels,
+        "category_chart_values": category_chart_values,
+        "status_chart_labels": status_chart_labels,
+        "status_chart_values": status_chart_values,
+        "monthly_chart_labels": monthly_chart_labels,
+        "monthly_chart_values": monthly_chart_values,
     }
     return render(request, "transparency.html", context)
 
