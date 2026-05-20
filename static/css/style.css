@@ -1901,6 +1901,10 @@ textarea:focus {
     grid-column: 1 / -1;
 }
 
+.chart-card-top {
+    margin-bottom: 8px;
+}
+
 .chart-card-head h3 {
     font-family: var(--font-head);
     font-size: 1.04rem;
