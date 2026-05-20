@@ -1920,11 +1920,11 @@ textarea:focus {
 .chart-canvas-wrap {
     position: relative;
     margin-top: 12px;
-    height: 300px;
+    height: 270px;
 }
 
 .chart-canvas-wrap-donut {
-    max-width: 430px;
+    max-width: 350px;
     margin-inline: auto;
 }
 
