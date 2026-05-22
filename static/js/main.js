@@ -80,21 +80,25 @@
         };
 
         userMenuToggle.addEventListener("click", toggleUserMenu);
-        userMenuToggle.addEventListener("keydown", function (event) {
-            if (event.key === "Enter" || event.key === " ") {
+        userMenuToggle.addEventListener("keydown", function (event) 
+        {
+            if (event.key === "Enter" || event.key === " ") 
+            {
                 toggleUserMenu(event);
             }
         });
     }
 
-    document.addEventListener("click", function (event) {
+    document.addEventListener("click", function (event) 
+    {
         if (
             navMenu &&
             navToggle &&
             navMenu.classList.contains("open") &&
             !navMenu.contains(event.target) &&
             !navToggle.contains(event.target)
-        ) {
+        ) 
+        {
             closeNav();
         }
 
@@ -102,7 +106,8 @@
             themeSwitcher &&
             themeSwitcher.classList.contains("open") &&
             !themeSwitcher.contains(event.target)
-        ) {
+        ) 
+        {
             closeThemeMenu();
         }
 
@@ -110,12 +115,14 @@
             userMenu &&
             userMenu.classList.contains("open") &&
             !userMenu.contains(event.target)
-        ) {
+        ) 
+        {
             closeUserMenu();
         }
     });
 
-    document.addEventListener("keydown", function (event) {
+    document.addEventListener("keydown", function (event) 
+    {
         if (event.key !== "Escape") return;
         closeNav();
         closeThemeMenu();
