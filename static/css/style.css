@@ -1682,6 +1682,11 @@ textarea:focus {
     opacity: 0;
 }
 
+.auth-reset-confirm .password-wrapper button {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .role-description {
     margin-top: 8px;
     background: #ecfffb;
