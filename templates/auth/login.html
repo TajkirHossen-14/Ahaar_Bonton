@@ -56,6 +56,19 @@
                 {% endif %}
             </div>
 
+            <div style="text-align:right; margin-top:-0.5rem;
+                        margin-bottom:1rem;">
+                <a href="{% url 'password_reset' %}"
+                   style="font-size:0.82rem;
+                          color:var(--muted);
+                          text-decoration:none;
+                          transition:var(--transition);"
+                   onmouseover="this.style.color='var(--green-700)'"
+                   onmouseout="this.style.color='var(--muted)'">
+                    Forgot password?
+                </a>
+            </div>
+
             <button type="submit" class="btn btn-primary btn-lg btn-full">Login</button>
         </form>
 

@@ -113,8 +113,26 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/login/"
 
-# Email backend for development
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# ── Email Configuration ───────────────────────────
+# Development: emails print to console
+EMAIL_BACKEND      = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'AhaarBonton <noreply@ahaarbonton.com>'
+EMAIL_HOST_USER    = ''
+
+# ── Production Email (Gmail SMTP) ─────────────────
+# When deploying, comment out the console backend above
+# and uncomment these lines:
+#
+# EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST          = 'smtp.gmail.com'
+# EMAIL_PORT          = 587
+# EMAIL_USE_TLS       = True
+# EMAIL_HOST_USER     = 'your@gmail.com'
+# EMAIL_HOST_PASSWORD = 'your_gmail_app_password'
+# DEFAULT_FROM_EMAIL  = 'AhaarBonton <your@gmail.com>'
+
+# ── Password Reset ────────────────────────────────
+PASSWORD_RESET_TIMEOUT = 86400  # Link expires in 24 hours
 
 # Django messages CSS tag mapping
 MESSAGE_TAGS = {

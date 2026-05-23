@@ -2316,6 +2316,10 @@ textarea:focus {
     margin-top: 24px;
 }
 
+.recent-requests-section .card > h3 {
+    margin-bottom: 12px;
+}
+
 .donor-pending-section {
     margin-bottom: 16px;
 }
