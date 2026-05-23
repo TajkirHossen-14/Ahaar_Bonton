@@ -4,7 +4,7 @@ from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Case, Count, IntegerField, When
 from django.db.models.functions import TruncMonth
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -425,9 +425,20 @@ def ngo_my_requests(request):
     if denied:
         return denied
 
-    requests_qs = FoodRequest.objects.filter(ngo=request.user).select_related(
-        "food_post",
-        "food_post__donor",
+    requests_qs = (
+        FoodRequest.objects.filter(ngo=request.user)
+        .select_related(
+            "food_post",
+            "food_post__donor",
+        )
+        .annotate(
+            status_priority=Case(
+                When(status=FoodRequest.StatusChoices.PENDING, then=0),
+                default=1,
+                output_field=IntegerField(),
+            )
+        )
+        .order_by("status_priority", "-requested_at")
     )
     return render(
         request,
