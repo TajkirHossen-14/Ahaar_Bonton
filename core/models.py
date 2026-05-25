@@ -3,7 +3,6 @@ from datetime import timedelta
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 
@@ -74,6 +73,29 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             self.RoleChoices.ADMIN: "/admin-panel/dashboard/",
         }
         return role_urls.get(self.role, "/dashboard/")
+
+    def get_average_rating(self):
+        from django.db.models import Avg
+
+        avg = self.ratings_received.aggregate(
+            Avg('score'))['score__avg']
+        return round(avg, 1) if avg else None
+
+    def get_rating_count(self):
+        return self.ratings_received.count()
+
+    def get_rating_label(self):
+        avg = self.get_average_rating()
+        if avg is None:
+            return 'No ratings yet'
+        elif avg >= 4.5:
+            return 'Excellent'
+        elif avg >= 3.5:
+            return 'Good'
+        elif avg >= 2.5:
+            return 'Average'
+        else:
+            return 'Poor'
 
 
 class DonorProfile(models.Model):
@@ -347,29 +369,47 @@ class Delivery(models.Model):
 
 
 class Rating(models.Model):
-    rater = models.ForeignKey(
-        CustomUser,
-        on_delete=models.CASCADE,
-        related_name="ratings_given",
-    )
-    rated_user = models.ForeignKey(
-        CustomUser,
-        on_delete=models.CASCADE,
-        related_name="ratings_received",
-    )
-    delivery = models.ForeignKey(
-        Delivery,
-        on_delete=models.CASCADE,
-        related_name="ratings",
-    )
-    score = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
-    )
-    comment = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    SCORE_CHOICES = [(i, str(i)) for i in range(1, 6)]
+
+    RATER_TYPE_CHOICES = [
+        ('ngo_to_donor',      'NGO rates Donor'),
+        ('donor_to_volunteer','Donor rates Volunteer'),
+        ('ngo_to_volunteer',  'NGO rates Volunteer'),
+    ]
+
+    rater       = models.ForeignKey(
+                    CustomUser,
+                    on_delete=models.CASCADE,
+                    related_name='ratings_given'
+                  )
+    rated_user  = models.ForeignKey(
+                    CustomUser,
+                    on_delete=models.CASCADE,
+                    related_name='ratings_received'
+                  )
+    delivery    = models.ForeignKey(
+                    'Delivery',
+                    on_delete=models.CASCADE,
+                    related_name='ratings'
+                  )
+    rating_type = models.CharField(
+                    max_length=30,
+                    choices=RATER_TYPE_CHOICES
+                  )
+    score       = models.IntegerField(choices=SCORE_CHOICES)
+    comment     = models.TextField(blank=True)
+    created_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['rater', 'delivery', 'rating_type']
+        ordering        = ['-created_at']
 
     def __str__(self):
-        return f"Rating<{self.score}/5>"
+        return (
+            f'{self.rater.full_name} → '
+            f'{self.rated_user.full_name}: '
+            f'{self.score}/5'
+        )
 
 
 # OOP CONCEPTS: Encapsulation(CustomUserManager, DonorProfile, VolunteerProfile, FoodPost, Delivery), Inheritance(CustomUser<-AbstractBaseUser), Polymorphism(get_dashboard_url), Abstraction(notification.py)

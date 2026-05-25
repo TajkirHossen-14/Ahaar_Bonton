@@ -16,6 +16,7 @@ from .models import (
     DonorProfile,
     FoodPost,
     FoodRequest,
+    Rating,
     VolunteerProfile,
 )
 from food.services.matching import FoodMatcher
@@ -773,3 +774,131 @@ def custom_404(request, exception):
 
 def custom_403(request, exception):
     return render(request, "403.html", status=403)
+
+
+@login_required
+def submit_rating(request, delivery_pk):
+    """
+    Handles rating submission after delivery complete.
+    Three types:
+    - NGO rates Donor
+    - Donor rates Volunteer
+    - NGO rates Volunteer
+    """
+    if request.method != 'POST':
+        return redirect('/')
+
+    delivery = get_object_or_404(
+        Delivery, pk=delivery_pk,
+        is_confirmed=True
+    )
+
+    rating_type = request.POST.get('rating_type')
+    score = request.POST.get('score')
+    comment = request.POST.get('comment', '')
+
+    # Validate rating type based on user role
+    valid_types = {
+        'ngo': [
+            'ngo_to_donor',
+            'ngo_to_volunteer'
+        ],
+        'donor': ['donor_to_volunteer'],
+    }
+
+    user_role = request.user.role
+    if rating_type not in valid_types.get(user_role, []):
+        messages.error(request, 'Invalid rating type.')
+        return redirect('/')
+
+    # Determine who is being rated
+    rated_user = None
+    if rating_type == 'ngo_to_donor':
+        rated_user = delivery.food_request.food_post.donor
+    elif rating_type == 'donor_to_volunteer':
+        rated_user = delivery.volunteer
+    elif rating_type == 'ngo_to_volunteer':
+        rated_user = delivery.volunteer
+
+    if not rated_user:
+        messages.error(request, 'Could not find user to rate.')
+        return redirect('/')
+
+    # Check already rated
+    already_rated = Rating.objects.filter(
+        rater=request.user,
+        delivery=delivery,
+        rating_type=rating_type
+    ).exists()
+
+    if already_rated:
+        messages.warning(
+            request,
+            'You have already submitted this rating.'
+        )
+        return redirect('/')
+
+    # Validate score
+    try:
+        score = int(score)
+        if score not in range(1, 6):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(
+            request, 'Invalid score. Choose between 1-5.'
+        )
+        return redirect('/')
+
+    # Create rating
+    Rating.objects.create(
+        rater=request.user,
+        rated_user=rated_user,
+        delivery=delivery,
+        rating_type=rating_type,
+        score=score,
+        comment=comment
+    )
+
+    messages.success(
+        request,
+        f'Thank you! Your rating has been submitted.'
+    )
+
+    # Redirect back to appropriate dashboard
+    if request.user.role == 'donor':
+        return redirect('donor_requests')
+    elif request.user.role == 'ngo':
+        return redirect('ngo_my_requests')
+    return redirect('/')
+
+
+@login_required
+def user_profile(request, user_pk):
+    """
+    Public profile page showing ratings and reviews.
+    """
+    profile_user = get_object_or_404(CustomUser, pk=user_pk)
+    ratings = Rating.objects.filter(
+        rated_user=profile_user
+    ).select_related('rater').order_by('-created_at')
+    avg_rating = profile_user.get_average_rating()
+    rating_count = profile_user.get_rating_count()
+    rating_label = profile_user.get_rating_label()
+
+    # Score breakdown (1-5 count)
+    score_breakdown = {}
+    for i in range(5, 0, -1):
+        score_breakdown[i] = ratings.filter(
+            score=i).count()
+
+    context = {
+        'profile_user': profile_user,
+        'ratings': ratings,
+        'avg_rating': avg_rating,
+        'rating_count': rating_count,
+        'rating_label': rating_label,
+        'score_breakdown': score_breakdown,
+    }
+    return render(
+        request, 'profiles/user_profile.html', context
+    )
