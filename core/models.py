@@ -412,4 +412,75 @@ class Rating(models.Model):
         )
 
 
+class Report(models.Model):
+    REPORT_TYPE = [
+        ('post',  'Inappropriate Food Post'),
+        ('user',  'Fraudulent User'),
+    ]
+    REASON_CHOICES = [
+        ('fake_food',    'Fake or misleading food info'),
+        ('expired',      'Food is already expired'),
+        ('fraud',        'Fraudulent activity'),
+        ('spam',         'Spam or repeated posts'),
+        ('inappropriate','Inappropriate content'),
+        ('other',        'Other'),
+    ]
+    STATUS_CHOICES = [
+        ('pending',   'Pending Review'),
+        ('reviewed',  'Reviewed'),
+        ('resolved',  'Resolved'),
+        ('dismissed', 'Dismissed'),
+    ]
+
+    reporter = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='reports_made'
+    )
+    report_type = models.CharField(
+        max_length=10,
+        choices=REPORT_TYPE
+    )
+    # For post reports
+    reported_post = models.ForeignKey(
+        FoodPost,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='reports'
+    )
+    # For user reports
+    reported_user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='reports_received'
+    )
+    reason = models.CharField(
+        max_length=30,
+        choices=REASON_CHOICES
+    )
+    description = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    resolved_at = models.DateTimeField(
+        null=True, blank=True
+    )
+    admin_note = models.TextField(blank=True)
+
+    def __str__(self):
+        return (
+            f'Report by {self.reporter.full_name}'
+            f' â€” {self.report_type}'
+        )
+
+    class Meta:
+        ordering = ['-created_at']
+
+
 # OOP CONCEPTS: Encapsulation(CustomUserManager, DonorProfile, VolunteerProfile, FoodPost, Delivery), Inheritance(CustomUser<-AbstractBaseUser), Polymorphism(get_dashboard_url), Abstraction(notification.py)

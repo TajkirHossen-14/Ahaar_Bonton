@@ -67,6 +67,16 @@ urlpatterns = [
         views.user_profile,
         name="user_profile",
     ),
+    path(
+        "report/post/<int:post_pk>/",
+        views.report_post,
+        name="report_post",
+    ),
+    path(
+        "report/user/<int:user_pk>/",
+        views.report_user,
+        name="report_user",
+    ),
     # Volunteer
     path(
         "volunteer/dashboard/",

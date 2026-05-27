@@ -16,6 +16,7 @@ from .models import (
     DonorProfile,
     FoodPost,
     FoodRequest,
+    Report,
     Rating,
     VolunteerProfile,
 )
@@ -774,6 +775,85 @@ def custom_404(request, exception):
 
 def custom_403(request, exception):
     return render(request, "403.html", status=403)
+
+
+@login_required
+def report_post(request, post_pk):
+    post = get_object_or_404(FoodPost, pk=post_pk)
+    if request.method == 'POST':
+        reason = request.POST.get('reason')
+        description = request.POST.get('description', '')
+
+        # Already reported check
+        already = Report.objects.filter(
+            reporter=request.user,
+            reported_post=post
+        ).exists()
+
+        if already:
+            messages.warning(
+                request,
+                'You have already reported this post.'
+            )
+            return redirect('ngo_dashboard')
+
+        Report.objects.create(
+            reporter=request.user,
+            report_type='post',
+            reported_post=post,
+            reason=reason,
+            description=description
+        )
+        messages.success(
+            request,
+            'Report submitted. Our team will review it.'
+        )
+        return redirect('ngo_dashboard')
+
+    return render(
+        request, 'reports/report_post.html',
+        {'post': post}
+    )
+
+
+@login_required
+def report_user(request, user_pk):
+    reported = get_object_or_404(
+        CustomUser, pk=user_pk
+    )
+    if request.method == 'POST':
+        reason = request.POST.get('reason')
+        description = request.POST.get('description', '')
+
+        already = Report.objects.filter(
+            reporter=request.user,
+            reported_user=reported
+        ).exists()
+
+        if already:
+            messages.warning(
+                request,
+                'You have already reported this user.'
+            )
+            return redirect('/')
+
+        Report.objects.create(
+            reporter=request.user,
+            report_type='user',
+            reported_user=reported,
+            reason=reason,
+            description=description
+        )
+        messages.success(
+            request,
+            'Report submitted. Our team will review it.'
+        )
+        return redirect('/')
+
+    return render(
+        request, 'reports/report_user.html',
+        {'reported_user': reported}
+    )
 
 
 @login_required

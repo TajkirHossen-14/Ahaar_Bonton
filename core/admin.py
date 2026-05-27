@@ -7,6 +7,7 @@ from .models import (
     DonorProfile,
     FoodPost,
     FoodRequest,
+    Report,
     Rating,
     VolunteerProfile,
 )
@@ -112,3 +113,21 @@ class DeliveryAdmin(admin.ModelAdmin):
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
     list_display = ("rater", "rated_user", "score")
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ['reporter', 'report_type',
+                    'reason', 'status', 'created_at']
+    list_filter = ['report_type', 'status', 'reason']
+    search_fields = ['reporter__full_name',
+                     'description']
+    readonly_fields = ['created_at']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request)\
+               .select_related(
+                   'reporter',
+                   'reported_post',
+                   'reported_user'
+               )
