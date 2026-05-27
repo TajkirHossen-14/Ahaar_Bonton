@@ -9,6 +9,7 @@
     --green-50: #ECFDF5;
     --amber-800: #92400E;
     --amber-700: #B45309;
+    --amber-400: #F59E0B;
     --amber-100: #FEF3C7;
     --amber-50: #FFFBEB;
     --teal-700: #0D7377;
@@ -2350,6 +2351,105 @@ textarea:focus {
     color: var(--amber-800);
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-weight: 700;
+}
+
+/* -- Star Rating ---------------------------- */
+.star-selector {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.star {
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--border-md);
+    transition: var(--transition);
+    line-height: 1;
+    user-select: none;
+}
+
+.star:hover,
+.star.active {
+    color: var(--amber-400);
+}
+
+.rating-form {
+    padding: 1rem;
+    background: var(--cream);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    margin-top: 1rem;
+}
+
+/* Rating display */
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rating-stars {
+    color: var(--amber-400);
+    font-size: 1rem;
+    letter-spacing: 2px;
+}
+
+.rating-num {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--dark);
+}
+
+.rating-label {
+    font-size: 0.82rem;
+    color: var(--muted);
+}
+
+/* Score breakdown bars */
+.score-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 1rem 0;
+}
+
+.score-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+}
+
+.score-stars-label {
+    width: 60px;
+    color: var(--muted);
+    flex-shrink: 0;
+}
+
+.score-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--cream);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.score-bar-fill {
+    height: 100%;
+    background: var(--amber-400);
+    border-radius: var(--radius-full);
+    transition: width 0.8s ease;
+}
+
+.score-count {
+    width: 20px;
+    text-align: right;
+    color: var(--muted);
+    font-weight: 600;
+    flex-shrink: 0;
 }
 
 [data-theme="dark"] .theme-option.active {
