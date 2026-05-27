@@ -326,6 +326,21 @@
         }
     };
 
+    // Star Rating
+    window.selectStar = function(el, groupId, inputId) {
+        const value = parseInt(el.dataset.value);
+        const group = document.getElementById(groupId);
+        const input = document.getElementById(inputId);
+        const stars = group.querySelectorAll('.star');
+
+        stars.forEach((star, index) => {
+            star.textContent = index < value ? '★' : '☆';
+            star.classList.toggle('active', index < value);
+        });
+
+        input.value = value;
+    };
+
     function formatCountdown(ms) {
         const totalMinutes = Math.floor(ms / 60000);
         const days = Math.floor(totalMinutes / 1440);
