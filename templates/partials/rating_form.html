@@ -1,0 +1,52 @@
+<form method="post"
+      action="{% url 'submit_rating' delivery.pk %}"
+      class="rating-form">
+    {% csrf_token %}
+    <input type="hidden"
+           name="rating_type"
+           value="{{ rating_type }}">
+
+    <!-- Star Rating -->
+    <div class="form-group">
+        <label>Rating *</label>
+        <div class="star-selector"
+             id="stars-{{ rating_type }}">
+            {% for i in '12345' %}
+            <span class="star"
+                  data-value="{{ forloop.counter }}"
+                  onclick="selectStar(
+                      this,
+                      'stars-{{ rating_type }}',
+                      'score-{{ rating_type }}'
+                  )">
+                ☆
+            </span>
+            {% endfor %}
+        </div>
+        <input type="hidden"
+               name="score"
+               id="score-{{ rating_type }}"
+               required>
+        <p class="form-hint">
+            Click a star to rate
+        </p>
+    </div>
+
+    <!-- Comment -->
+    <div class="form-group">
+        <label>Comment
+            <span class="label-optional">
+                (optional)
+            </span>
+        </label>
+        <textarea name="comment"
+                  rows="3"
+                  placeholder="Share your experience...">
+        </textarea>
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary btn-full">
+        Submit Rating
+    </button>
+</form>
