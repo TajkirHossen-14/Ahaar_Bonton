@@ -110,6 +110,42 @@
                         {% endif %}
                     </td>
                 </tr>
+
+                {% if req.status == 'completed' and req.delivery and req.delivery.is_confirmed %}
+                <tr>
+                    <td colspan="5" style="padding:0 1rem 1rem;">
+                        <div style="margin-top:0.5rem;">
+                            <p style="font-size:0.82rem;
+                                      font-weight:600;
+                                      color:var(--green-700);
+                                      margin-bottom:0.5rem;">
+                                ⭐ Rate the Donor
+                            </p>
+                            {% with delivery=req.delivery %}
+                            {% with rating_type="ngo_to_donor" %}
+                            {% include 'partials/rating_form.html' %}
+                            {% endwith %}
+                            {% endwith %}
+                        </div>
+
+                        {% if req.delivery.volunteer %}
+                        <div style="margin-top:0.8rem;">
+                            <p style="font-size:0.82rem;
+                                      font-weight:600;
+                                      color:var(--green-700);
+                                      margin-bottom:0.5rem;">
+                                ⭐ Rate the Volunteer
+                            </p>
+                            {% with delivery=req.delivery %}
+                            {% with rating_type="ngo_to_volunteer" %}
+                            {% include 'partials/rating_form.html' %}
+                            {% endwith %}
+                            {% endwith %}
+                        </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
