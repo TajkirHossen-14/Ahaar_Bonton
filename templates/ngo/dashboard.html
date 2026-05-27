@@ -55,7 +55,24 @@
                         <div class="expiry-countdown" data-expiry="{{ post.expiry_time|date:'c' }}">
                             {{ post.time_remaining }}
                         </div>
-                        <p class="donor-tag">👤 {{ post.donor.full_name }}</p>
+                        <div class="donor-tag">
+                            <a href="{% url 'user_profile' post.donor.pk %}"
+                               style="color:inherit;text-decoration:none;">
+                                👤 {{ post.donor.full_name }}
+                            </a>
+                            {% with avg=post.donor.get_average_rating %}
+                            {% if avg %}
+                                <span style="color:var(--amber-400);
+                                             margin-left:6px;">
+                                    ★ {{ avg }}
+                                </span>
+                                <span style="font-size:0.75rem;
+                                             color:var(--muted);">
+                                    ({{ post.donor.get_rating_count }})
+                                </span>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
 
                         <div class="food-card-actions">
                             {% if post.pk in requested_post_ids %}
@@ -81,4 +98,3 @@
     {% endif %}
 </section>
 {% endblock %}
-
