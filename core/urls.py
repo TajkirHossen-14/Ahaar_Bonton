@@ -57,6 +57,16 @@ urlpatterns = [
     path("ngo/dashboard/", views.ngo_dashboard, name="ngo_dashboard"),
     path("ngo/request/<int:pk>/", views.request_food, name="request_food"),
     path("ngo/my-requests/", views.ngo_my_requests, name="ngo_my_requests"),
+    path(
+        "rate/<int:delivery_pk>/",
+        views.submit_rating,
+        name="submit_rating",
+    ),
+    path(
+        "profile/<int:user_pk>/",
+        views.user_profile,
+        name="user_profile",
+    ),
     # Volunteer
     path(
         "volunteer/dashboard/",
