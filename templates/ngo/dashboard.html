@@ -80,6 +80,17 @@
                             {% else %}
                                 <a href="{% url 'request_food' post.pk %}" class="btn btn-primary btn-sm">Request This Food</a>
                             {% endif %}
+                            <a href="{% url 'report_post' post.pk %}"
+                               style="font-size:0.75rem;
+                                      color:var(--muted);
+                                      text-decoration:none;
+                                      display:block;
+                                      text-align:center;
+                                      margin-top:6px;"
+                               onmouseover="this.style.color='var(--red-700)'"
+                               onmouseout="this.style.color='var(--muted)'">
+                                🚩 Report this post
+                            </a>
                         </div>
                     </div>
                 </article>

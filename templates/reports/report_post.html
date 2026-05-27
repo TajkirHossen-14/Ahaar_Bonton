@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Report Food Post{% endblock %}
+{% block content %}
+<section class="container">
+    <header class="page-header">
+        <div>
+            <h2>Report Post</h2>
+        </div>
+        <a href="{% url 'ngo_dashboard' %}" class="btn btn-ghost btn-sm">Back</a>
+    </header>
+
+    <div class="card" style="max-width:500px; margin:0 auto;">
+        <div style="padding:12px; border-radius:var(--radius-md); background:var(--amber-50); border:1px solid var(--amber-100); color:var(--amber-800); margin-bottom:1rem;">
+            ⚠️ Only report genuinely problematic posts.
+            False reports may result in account suspension.
+        </div>
+
+        <h4 style="margin-bottom:0.9rem;">Reporting: {{ post.title }}</h4>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Reason *</label>
+                <select name="reason" required>
+                    <option value="">-- Select reason --</option>
+                    <option value="fake_food">Fake or misleading food info</option>
+                    <option value="expired">Food is already expired</option>
+                    <option value="fraud">Fraudulent activity</option>
+                    <option value="spam">Spam or repeated posts</option>
+                    <option value="inappropriate">Inappropriate content</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Additional details (optional)</label>
+                <textarea name="description" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn btn-danger btn-full">
+                Submit Report
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}
