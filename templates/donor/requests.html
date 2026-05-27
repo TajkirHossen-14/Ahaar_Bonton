@@ -166,6 +166,32 @@
                             <td data-label="Delivered">{% if req.delivery %}{{ req.delivery.delivered_at|date:"d M Y, h:i A" }}{% else %}N/A{% endif %}</td>
                             <td data-label="Status"><span class="badge-delivered">Completed</span></td>
                         </tr>
+                        {% if req.delivery and req.delivery.is_confirmed and req.delivery.volunteer %}
+                            {% with delivery=req.delivery %}
+                            {# Check if already rated #}
+                            {% with already_rated=req.delivery.ratings.all %}
+                            {% if not already_rated|length %}
+                            <!-- Rating form for volunteer -->
+                            <tr>
+                                <td colspan="4"
+                                    style="padding:0 1rem 1rem;">
+                                    <div style="margin-top:0.5rem;">
+                                        <p style="font-size:0.82rem;
+                                                   font-weight:600;
+                                                   color:var(--green-700);
+                                                   margin-bottom:0.5rem;">
+                                            ⭐ Rate the Volunteer
+                                        </p>
+                                        {% with rating_type="donor_to_volunteer" %}
+                                        {% include 'partials/rating_form.html' %}
+                                        {% endwith %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endwith %}
+                            {% endwith %}
+                        {% endif %}
                     {% empty %}
                         <tr>
                             <td colspan="4">No completed requests.</td>
