@@ -1,6 +1,6 @@
 <div align="center">
 <p align="center">
-  <img src="Assets/Banner/AhaarBonton Banner.png" alt="Ahaar Bonton Banner" width="100%">
+  <img src="Assets/Banner/AhaarBonton Banner 2.png" alt="Ahaar Bonton Banner" width="100%">
 </p>
  
 ### A Surplus Food Redistribution Platform
