@@ -982,3 +982,40 @@ def user_profile(request, user_pk):
     return render(
         request, 'profiles/user_profile.html', context
     )
+
+
+def leaderboard_view(request):
+    from django.db.models import Avg, Q
+
+    # Top Donors — most delivered food posts
+    top_donors = (
+        CustomUser.objects.filter(role='donor')
+        .annotate(
+            delivered_count=Count(
+                'food_posts',
+                filter=Q(food_posts__status='delivered'),
+            ),
+            avg_rating=Avg('ratings_received__score'),
+        )
+        .filter(delivered_count__gt=0)
+        .order_by('-delivered_count')[:10]
+    )
+
+    # Top Volunteers — most confirmed deliveries
+    top_volunteers = (
+        CustomUser.objects.filter(role='volunteer')
+        .annotate(
+            delivery_count=Count(
+                'deliveries',
+                filter=Q(deliveries__is_confirmed=True),
+            ),
+            avg_rating=Avg('ratings_received__score'),
+        )
+        .filter(delivery_count__gt=0)
+        .order_by('-delivery_count')[:10]
+    )
+
+    return render(request, 'leaderboard.html', {
+        'top_donors': top_donors,
+        'top_volunteers': top_volunteers,
+    })

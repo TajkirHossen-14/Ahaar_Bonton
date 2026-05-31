@@ -55,6 +55,7 @@
                         <a href="{% url 'home' %}" class="nav-link">Home</a>
                         <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
                         <a href="{% url 'transparency' %}" class="nav-link">Impact</a>
+                        <a href="{% url 'leaderboard' %}" class="nav-link">Leaderboard</a>
                         <details class="user-menu" id="userMenu">
                             <summary
                                 class="user-menu-toggle"
@@ -86,6 +87,7 @@
                     {% else %}
                         <a href="{% url 'home' %}" class="nav-link">Home</a>
                         <a href="{% url 'transparency' %}" class="nav-link">Impact</a>
+                        <a href="{% url 'leaderboard' %}" class="nav-link">Leaderboard</a>
                         <a href="{% url 'login' %}" class="nav-link">Login</a>
                         <a href="{% url 'register' %}" class="btn btn-primary btn-sm">Get Started</a>
                     {% endif %}
