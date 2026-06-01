@@ -15,7 +15,7 @@
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
 
  
-## 📖 About the Project
+## 📌 About the Project
  
 **Ahaar Bonton (আহার বণ্টন)** is a web-based surplus food redistribution platform built specifically for the context of Bangladesh. Every day, significant amounts of food go to waste at restaurants, weddings, corporate events, and households, while many people struggle to meet their daily nutritional needs.
 This platform provides a structured, community-driven solution to that contradiction. Donors can post surplus food listings, NGOs can claim and coordinate pickups, and volunteers can register to assist with deliveries – all through a single, unified platform designed to work within Bangladesh's existing social and organizational fabric.
