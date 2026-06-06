@@ -125,7 +125,7 @@ Once delivery is confirmed, the system automatically updates :
 ## 🗂️ Project Structure
  
 ```
-AhaarBonton/
+Ahaar_Bonton/
 │
 ├── ahaarbonton/
 │   ├── __init__.py
