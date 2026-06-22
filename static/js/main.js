@@ -135,32 +135,41 @@
         ? window.matchMedia("(prefers-color-scheme: dark)")
         : null;
 
-    function getStoredThemeMode() {
-        try {
+    function getStoredThemeMode() 
+    {
+        try 
+        {
             const value = localStorage.getItem(THEME_KEY);
-            if (value === "light" || value === "dark" || value === "system") {
+            if (value === "light" || value === "dark" || value === "system") 
+            {
                 return value;
             }
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             return "system";
         }
         return "system";
     }
 
-    function resolveTheme(mode) {
+    function resolveTheme(mode) 
+    {
         if (mode === "light" || mode === "dark") return mode;
         if (prefersDarkQuery && prefersDarkQuery.matches) return "dark";
         return "light";
     }
 
-    function getThemeIcon(mode) {
+    function getThemeIcon(mode) 
+    {
         if (mode === "light") return "\u2600";
         if (mode === "dark") return "\u263E";
         return resolveTheme(mode) === "dark" ? "\u25D1" : "\u25D0";
     }
 
-    function updateThemeUI(mode) {
-        themeOptions.forEach(function (btn) {
+    function updateThemeUI(mode) 
+    {
+        themeOptions.forEach(function (btn) 
+        {
             const isActive = btn.dataset.themeValue === mode;
             btn.classList.toggle("active", isActive);
             btn.setAttribute("aria-pressed", String(isActive));
@@ -172,7 +181,8 @@
         themeToggleBtn.setAttribute("title", "Theme: " + mode);
     }
 
-    function applyThemeMode(mode) {
+    function applyThemeMode(mode) 
+    {
         const safeMode = mode === "light" || mode === "dark" || mode === "system" ? mode : "system";
         const resolvedTheme = resolveTheme(safeMode);
         document.documentElement.setAttribute("data-theme-mode", safeMode);
@@ -180,17 +190,23 @@
         updateThemeUI(safeMode);
     }
 
-    window.setThemeMode = function (mode) {
-        try {
+    window.setThemeMode = function (mode) 
+    {
+        try 
+        {
             localStorage.setItem(THEME_KEY, mode);
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             // Ignore storage errors (private mode / disabled storage)
         }
         applyThemeMode(mode);
     };
 
-    themeOptions.forEach(function (btn) {
-        btn.addEventListener("click", function (event) {
+    themeOptions.forEach(function (btn) 
+    {
+        btn.addEventListener("click", function (event) 
+        {
             event.stopPropagation();
             const mode = btn.dataset.themeValue;
             window.setThemeMode(mode);
@@ -198,16 +214,22 @@
         });
     });
 
-    if (prefersDarkQuery) {
-        const onSystemThemeChange = function () {
-            if (getStoredThemeMode() === "system") {
+    if (prefersDarkQuery) 
+    {
+        const onSystemThemeChange = function () 
+        {
+            if (getStoredThemeMode() === "system") 
+            {
                 applyThemeMode("system");
             }
         };
 
-        if (typeof prefersDarkQuery.addEventListener === "function") {
+        if (typeof prefersDarkQuery.addEventListener === "function") 
+        {
             prefersDarkQuery.addEventListener("change", onSystemThemeChange);
-        } else if (typeof prefersDarkQuery.addListener === "function") {
+        } 
+        else if (typeof prefersDarkQuery.addListener === "function") 
+        {
             prefersDarkQuery.addListener(onSystemThemeChange);
         }
     }
