@@ -236,8 +236,10 @@
 
     applyThemeMode(getStoredThemeMode());
 
-    document.querySelectorAll("form").forEach(function (form) {
-        form.addEventListener("submit", function () {
+    document.querySelectorAll("form").forEach(function (form) 
+    {
+        form.addEventListener("submit", function () 
+        {
             const submitBtn = form.querySelector(
                 "button[type='submit'], input[type='submit']"
             );
@@ -246,13 +248,18 @@
 
             submitBtn.disabled = true;
             submitBtn.classList.add("loading");
-            if (submitBtn.tagName === "BUTTON") {
-                if (!submitBtn.dataset.originalText) {
+            if (submitBtn.tagName === "BUTTON") 
+            {
+                if (!submitBtn.dataset.originalText) 
+                {
                     submitBtn.dataset.originalText = submitBtn.textContent.trim();
                 }
                 submitBtn.textContent = "Please wait...";
-            } else {
-                if (!submitBtn.dataset.originalText) {
+            } 
+            else 
+            {
+                if (!submitBtn.dataset.originalText) 
+                {
                     submitBtn.dataset.originalText = submitBtn.value;
                 }
                 submitBtn.value = "Please wait...";
@@ -260,27 +267,34 @@
         });
     });
 
-    function closeAlert(alertEl) {
+    function closeAlert(alertEl) 
+    {
         if (!alertEl) return;
         alertEl.classList.add("is-closing");
-        window.setTimeout(function () {
+        window.setTimeout(function () 
+        {
             alertEl.remove();
         }, 320);
     }
 
-    document.querySelectorAll(".alert-close").forEach(function (btn) {
-        btn.addEventListener("click", function () {
+    document.querySelectorAll(".alert-close").forEach(function (btn) 
+    {
+        btn.addEventListener("click", function () 
+        {
             closeAlert(btn.closest(".alert"));
         });
     });
 
-    document.querySelectorAll(".alert").forEach(function (alertEl) {
-        window.setTimeout(function () {
+    document.querySelectorAll(".alert").forEach(function (alertEl) 
+    {
+        window.setTimeout(function () 
+        {
             closeAlert(alertEl);
         }, 6000);
     });
 
-    window.switchTab = function (btn) {
+    window.switchTab = function (btn) 
+    {
         if (!btn) return;
         const target = btn.dataset.target;
         if (!target) return;
@@ -289,60 +303,77 @@
             btn.closest("[data-tab-container]") ||
             btn.closest("section") ||
             document;
-        scope.querySelectorAll(".tab-btn").forEach(function (tabBtn) {
+        scope.querySelectorAll(".tab-btn").forEach(function (tabBtn) 
+        {
             tabBtn.classList.remove("active");
         });
         btn.classList.add("active");
 
-        scope.querySelectorAll(".tab-panel").forEach(function (panel) {
+        scope.querySelectorAll(".tab-panel").forEach(function (panel) 
+        {
             panel.classList.remove("active");
             panel.style.display = "none";
         });
 
         const targetPanel = scope.querySelector(target) || document.querySelector(target);
-        if (targetPanel) {
+        if (targetPanel) 
+        {
             targetPanel.classList.add("active");
             targetPanel.style.display = "block";
         }
     };
 
-    window.filterPosts = function (type, btn) {
+    window.filterPosts = function (type, btn) 
+    {
         const cards = document.querySelectorAll(".ngo-food-card");
         let visibleCount = 0;
-        cards.forEach(function (card) {
+        cards.forEach(function (card) 
+        {
             const category = (card.dataset.category || "").toLowerCase();
             const expiring = (card.dataset.expiring || "no").toLowerCase();
 
             let visible = false;
-            if (type === "all") {
+            if (type === "all") 
+            {
                 visible = true;
-            } else if (type === "expiring") {
+            } 
+            else if (type === "expiring") 
+            {
                 visible = expiring === "yes";
-            } else {
+            } 
+            else 
+            {
                 visible = category === String(type).toLowerCase();
             }
             card.style.display = visible ? "" : "none";
             if (visible) visibleCount += 1;
         });
 
-        if (btn) {
+        if (btn) 
+        {
             const parent = btn.parentElement || document;
-            parent.querySelectorAll(".filter-btn").forEach(function (sibling) {
+            parent.querySelectorAll(".filter-btn").forEach(function (sibling) 
+            {
                 sibling.classList.remove("active");
             });
             btn.classList.add("active");
         }
 
         const postCountEl = document.getElementById("postCount");
-        if (postCountEl) {
+        if (postCountEl) 
+        {
             postCountEl.textContent = visibleCount + " food post(s) available";
         }
 
         const noResults = document.getElementById("noResults");
-        if (noResults) {
-            if (visibleCount === 0 && cards.length > 0) {
+        if (noResults) 
+        {
+            if (visibleCount === 0 && cards.length > 0) 
+            {
                 noResults.classList.remove("hidden");
-            } else {
+            } 
+            else 
+            {
                 noResults.classList.add("hidden");
             }
         }
