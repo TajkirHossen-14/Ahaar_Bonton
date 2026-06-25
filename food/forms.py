@@ -15,7 +15,8 @@ class FoodPostForm(forms.ModelForm):
             "location",
             "expiry_time",
         ]
-        widgets = {
+        widgets = 
+        {
             "expiry_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
 
