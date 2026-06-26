@@ -102,4 +102,5 @@ urlpatterns = [
     path("admin-panel/expire/", views.admin_expire_food, name="admin_expire_food"),
     path("leaderboard/", views.leaderboard_view, name="leaderboard"),
     path("map/", views.food_map_view, name="food_map"),
+    path("heatmap/", views.heatmap_view, name="heatmap"),
 ]
