@@ -1019,3 +1019,35 @@ def leaderboard_view(request):
         'top_donors': top_donors,
         'top_volunteers': top_volunteers,
     })
+
+
+def food_map_view(request):
+    import json
+
+    posts = (
+        FoodPost.objects.filter(status='available')
+        .exclude(latitude=None)
+        .exclude(longitude=None)
+        .select_related('donor')
+    )
+
+    posts_data = []
+    for post in posts:
+        posts_data.append({
+            'id': post.pk,
+            'title': post.title,
+            'quantity': post.quantity,
+            'category': post.get_category_display(),
+            'location': post.location,
+            'lat': float(post.latitude),
+            'lng': float(post.longitude),
+            'expiry': post.time_remaining(),
+            'donor': post.donor.full_name,
+            'request_url': f'/ngo/request/{post.pk}/',
+        })
+
+    return render(request, 'food_map.html', {
+        'posts': posts,
+        'posts_json': json.dumps(posts_data),
+        'total': posts.count(),
+    })
