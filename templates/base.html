@@ -38,6 +38,7 @@
     <meta name="apple-mobile-web-app-title" content="AhaarBonton">
     <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
     <nav class="site-nav">
@@ -142,5 +143,6 @@
     </footer>
 
     <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
