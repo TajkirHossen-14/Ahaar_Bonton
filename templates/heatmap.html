@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% block page_title %}Donation Heatmap - AhaarBonton{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
+<style>
+/* ── Heatmap Page Layout ───────────────────────── */
+.heatmap-page-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+.heatmap-page-header h2 {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--green-700);
+    margin-bottom: 4px;
+}
+[data-theme="dark"] .heatmap-page-header h2 {
+    color: var(--green-400);
+}
+.heatmap-page-header p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+/* ── Stats Row ──────────────────────────────────── */
+.heatmap-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.heatmap-stat-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+.heatmap-stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+.heatmap-stat-card .stat-emoji {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+    display: block;
+}
+.heatmap-stat-card .stat-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.heatmap-stat-card .stat-value {
+    font-family: var(--font-head);
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+.heatmap-stat-card.stat-total      .stat-value { color: var(--green-700); }
+.heatmap-stat-card.stat-available  .stat-value { color: var(--teal-700); }
+.heatmap-stat-card.stat-delivered  .stat-value { color: var(--green-600); }
+.heatmap-stat-card.stat-expired    .stat-value { color: var(--muted); }
+[data-theme="dark"] .heatmap-stat-card.stat-total     .stat-value { color: var(--green-400); }
+[data-theme="dark"] .heatmap-stat-card.stat-available  .stat-value { color: #5eead4; }
+[data-theme="dark"] .heatmap-stat-card.stat-delivered  .stat-value { color: var(--green-400); }
+
+/* ── Legend Card ─────────────────────────────────── */
+.heatmap-legend-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.heatmap-legend-card h4 {
+    font-family: var(--font-head);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+    white-space: nowrap;
+}
+.legend-bar-wrap {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.legend-gradient-bar {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(to right, #3b82f6, #06b6d4, #84cc16, #facc15, #ef4444);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.legend-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+/* ── Map Container ──────────────────────────────── */
+.heatmap-container {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
+    position: relative;
+}
+#heatmapDiv {
+    height: 500px;
+    width: 100%;
+    background: var(--bg-surface);
+}
+.heatmap-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    text-align: center;
+    padding: 32px;
+    line-height: 1.6;
+}
+
+/* ── Back Link ──────────────────────────────────── */
+.heatmap-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 18px;
+    transition: var(--transition);
+}
+.heatmap-back-link:hover {
+    color: var(--green-700);
+}
+[data-theme="dark"] .heatmap-back-link:hover {
+    color: var(--green-400);
+}
+
+/* ── Responsive ─────────────────────────────────── */
+@media (max-width: 768px) {
+    .heatmap-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .heatmap-stat-card {
+        padding: 14px 12px;
+    }
+    .heatmap-stat-card .stat-value {
+        font-size: 1.35rem;
+    }
+    #heatmapDiv {
+        height: 380px;
+    }
+    .heatmap-legend-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+}
+@media (max-width: 480px) {
+    .heatmap-stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    #heatmapDiv {
+        height: 300px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <a href="{% url 'transparency' %}" class="heatmap-back-link">
+        ← Back to Impact
+    </a>
+
+    <div class="heatmap-page-header">
+        <h2>🔥 Donation Heatmap</h2>
+        <p>Areas with higher donation activity glow brighter</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="heatmap-stats-row">
+        <article class="heatmap-stat-card stat-total">
+            <span class="stat-emoji">📊</span>
+            <div class="stat-label">Total Posts</div>
+            <div class="stat-value">{{ stats.total }}</div>
+        </article>
+        <article class="heatmap-stat-card stat-available">
+            <span class="stat-emoji">🟢</span>
+            <div class="stat-label">Available</div>
+            <div class="stat-value">{{ stats.available }}</div>
+        </article>
+        <article class="heatmap-stat-card stat-delivered">
+            <span class="stat-emoji">✅</span>
+            <div class="stat-label">Delivered</div>
+            <div class="stat-value">{{ stats.delivered }}</div>
+        </article>
+        <article class="heatmap-stat-card stat-expired">
+            <span class="stat-emoji">⌛</span>
+            <div class="stat-label">Expired</div>
+            <div class="stat-value">{{ stats.expired }}</div>
+        </article>
+    </div>
+
+    <!-- Legend -->
+    <div class="heatmap-legend-card">
+        <h4>🗺️ Heatmap Legend</h4>
+        <div class="legend-bar-wrap">
+            <div class="legend-gradient-bar"></div>
+            <div class="legend-labels">
+                <span>Low activity</span>
+                <span>Medium</span>
+                <span>High activity</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map -->
+    <div class="heatmap-container">
+        <div id="heatmapDiv"></div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script>
+const heatData = {{ heat_data|safe }};
+
+const map = L.map('heatmapDiv').setView(
+    [23.8103, 90.4125], 11
+);
+
+L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    { attribution: '&copy; OpenStreetMap contributors', maxZoom: 18 }
+).addTo(map);
+
+if (heatData.length > 0) {
+    L.heatLayer(heatData, {
+        radius:  35,
+        blur:    25,
+        maxZoom: 15,
+        max:     1.0,
+        gradient: {
+            0.2: 'blue',
+            0.4: 'cyan',
+            0.6: 'lime',
+            0.8: 'yellow',
+            1.0: 'red'
+        }
+    }).addTo(map);
+
+    const bounds = heatData.map(p => [p[0], p[1]]);
+    map.fitBounds(bounds, { padding: [40, 40] });
+} else {
+    document.getElementById('heatmapDiv').innerHTML =
+        '<div class="heatmap-empty-state">' +
+        '📍 No location data yet.<br>' +
+        'Add GPS coordinates to food posts first.' +
+        '</div>';
+}
+</script>
+{% endblock %}
