@@ -1051,3 +1051,46 @@ def food_map_view(request):
         'posts_json': json.dumps(posts_data),
         'total': posts.count(),
     })
+
+
+def heatmap_view(request):
+    import json
+
+    # All food posts with coordinates
+    posts = FoodPost.objects.exclude(
+        latitude=None
+    ).exclude(
+        longitude=None
+    )
+
+    # Heatmap data: [lat, lng, intensity]
+    heat_data = []
+    for post in posts:
+        # Higher intensity for recent/delivered posts
+        intensity = 0.5
+        if post.status == 'delivered':
+            intensity = 1.0
+        elif post.status == 'available':
+            intensity = 0.7
+
+        heat_data.append([
+            float(post.latitude),
+            float(post.longitude),
+            intensity
+        ])
+
+    # Stats by status
+    stats = {
+        'total':     posts.count(),
+        'available': posts.filter(
+            status='available').count(),
+        'delivered': posts.filter(
+            status='delivered').count(),
+        'expired':   posts.filter(
+            status='expired').count(),
+    }
+
+    return render(request, 'heatmap.html', {
+        'heat_data': json.dumps(heat_data),
+        'stats':     stats,
+    })
