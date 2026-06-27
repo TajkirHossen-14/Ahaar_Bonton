@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block page_title %}You're Offline - AhaarBonton{% endblock %}
+{% block content %}
+<div class="empty-state" style="padding:5rem 2rem;">
+    <div class="empty-icon">📡</div>
+    <h3>You're Offline</h3>
+    <p>Please check your internet connection and try again.</p>
+    <p style="font-size:0.82rem; color:var(--muted); margin-top:0.5rem;">
+        Some pages may be available from cache.
+    </p>
+    <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top:1.5rem;">
+        Try Again
+    </button>
+</div>
+{% endblock %}
