@@ -1094,3 +1094,8 @@ def heatmap_view(request):
         'heat_data': json.dumps(heat_data),
         'stats':     stats,
     })
+
+
+def offline_view(request):
+    return render(request, 'offline.html')
+
