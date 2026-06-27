@@ -3,90 +3,155 @@
 {% block content %}
 
 <section class="container leaderboard-section">
-    <div class="section-head" style="text-align:center; margin-bottom:28px;">
+    <header class="section-head" style="text-align: center; margin-bottom: 28px;">
         <h2 class="section-heading">🏆 Community Leaderboard</h2>
-        <p class="section-sub">Celebrating our most active donors and volunteers</p>
+        <p class="section-sub">Celebrating our most active and highly-rated community members</p>
+    </header>
+
+    <!-- Tab bar -->
+    <div class="tab-bar" style="justify-content: center; margin-bottom: 24px; display: flex; gap: 8px;">
+        <button class="tab-btn active" data-target="#tab-activity" onclick="switchTab(this)">
+            📦 By Activity
+        </button>
+        <button class="tab-btn" data-target="#tab-rating" onclick="switchTab(this)">
+            ⭐ By Rating
+        </button>
     </div>
 
-    <div class="leaderboard-grid">
-        <!-- Donor Leaderboard -->
-        <div class="card leaderboard-card">
-            <h3 class="leaderboard-card-title">🍱 Top Donors</h3>
-            <p class="leaderboard-card-sub">Most food delivered</p>
+    <!-- TAB 1: Activity -->
+    <div id="tab-activity" class="tab-content tab-panel">
+        <div class="leaderboard-grid">
+            <!-- Donor Leaderboard -->
+            <div class="card leaderboard-card">
+                <h3 class="leaderboard-card-title">🍱 Top Donors</h3>
+                <p class="leaderboard-card-sub text-muted">Ranked by food posts delivered</p>
 
-            {% if top_donors %}
-                {% for donor in top_donors %}
-                <div class="leaderboard-row">
-                    <span class="leaderboard-rank rank-{{ forloop.counter }}">
-                        {% if forloop.counter == 1 %}🥇
-                        {% elif forloop.counter == 2 %}🥈
-                        {% elif forloop.counter == 3 %}🥉
-                        {% else %}{{ forloop.counter }}
-                        {% endif %}
-                    </span>
-                    <span class="leaderboard-avatar">
-                        {{ donor.full_name|default:"?"|slice:":1"|upper }}
-                    </span>
-                    <div class="leaderboard-info">
-                        <a href="{% url 'user_profile' donor.pk %}" class="leaderboard-name">{{ donor.full_name }}</a>
-                        <span class="leaderboard-stat">{{ donor.delivered_count }} donation{{ donor.delivered_count|pluralize }}</span>
+                {% if activity_donors %}
+                    {% for donor in activity_donors %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank {% if forloop.counter <= 3 %}rank-{{ forloop.counter }}{% endif %}">
+                            {% if forloop.counter == 1 %}🥇
+                            {% elif forloop.counter == 2 %}🥈
+                            {% elif forloop.counter == 3 %}🥉
+                            {% else %}{{ forloop.counter }}
+                            {% endif %}
+                        </span>
+                        <div class="leaderboard-avatar">
+                            {{ donor.full_name|default:"?"|slice:":1"|upper }}
+                        </div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">{{ donor.full_name }}</div>
+                            <div class="leaderboard-stat">{{ donor.delivered_count }} donation{{ donor.delivered_count|pluralize }} delivered</div>
+                        </div>
+                        <a href="{% url 'user_profile' donor.pk %}" class="leaderboard-view-link">View →</a>
                     </div>
-                    {% if donor.avg_rating %}
-                    <span class="leaderboard-rating" title="{{ donor.avg_rating|floatformat:1 }} / 5">
-                        ⭐ {{ donor.avg_rating|floatformat:1 }}
-                    </span>
-                    {% endif %}
-                    {% if donor.donor_profile %}
-                    <span class="leaderboard-trust badge-trust-{{ donor.donor_profile.get_score_label|lower }}">
-                        {{ donor.donor_profile.trust_score }}
-                    </span>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            {% else %}
-                <p class="leaderboard-empty">No donors on the board yet. Be the first!</p>
-            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p class="leaderboard-empty">No data yet</p>
+                {% endif %}
+            </div>
+
+            <!-- Volunteer Leaderboard -->
+            <div class="card leaderboard-card">
+                <h3 class="leaderboard-card-title">🚚 Top Volunteers</h3>
+                <p class="leaderboard-card-sub text-muted">Ranked by deliveries completed</p>
+
+                {% if activity_volunteers %}
+                    {% for volunteer in activity_volunteers %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank {% if forloop.counter <= 3 %}rank-{{ forloop.counter }}{% endif %}">
+                            {% if forloop.counter == 1 %}🥇
+                            {% elif forloop.counter == 2 %}🥈
+                            {% elif forloop.counter == 3 %}🥉
+                            {% else %}{{ forloop.counter }}
+                            {% endif %}
+                        </span>
+                        <div class="leaderboard-avatar volunteer-avatar">
+                            {{ volunteer.full_name|default:"?"|slice:":1"|upper }}
+                        </div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">{{ volunteer.full_name }}</div>
+                            <div class="leaderboard-stat">{{ volunteer.delivery_count }} deliver{{ volunteer.delivery_count|pluralize:"y,ies" }} completed</div>
+                        </div>
+                        <a href="{% url 'user_profile' volunteer.pk %}" class="leaderboard-view-link">View →</a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="leaderboard-empty">No data yet</p>
+                {% endif %}
+            </div>
         </div>
+    </div>
 
-        <!-- Volunteer Leaderboard -->
-        <div class="card leaderboard-card">
-            <h3 class="leaderboard-card-title">🚚 Top Volunteers</h3>
-            <p class="leaderboard-card-sub">Most deliveries completed</p>
+    <!-- TAB 2: Rating -->
+    <div id="tab-rating" class="tab-content tab-panel" style="display:none;">
+        <div class="leaderboard-grid">
+            <!-- Donor Rating Leaderboard -->
+            <div class="card leaderboard-card">
+                <h3 class="leaderboard-card-title">🍱 Top Rated Donors</h3>
+                <p class="leaderboard-card-sub text-muted">Ranked by average community rating</p>
 
-            {% if top_volunteers %}
-                {% for volunteer in top_volunteers %}
-                <div class="leaderboard-row">
-                    <span class="leaderboard-rank rank-{{ forloop.counter }}">
-                        {% if forloop.counter == 1 %}🥇
-                        {% elif forloop.counter == 2 %}🥈
-                        {% elif forloop.counter == 3 %}🥉
-                        {% else %}{{ forloop.counter }}
-                        {% endif %}
-                    </span>
-                    <span class="leaderboard-avatar volunteer-avatar">
-                        {{ volunteer.full_name|default:"?"|slice:":1"|upper }}
-                    </span>
-                    <div class="leaderboard-info">
-                        <a href="{% url 'user_profile' volunteer.pk %}" class="leaderboard-name">{{ volunteer.full_name }}</a>
-                        <span class="leaderboard-stat">{{ volunteer.delivery_count }} deliver{{ volunteer.delivery_count|pluralize:"y,ies" }}</span>
+                {% if rating_donors %}
+                    {% for donor in rating_donors %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank {% if forloop.counter <= 3 %}rank-{{ forloop.counter }}{% endif %}">
+                            {% if forloop.counter == 1 %}🥇
+                            {% elif forloop.counter == 2 %}🥈
+                            {% elif forloop.counter == 3 %}🥉
+                            {% else %}{{ forloop.counter }}
+                            {% endif %}
+                        </span>
+                        <div class="leaderboard-avatar">
+                            {{ donor.full_name|default:"?"|slice:":1"|upper }}
+                        </div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">{{ donor.full_name }}</div>
+                            <div class="leaderboard-stat">
+                                ⭐ {{ donor.avg_score|floatformat:1 }} / 5 ({{ donor.rating_count }} rating{{ donor.rating_count|pluralize }})
+                            </div>
+                        </div>
+                        <a href="{% url 'user_profile' donor.pk %}" class="leaderboard-view-link">View →</a>
                     </div>
-                    {% if volunteer.avg_rating %}
-                    <span class="leaderboard-rating" title="{{ volunteer.avg_rating|floatformat:1 }} / 5">
-                        ⭐ {{ volunteer.avg_rating|floatformat:1 }}
-                    </span>
-                    {% endif %}
-                    {% if volunteer.volunteer_profile %}
-                    <span class="leaderboard-trust badge-trust-{{ volunteer.volunteer_profile.get_score_label|lower }}">
-                        {{ volunteer.volunteer_profile.trust_score }}
-                    </span>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            {% else %}
-                <p class="leaderboard-empty">No volunteers on the board yet. Start delivering!</p>
-            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p class="leaderboard-empty">No ratings yet</p>
+                {% endif %}
+            </div>
+
+            <!-- Volunteer Rating Leaderboard -->
+            <div class="card leaderboard-card">
+                <h3 class="leaderboard-card-title">🚚 Top Rated Volunteers</h3>
+                <p class="leaderboard-card-sub text-muted">Ranked by average community rating</p>
+
+                {% if rating_volunteers %}
+                    {% for volunteer in rating_volunteers %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank {% if forloop.counter <= 3 %}rank-{{ forloop.counter }}{% endif %}">
+                            {% if forloop.counter == 1 %}🥇
+                            {% elif forloop.counter == 2 %}🥈
+                            {% elif forloop.counter == 3 %}🥉
+                            {% else %}{{ forloop.counter }}
+                            {% endif %}
+                        </span>
+                        <div class="leaderboard-avatar volunteer-avatar">
+                            {{ volunteer.full_name|default:"?"|slice:":1"|upper }}
+                        </div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">{{ volunteer.full_name }}</div>
+                            <div class="leaderboard-stat">
+                                ⭐ {{ volunteer.avg_score|floatformat:1 }} / 5 ({{ volunteer.rating_count }} rating{{ volunteer.rating_count|pluralize }})
+                            </div>
+                        </div>
+                        <a href="{% url 'user_profile' volunteer.pk %}" class="leaderboard-view-link">View →</a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="leaderboard-empty">No ratings yet</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </section>
+
 
 {% endblock %}
