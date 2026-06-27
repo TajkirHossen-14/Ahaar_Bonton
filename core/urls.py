@@ -103,4 +103,6 @@ urlpatterns = [
     path("leaderboard/", views.leaderboard_view, name="leaderboard"),
     path("map/", views.food_map_view, name="food_map"),
     path("heatmap/", views.heatmap_view, name="heatmap"),
+    path("offline/", views.offline_view, name="offline"),
 ]
+
