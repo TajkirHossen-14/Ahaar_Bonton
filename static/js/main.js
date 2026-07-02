@@ -380,7 +380,8 @@
     };
 
     // Star Rating
-    window.selectStar = function(el, groupId, inputId) {
+    window.selectStar = function(el, groupId, inputId) 
+    {
         const value = parseInt(el.dataset.value);
         const group = document.getElementById(groupId);
         const input = document.getElementById(inputId);
@@ -394,7 +395,8 @@
         input.value = value;
     };
 
-    function formatCountdown(ms) {
+    function formatCountdown(ms) 
+    {
         const totalMinutes = Math.floor(ms / 60000);
         const days = Math.floor(totalMinutes / 1440);
         const hours = Math.floor((totalMinutes % 1440) / 60);
@@ -405,9 +407,11 @@
         return Math.max(minutes, 0) + "m left";
     }
 
-    window.updateCountdowns = function () {
+    window.updateCountdowns = function () 
+    {
         const now = Date.now();
-        document.querySelectorAll("[data-expiry]").forEach(function (el) {
+        document.querySelectorAll("[data-expiry]").forEach(function (el) 
+        {
             const raw = el.dataset.expiry;
             const expiryMs = new Date(raw).getTime();
             if (!raw || Number.isNaN(expiryMs)) return;
@@ -426,13 +430,18 @@
             }
 
             el.textContent = formatCountdown(diff);
-            if (hours > 6) {
+            if (hours > 6) 
+            {
                 el.classList.add("time-green");
                 if (card) card.dataset.expiring = "no";
-            } else if (hours >= 1) {
+            } 
+            else if (hours >= 1) 
+            {
                 el.classList.add("time-amber");
                 if (card) card.dataset.expiring = "yes";
-            } else {
+            } 
+            else 
+            {
                 el.classList.add("time-red");
                 if (card) card.dataset.expiring = "yes";
             }
@@ -441,7 +450,8 @@
 
     const imageInput = document.getElementById("id_image");
     if (imageInput) {
-        imageInput.addEventListener("change", function (event) {
+        imageInput.addEventListener("change", function (event) 
+        {
             const file = event.target.files && event.target.files[0];
             const previewImg = document.getElementById("previewImg");
             const previewPlaceholder = document.getElementById("previewPlaceholder");
@@ -449,7 +459,8 @@
             if (!file || !previewImg) return;
 
             const reader = new FileReader();
-            reader.onload = function (loadEvent) {
+            reader.onload = function (loadEvent) 
+            {
                 previewImg.src = loadEvent.target.result;
                 previewImg.classList.remove("hidden");
                 if (previewPlaceholder) previewPlaceholder.classList.add("hidden");
@@ -458,14 +469,16 @@
         });
     }
 
-    function setPasswordToggleState(btn, isVisible) {
+    function setPasswordToggleState(btn, isVisible) 
+    {
         if (!btn) return;
         btn.classList.toggle("is-visible", isVisible);
         btn.setAttribute("aria-pressed", String(isVisible));
         btn.setAttribute("aria-label", isVisible ? "Hide password" : "Show password");
     }
 
-    window.togglePass = function (inputId, btn) {
+    window.togglePass = function (inputId, btn) 
+    {
         const input = document.getElementById(inputId);
         if (!input) return;
 
@@ -474,39 +487,48 @@
         setPasswordToggleState(btn, toText);
     };
 
-    document.querySelectorAll(".password-toggle").forEach(function (toggleBtn) {
+    document.querySelectorAll(".password-toggle").forEach(function (toggleBtn) 
+    {
         setPasswordToggleState(toggleBtn, false);
     });
 
     const loginToggle = document.getElementById("togglePassword");
     const loginPassword = document.getElementById("password");
-    if (loginToggle && loginPassword) {
-        loginToggle.addEventListener("click", function (event) {
+    if (loginToggle && loginPassword) 
+    {
+        loginToggle.addEventListener("click", function (event) 
+        {
             event.preventDefault();
             window.togglePass("password", loginToggle);
         });
     }
 
-    window.updateRoleDescription = function (value) {
+    window.updateRoleDescription = function (value) 
+    {
         const roleBox = document.getElementById("roleDescription");
         if (!roleBox) return;
 
-        const descriptions = {
+        const descriptions = 
+        {
             donor: "Donor: Share surplus food and help reduce waste.",
             ngo: "NGO: Browse available donations and request food for people in need.",
             volunteer: "Volunteer: Accept deliveries and confirm handover with OTP.",
         };
 
-        if (descriptions[value]) {
+        if (descriptions[value]) 
+        {
             roleBox.textContent = descriptions[value];
             roleBox.style.display = "block";
-        } else {
+        } 
+        else 
+        {
             roleBox.textContent = "";
             roleBox.style.display = "none";
         }
     };
 
-    window.animateCounter = function (el, target) {
+    window.animateCounter = function (el, target) 
+    {
         const finalValue = Number(target);
         if (!el || Number.isNaN(finalValue)) return;
 
@@ -514,43 +536,52 @@
         const start = 0;
         let startTime = null;
 
-        function step(timestamp) {
+        function step(timestamp) 
+        {
             if (!startTime) startTime = timestamp;
             const progress = Math.min((timestamp - startTime) / duration, 1);
             const current = Math.floor(start + (finalValue - start) * progress);
             el.textContent = current.toLocaleString();
-            if (progress < 1) {
+            if (progress < 1) 
+            {
                 window.requestAnimationFrame(step);
             }
         }
         window.requestAnimationFrame(step);
     };
 
-    function clearLocationError() {
+    function clearLocationError() 
+    {
         const existing = document.getElementById("locationError");
         if (existing) existing.remove();
     }
 
-    window.showLocationError = function (msg) {
+    window.showLocationError = function (msg) 
+    {
         const input = document.getElementById("id_location");
         if (!input) return;
 
         let errorEl = document.getElementById("locationError");
-        if (!errorEl) {
+        if (!errorEl) 
+        {
             errorEl = document.createElement("p");
             errorEl.id = "locationError";
             errorEl.className = "location-error";
             const wrapper = input.closest(".location-field-wrapper");
-            if (wrapper && wrapper.parentNode) {
+            if (wrapper && wrapper.parentNode) 
+            {
                 wrapper.parentNode.insertBefore(errorEl, wrapper.nextSibling);
-            } else if (input.parentNode) {
+            } 
+            else if (input.parentNode) 
+            {
                 input.parentNode.insertBefore(errorEl, input.nextSibling);
             }
         }
         errorEl.textContent = msg;
     };
 
-    function buildOpenStreetMapEmbed(lat, lng, zoomPadding) {
+    function buildOpenStreetMapEmbed(lat, lng, zoomPadding) 
+    {
         const delta = zoomPadding || 0.01;
         const latNum = Number(lat);
         const lngNum = Number(lng);
@@ -575,7 +606,8 @@
         );
     }
 
-    window.detectLocation = function () {
+    window.detectLocation = function () 
+    {
         const btn = document.getElementById("detectLocationBtn");
         const locationInput = document.getElementById("id_location");
         const latInput = document.getElementById("id_latitude");
@@ -585,7 +617,8 @@
 
         if (!locationInput) return;
 
-        function setBtnLoading(isLoading) {
+        function setBtnLoading(isLoading) 
+        {
             if (!btn) return;
             btn.disabled = isLoading;
             btn.classList.toggle("loading", isLoading);
