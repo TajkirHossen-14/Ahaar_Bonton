@@ -74,6 +74,7 @@ class DonorProfileAdmin(admin.ModelAdmin):
 @admin.register(VolunteerProfile)
 class VolunteerProfileAdmin(admin.ModelAdmin):
     list_display = ("user", "trust_score", "score_label")
+    search_fields = ("user__full_name", "user__email")
 
     @admin.display(description="Score Label")
     def score_label(self, obj):
