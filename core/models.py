@@ -137,23 +137,25 @@ class VolunteerProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="volunteer_profile",
     )
-    trust_score = models.IntegerField(default=0)
+    trust_score = models.IntegerField(default=100)
 
     def __str__(self):
-        return f"VolunteerProfile<{self.user.email}>"
+        return f"{self.user.full_name} — Score: {self.trust_score}"
 
     def update_trust_score(self, delta):
-        self.trust_score = max(0, self.trust_score + delta)
+        self.trust_score = max(0, min(100, self.trust_score + delta))
         self.save(update_fields=["trust_score"])
 
     def increase_score(self):
+        """Called when the volunteer successfully completes a delivery."""
         self.update_trust_score(+5)
 
     def decrease_score(self):
-        self.update_trust_score(-2)
+        """Called when an assigned delivery expires before completion."""
+        self.update_trust_score(-3)
 
     def get_score_label(self):
-        if self.trust_score >= 85:
+        if self.trust_score >= 90:
             return "Excellent"
         if self.trust_score >= 70:
             return "Good"
