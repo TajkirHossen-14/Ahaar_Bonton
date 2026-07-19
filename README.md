@@ -3,7 +3,8 @@
   <img src="Assets/Banner/AhaarBonton Banner 3.png" alt="Ahaar Bonton Banner" width="100%">
 </p>
 
-### A Surplus Food Redistribution Platform
+# AhaarBonton
+## A Surplus Food Redistribution Platform
 
 *Connecting Donors, NGOs, and Volunteers to Reduce Food Waste*
 
