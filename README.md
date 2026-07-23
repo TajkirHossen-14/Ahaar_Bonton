@@ -4,7 +4,7 @@
 </p>
 
 # AhaarBonton
-**A Surplus Food Redistribution Platform**
+A Surplus Food Redistribution Platform
 
 *Connecting Donors, NGOs, and Volunteers to Reduce Food Waste*
 
