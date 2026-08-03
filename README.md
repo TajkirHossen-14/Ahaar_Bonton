@@ -20,20 +20,20 @@ A Surplus Food Redistribution Platform
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
 
-## 📑 Table of Contents
+## 📌 Table of Contents
 
-- [About the Project](#-about-the-project)
-- [Key Features](#-key-features)
-- [How AhaarBonton Works](#️-how-aharbonton-works)
-- [Project Structure](#️-project-structure)
-- [Tech Stack](#️-tech-stack)
-- [Getting Started](#-getting-started)
-- [User Roles](#-user-roles)
-- [Contributing](#-contributing)
+- [📑 About the Project](#-about-the-project)
+- [✨ Key Features](#-key-features)
+- [⚙️ How AhaarBonton Works](#️-how-aharbonton-works)
+- [🗂️ Project Structure](#️-project-structure)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [👥 User Roles](#-user-roles)
+- [🤝🏼 Contributing](#-contributing)
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
 
-## 📌 About the Project
+## 📑 About the Project
 
 **AhaarBonton (আহার বণ্টন)** is a web-based surplus food redistribution platform built specifically for the context of Bangladesh. Every day, significant amounts of food go to waste at restaurants, weddings, corporate events, and households, while many people struggle to meet their daily nutritional needs.
 
@@ -328,7 +328,7 @@ Now open your browser and visit **http://127.0.0.1:8000** 🎉
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
 
 
-## 🤝 Contributing
+## 🤝🏼 Contributing
 
 Contributions are welcome! If you'd like to improve the platform:
 
