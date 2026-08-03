@@ -333,7 +333,13 @@ Now open your browser and visit **http://127.0.0.1:8000** 🎉
 Contributions are welcome! If you'd like to improve the platform:
 
 1. Fork the repository
-2. Create a new branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add some feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
+2. Create a new branch (`git checkout -b feature/Your-Feature`)
+3. Commit your changes (`git commit -m 'Add Some Feature'`)
+4. Push to the branch (`git push origin feature/Your-Feature`)
 5. Open a Pull Request
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
