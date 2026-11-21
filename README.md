@@ -277,7 +277,7 @@ Ahaar_Bonton/
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/TajkirHossen-14/AhaarBonton.git
+git clone https://github.com/TajkirHossen-14/Ahaar_Bonton.git
 cd Ahaar_Bonton
 ```
 
