@@ -292,6 +292,11 @@ class FoodPost(models.Model):
             return timedelta(seconds=0)
         return remaining
 
+    @property
+    def expires_within_six_hours(self):
+        now = timezone.now()
+        return now < self.expiry_time <= now + timedelta(hours=6)
+
     def has_map(self):
         return self.latitude is not None and self.longitude is not None
 
