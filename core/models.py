@@ -1,14 +1,21 @@
-import random
+import secrets
 from datetime import timedelta
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models, transaction
+from django.db.models import Q
+from django.db.models.functions import Lower
 from django.utils import timezone
 
 
 def generate_otp():
-    return str(random.randint(100000, 999999))
+    return f"{secrets.randbelow(1_000_000):06d}"
+
+
+def otp_matches(stored_otp, entered_otp):
+    return secrets.compare_digest(str(stored_otp), str(entered_otp))
 
 
 class CustomUserManager(BaseUserManager):
@@ -19,7 +26,7 @@ class CustomUserManager(BaseUserManager):
         if not password:
             raise ValueError("Password must be provided.")
 
-        email = self.normalize_email(email)
+        email = self.normalize_email(email).strip().lower()
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -60,6 +67,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["full_name", "role"]
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(Lower("email"), name="unique_user_email_case_insensitive"),
+        ]
+
+    def save(self, *args, **kwargs):
+        self.email = CustomUser.objects.normalize_email(self.email).strip().lower()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.full_name} ({self.email})"
@@ -105,13 +121,16 @@ class DonorProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="donor_profile",
     )
-    trust_score = models.IntegerField(default=0)
+    trust_score = models.IntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
 
     def __str__(self):
         return f"DonorProfile<{self.user.email}>"
 
     def update_trust_score(self, delta):
-        self.trust_score = max(0, self.trust_score + delta)
+        self.trust_score = max(0, min(100, self.trust_score + delta))
         self.save(update_fields=["trust_score"])
 
     def increase_score(self):
@@ -119,6 +138,14 @@ class DonorProfile(models.Model):
 
     def decrease_score(self):
         self.update_trust_score(-2)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(trust_score__gte=0) & Q(trust_score__lte=100),
+                name="donor_trust_score_between_0_and_100",
+            ),
+        ]
 
     def get_score_label(self):
         if self.trust_score >= 85:
@@ -137,7 +164,10 @@ class VolunteerProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="volunteer_profile",
     )
-    trust_score = models.IntegerField(default=100)
+    trust_score = models.IntegerField(
+        default=100,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
 
     def __str__(self):
         return f"{self.user.full_name} — Score: {self.trust_score}"
@@ -153,6 +183,14 @@ class VolunteerProfile(models.Model):
     def decrease_score(self):
         """Called when an assigned delivery expires before completion."""
         self.update_trust_score(-3)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(trust_score__gte=0) & Q(trust_score__lte=100),
+                name="volunteer_trust_score_between_0_and_100",
+            ),
+        ]
 
     def get_score_label(self):
         if self.trust_score >= 90:
@@ -185,9 +223,11 @@ class FoodPost(models.Model):
     )
     title = models.CharField(max_length=255)
     description = models.TextField()
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)],
+    )
     category = models.CharField(max_length=20, choices=CategoryChoices.choices)
-    image = models.ImageField(upload_to="food_posts/")
+    image = models.ImageField(upload_to="food_posts/", blank=True)
     location = models.CharField(max_length=255)
     latitude = models.DecimalField(
         max_digits=9,
@@ -211,6 +251,26 @@ class FoodPost(models.Model):
 
     class Meta:
         ordering = ["expiry_time"]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(quantity__gt=0),
+                name="food_quantity_must_be_positive",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(latitude__isnull=True, longitude__isnull=True)
+                    | Q(
+                        latitude__isnull=False,
+                        longitude__isnull=False,
+                        latitude__gte=-90,
+                        latitude__lte=90,
+                        longitude__gte=-180,
+                        longitude__lte=180,
+                    )
+                ),
+                name="food_coordinates_are_valid_pair",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.title} ({self.get_status_display()})"
@@ -268,21 +328,46 @@ class FoodRequest(models.Model):
         return f"FoodRequest<{self.ngo.email} -> {self.food_post.title}>"
 
     def approve(self):
-        self.status = 'approved'
-        self.food_post.mark_claimed()
-        self.save()
-        delivery, created = Delivery.objects.get_or_create(
-            food_request=self,
-            defaults={
-                'pickup_otp':   generate_otp(),
-                'delivery_otp': generate_otp(),
-            }
-        )
-        return delivery
+        """Approve one request and claim the post without race-condition leaks."""
+        with transaction.atomic():
+            food_request = (
+                FoodRequest.objects.select_for_update()
+                .select_related("food_post")
+                .get(pk=self.pk)
+            )
+            food_post = FoodPost.objects.select_for_update().get(pk=food_request.food_post_id)
+
+            if food_request.status != self.StatusChoices.PENDING:
+                raise ValueError("Only pending requests can be approved.")
+            if food_post.status != FoodPost.StatusChoices.AVAILABLE or food_post.is_expired():
+                raise ValueError("This food post is no longer available.")
+
+            food_request.status = self.StatusChoices.APPROVED
+            food_request.save(update_fields=["status"])
+            food_post.mark_claimed()
+            FoodRequest.objects.filter(
+                food_post=food_post,
+                status=self.StatusChoices.PENDING,
+            ).exclude(pk=food_request.pk).update(status=self.StatusChoices.REJECTED)
+
+            delivery, _ = Delivery.objects.get_or_create(
+                food_request=food_request,
+                defaults={
+                    "pickup_otp": generate_otp(),
+                    "delivery_otp": generate_otp(),
+                },
+            )
+            self.refresh_from_db()
+            return delivery
 
     def reject(self):
-        self.status = self.StatusChoices.REJECTED
-        self.save(update_fields=["status"])
+        with transaction.atomic():
+            food_request = FoodRequest.objects.select_for_update().get(pk=self.pk)
+            if food_request.status != self.StatusChoices.PENDING:
+                raise ValueError("Only pending requests can be rejected.")
+            food_request.status = self.StatusChoices.REJECTED
+            food_request.save(update_fields=["status"])
+            self.refresh_from_db()
 
 
 class Delivery(models.Model):
@@ -327,34 +412,94 @@ class Delivery(models.Model):
 
     # OOP: Encapsulation — pickup logic inside class
     def confirm_pickup(self, entered_otp):
-        if self.pickup_otp == entered_otp:
-            self.pickup_confirmed = True
-            self.status           = 'picked_up'
-            self.picked_up_at     = timezone.now()
-            self.save()
-            return True
-        return False
+        with transaction.atomic():
+            delivery = (
+                Delivery.objects.select_for_update()
+                .select_related("food_request__food_post")
+                .get(pk=self.pk)
+            )
+            if delivery.pickup_confirmed:
+                return "already_confirmed"
+            if delivery.volunteer_id is None:
+                return "not_assigned"
+            if (
+                delivery.food_request.status != FoodRequest.StatusChoices.APPROVED
+                or delivery.food_request.food_post.status != FoodPost.StatusChoices.CLAIMED
+            ):
+                return "not_available"
+            if delivery.food_request.food_post.is_expired():
+                return "expired"
+            if not otp_matches(delivery.pickup_otp, entered_otp):
+                return "wrong_otp"
+
+            delivery.pickup_confirmed = True
+            delivery.status = self.StatusChoices.PICKED_UP
+            delivery.picked_up_at = timezone.now()
+            delivery.save(update_fields=["pickup_confirmed", "status", "picked_up_at"])
+            self.refresh_from_db()
+            return "success"
 
     # OOP: Encapsulation — delivery logic inside class
     def confirm_delivery(self, entered_otp):
-        if not self.pickup_confirmed:
-            return 'pickup_first'
-        if self.delivery_otp == entered_otp:
-            self.delivery_confirmed          = True
-            self.is_confirmed                = True
-            self.status                      = 'delivered'
-            self.delivered_at                = timezone.now()
-            self.food_request.status         = 'completed'
-            self.food_request.food_post.mark_delivered()
-            self.food_request.save()
-            self.save()
-            return 'success'
-        return 'wrong_otp'
+        with transaction.atomic():
+            delivery = (
+                Delivery.objects.select_for_update()
+                .select_related("food_request__food_post", "food_request__ngo", "volunteer")
+                .get(pk=self.pk)
+            )
+            if delivery.is_confirmed:
+                return "already_confirmed"
+            if delivery.volunteer_id is None:
+                return "not_assigned"
+            if not delivery.pickup_confirmed:
+                return "pickup_first"
+            if (
+                delivery.food_request.status != FoodRequest.StatusChoices.APPROVED
+                or delivery.food_request.food_post.status != FoodPost.StatusChoices.CLAIMED
+            ):
+                return "not_available"
+            if delivery.food_request.food_post.is_expired():
+                return "expired"
+            if not otp_matches(delivery.delivery_otp, entered_otp):
+                return "wrong_otp"
+
+            delivery.delivery_confirmed = True
+            delivery.is_confirmed = True
+            delivery.status = self.StatusChoices.DELIVERED
+            delivery.delivered_at = timezone.now()
+            delivery.food_request.status = FoodRequest.StatusChoices.COMPLETED
+            delivery.food_request.food_post.mark_delivered()
+            delivery.food_request.save(update_fields=["status"])
+            delivery.save(
+                update_fields=[
+                    "delivery_confirmed",
+                    "is_confirmed",
+                    "status",
+                    "delivered_at",
+                ]
+            )
+
+            volunteer_profile, _ = VolunteerProfile.objects.get_or_create(user=delivery.volunteer)
+            volunteer_profile.increase_score()
+            donor_profile, _ = DonorProfile.objects.get_or_create(
+                user=delivery.food_request.food_post.donor
+            )
+            donor_profile.increase_score()
+            self.refresh_from_db()
+            return "success"
 
     def mark_picked_up(self):
-        self.status       = 'picked_up'
+        """Mark pickup without an OTP for trusted internal/admin use only."""
+        if self.is_confirmed or self.pickup_confirmed:
+            raise ValueError("Pickup has already been confirmed.")
+        if self.volunteer_id is None:
+            raise ValueError("Assign a volunteer before confirming pickup.")
+        if self.food_request.food_post.is_expired():
+            raise ValueError("Expired food cannot be picked up.")
+        self.status = self.StatusChoices.PICKED_UP
+        self.pickup_confirmed = True
         self.picked_up_at = timezone.now()
-        self.save()
+        self.save(update_fields=["status", "pickup_confirmed", "picked_up_at"])
 
     @property
     def otp(self):
@@ -362,12 +507,43 @@ class Delivery(models.Model):
         return self.delivery_otp
 
     def __str__(self):
-        return (f'Delivery — '
-                f'{self.food_request.food_post.title} '
-                f'| Pickup OTP: {self.pickup_otp}')
+        return f"Delivery — {self.food_request.food_post.title} ({self.get_status_display()})"
 
     class Meta:
         ordering = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(pickup_confirmed=False) | Q(picked_up_at__isnull=False),
+                name="delivery_pickup_requires_timestamp",
+            ),
+            models.CheckConstraint(
+                condition=Q(delivery_confirmed=False) | Q(delivered_at__isnull=False),
+                name="delivery_completion_requires_timestamp",
+            ),
+            models.CheckConstraint(
+                condition=~Q(status="picked_up")
+                | Q(pickup_confirmed=True, picked_up_at__isnull=False),
+                name="delivery_picked_up_requires_confirmation",
+            ),
+            models.CheckConstraint(
+                condition=~Q(status="delivered")
+                | Q(
+                    delivery_confirmed=True,
+                    is_confirmed=True,
+                    delivered_at__isnull=False,
+                ),
+                name="delivery_delivered_requires_completion",
+            ),
+            models.CheckConstraint(
+                condition=Q(is_confirmed=False)
+                | Q(
+                    delivery_confirmed=True,
+                    status="delivered",
+                    delivered_at__isnull=False,
+                ),
+                name="delivery_confirmed_requires_completion",
+            ),
+        ]
 
 
 class Rating(models.Model):
@@ -405,6 +581,16 @@ class Rating(models.Model):
     class Meta:
         unique_together = ['rater', 'delivery', 'rating_type']
         ordering        = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(score__gte=1) & Q(score__lte=5),
+                name="rating_score_between_1_and_5",
+            ),
+            models.CheckConstraint(
+                condition=~Q(rater=models.F("rated_user")),
+                name="rating_cannot_target_self",
+            ),
+        ]
 
     def __str__(self):
         return (
@@ -476,13 +662,29 @@ class Report(models.Model):
     admin_note = models.TextField(blank=True)
 
     def __str__(self):
-        return (
-            f'Report by {self.reporter.full_name}'
-            f' â€” {self.report_type}'
-        )
+        return f"Report by {self.reporter.full_name} — {self.report_type}"
 
     class Meta:
         ordering = ['-created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=["reporter", "reported_post"],
+                condition=Q(reported_post__isnull=False),
+                name="unique_reporter_post_report",
+            ),
+            models.UniqueConstraint(
+                fields=["reporter", "reported_user"],
+                condition=Q(reported_user__isnull=False),
+                name="unique_reporter_user_report",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(report_type="post", reported_post__isnull=False, reported_user__isnull=True)
+                    | Q(report_type="user", reported_user__isnull=False, reported_post__isnull=True)
+                ),
+                name="report_requires_exactly_one_target",
+            ),
+        ]
 
 
 # OOP CONCEPTS: Encapsulation(CustomUserManager, DonorProfile, VolunteerProfile, FoodPost, Delivery), Inheritance(CustomUser<-AbstractBaseUser), Polymorphism(get_dashboard_url), Abstraction(notification.py)
