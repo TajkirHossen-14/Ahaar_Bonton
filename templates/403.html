@@ -1,12 +1,3 @@
 {% extends 'base.html' %}
-
-{% block content %}
-<section class="container">
-    <div class="empty-state card card-elevated">
-        <h1 style="font-size:4rem; color:#EF4444; font-family:var(--font-head);">403</h1>
-        <h2>Access Denied</h2>
-        <p>You do not have permission to access this page.</p>
-        <a href="{% url 'home' %}" class="btn btn-primary">Go Home</a>
-    </div>
-</section>
-{% endblock %}
+{% block page_title %}Access denied - AhaarBonton{% endblock %}
+{% block content %}<section class="error-page"><div><div class="error-code">403</div><h1>This area needs a different role.</h1><p>Your account doesn’t have permission to access this page. Return to your own workspace to keep helping.</p><a href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" class="btn btn-primary"><svg class="icon"><use href="#i-shield"/></svg>Go to your workspace</a></div></section>{% endblock %}
