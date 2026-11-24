@@ -1,15 +1,48 @@
-{% extends 'base.html' %}
-{% block page_title %}You're Offline - AhaarBonton{% endblock %}
-{% block content %}
-<div class="empty-state" style="padding:5rem 2rem;">
-    <div class="empty-icon">📡</div>
-    <h3>You're Offline</h3>
-    <p>Please check your internet connection and try again.</p>
-    <p style="font-size:0.82rem; color:var(--muted); margin-top:0.5rem;">
-        Some pages may be available from cache.
-    </p>
-    <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top:1.5rem;">
-        Try Again
-    </button>
-</div>
-{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#176b45">
+    <title>You are offline - AhaarBonton</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'favicon/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script>
+        (function () {
+            var mode = 'system';
+            try { mode = localStorage.getItem('ahaar_theme_preference') || 'system'; } catch (error) {}
+            if (!['light', 'dark', 'system'].includes(mode)) mode = 'system';
+            var resolved = mode === 'system'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : mode;
+            document.documentElement.dataset.themeMode = mode;
+            document.documentElement.dataset.theme = resolved;
+        })();
+    </script>
+</head>
+<body>
+    <main class="offline-shell">
+        <section class="offline-card" aria-labelledby="offline-title">
+            <div class="offline-icon" aria-hidden="true">
+                <svg class="icon icon-lg"><use href="#i-offline"/></svg>
+            </div>
+            <h1 id="offline-title">You’re offline</h1>
+            <p>We couldn’t connect to AhaarBonton. Check your internet connection, then try again. Your account and requests will be here when you reconnect.</p>
+            <button type="button" class="btn btn-primary btn-lg" id="retryConnection">
+                <svg class="icon"><use href="#i-refresh"/></svg>Try again
+            </button>
+        </section>
+    </main>
+    <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <symbol id="i-offline" viewBox="0 0 24 24"><path d="M2 8.5A16 16 0 0 1 22 8.5M5 12a11 11 0 0 1 14 0M8.5 15.5a6 6 0 0 1 7 0M12 19v.1M2 2l20 20"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 8a8 8 0 0 1 13-2l1 2M4 16l1 2a8 8 0 0 0 13-2"/></symbol>
+    </svg>
+    <script src="{% static 'js/main.js' %}" defer></script>
+    <script>
+        document.getElementById('retryConnection').addEventListener('click', function () {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
