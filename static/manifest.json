@@ -4,8 +4,8 @@
   "description": "Surplus Food Redistribution Platform",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0D3D21",
-  "theme_color": "#1A7A4A",
+  "background_color": "#f7f8f3",
+  "theme_color": "#176b45",
   "orientation": "portrait",
   "icons": [
     {
