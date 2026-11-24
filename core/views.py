@@ -1,5 +1,4 @@
 import calendar
-import json
 from datetime import timedelta
 
 from django.contrib import messages
@@ -437,7 +436,7 @@ def ngo_dashboard(request):
         return denied
 
     matcher = FoodMatcher()
-    posts = matcher.get_priority_posts()
+    posts = matcher.get_priority_posts().select_related("donor")
     expiring = matcher.get_expiring_soon(6)
     requested_post_ids = set(
         FoodRequest.objects.filter(ngo=request.user)
@@ -1207,6 +1206,8 @@ def food_map_view(request):
                 "lng": round(float(post.longitude), 6 if request.user.is_authenticated else 3),
                 "expiry": post.expiry_time.isoformat(),
                 "donor": post.donor.full_name,
+                "image_url": post.image.url if post.image else None,
+                "profile_url": reverse("user_profile", kwargs={"user_pk": post.donor.pk}),
                 "request_url": (
                     reverse("request_food", kwargs={"pk": post.pk})
                     if getattr(request.user, "role", None) == CustomUser.RoleChoices.NGO
@@ -1215,21 +1216,21 @@ def food_map_view(request):
             }
         )
 
+    can_request = getattr(request.user, "role", None) == CustomUser.RoleChoices.NGO
     return render(
         request,
         "food_map.html",
         {
             "posts": posts,
             "posts_data": posts_data,
-            "posts_json": json.dumps(posts_data),
-            "total": posts.count(),
-            "can_request": getattr(request.user, "role", None) == CustomUser.RoleChoices.NGO,
+            "total": len(posts_data),
+            "can_request": can_request,
         },
     )
 
 
 def heatmap_view(request):
-    import json
+    now = timezone.now()
 
     # All food posts with coordinates
     posts = FoodPost.objects.exclude(
@@ -1253,14 +1254,27 @@ def heatmap_view(request):
         ])
 
     # Stats by status
+    expired_filter = Q(status=FoodPost.StatusChoices.EXPIRED) | Q(
+        status__in=[
+            FoodPost.StatusChoices.AVAILABLE,
+            FoodPost.StatusChoices.CLAIMED,
+        ],
+        expiry_time__lte=now,
+    )
     stats = {
-        'total':     posts.count(),
+        'total': posts.count(),
         'available': posts.filter(
-            status='available').count(),
+            status=FoodPost.StatusChoices.AVAILABLE,
+            expiry_time__gt=now,
+        ).count(),
+        'claimed': posts.filter(
+            status=FoodPost.StatusChoices.CLAIMED,
+            expiry_time__gt=now,
+        ).count(),
         'delivered': posts.filter(
-            status='delivered').count(),
-        'expired':   posts.filter(
-            status='expired').count(),
+            status=FoodPost.StatusChoices.DELIVERED,
+        ).count(),
+        'expired': posts.filter(expired_filter).count(),
     }
 
     return render(request, 'heatmap.html', {
