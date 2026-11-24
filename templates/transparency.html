@@ -1,157 +1,104 @@
 {% extends 'base.html' %}
-
-{% block page_title %}Impact - AhaarBonton{% endblock %}
+{% block page_title %}Impact and transparency - AhaarBonton{% endblock %}
 
 {% block content %}
-<section class="container">
-    <div class="transparency-hero">
-        <p class="hero-eyebrow">&#128202; Transparency Dashboard</p>
-        <h1>Our Impact So Far</h1>
-        <p>Real numbers, visible progress, and community trust in action.</p>
-
-        {% with completed=completed_deliveries %}
-        <div class="counter-grid">
-            <article class="counter-item">
-                <small>Delivered Meals</small>
-                <strong data-target="{{ stats.delivered }}">0</strong>
-            </article>
-            <article class="counter-item">
-                <small>Completed Deliveries</small>
-                <strong data-target="{{ completed }}">0</strong>
-            </article>
-            <article class="counter-item">
-                <small>Total Users</small>
-                <strong data-target="{{ total_users }}">0</strong>
-            </article>
+<section class="container page-section">
+    <div class="dashboard-hero">
+        <div>
+            <span class="eyebrow">Transparency dashboard</span>
+            <h1>Every shared meal makes an impact.</h1>
+            <p>Live numbers, visible progress, and accountable food sharing across the AhaarBonton community.</p>
         </div>
-        {% endwith %}
-        <div style="margin-top:18px;">
-            <a href="{% url 'heatmap' %}" class="btn btn-secondary btn-sm">🔥 View Heatmap</a>
+        <div class="banner-actions">
+            <a href="{% url 'heatmap' %}" class="btn btn-ghost"><svg class="icon"><use href="#i-layers"/></svg>Community heatmap</a>
+            <a href="{% url 'food_map' %}" class="btn btn-primary"><svg class="icon"><use href="#i-map"/></svg>Find food</a>
         </div>
     </div>
-</section>
 
-<section class="container">
-    <div class="impact-row">
-        <article class="impact-card">
-            <h3>Total Posts</h3>
-            <p>{{ stats.total }}</p>
+    <div class="stats-grid">
+        <article class="stat-card"><div class="stat-card-top"><h4>Meals delivered</h4><span class="stat-icon teal"><svg class="icon"><use href="#i-heart"/></svg></span></div><p data-counter="{{ stats.meals_delivered }}">{{ stats.meals_delivered }}</p></article>
+        <article class="stat-card"><div class="stat-card-top"><h4>Completed deliveries</h4><span class="stat-icon"><svg class="icon"><use href="#i-check"/></svg></span></div><p data-counter="{{ completed_deliveries }}">{{ completed_deliveries }}</p></article>
+        <article class="stat-card"><div class="stat-card-top"><h4>Available donations</h4><span class="stat-icon amber"><svg class="icon"><use href="#i-box"/></svg></span></div><p data-counter="{{ stats.available }}">{{ stats.available }}</p></article>
+        <article class="stat-card"><div class="stat-card-top"><h4>Community members</h4><span class="stat-icon teal"><svg class="icon"><use href="#i-users"/></svg></span></div><p data-counter="{{ total_users }}">{{ total_users }}</p></article>
+    </div>
+
+    <div class="transparency-grid mb-3">
+        <article class="card card-pad">
+            <div class="section-header"><h3>The food journey</h3><span class="badge badge-available">Live status</span></div>
+            <div class="bar-row"><small><span>Available now</span><span>{{ stats.available }}</span></small><div class="bar-track"><div class="bar-fill" style="width:{% widthratio stats.available stats.total 100 %}%;"></div></div></div>
+            <div class="bar-row"><small><span>Claimed for delivery</span><span>{{ stats.claimed }}</span></small><div class="bar-track"><div class="bar-fill" style="width:{% widthratio stats.claimed stats.total 100 %}%;background:var(--amber-400);"></div></div></div>
+            <div class="bar-row"><small><span>Delivered</span><span>{{ stats.delivered }}</span></small><div class="bar-track"><div class="bar-fill" style="width:{% widthratio stats.delivered stats.total 100 %}%;background:var(--teal-700);"></div></div></div>
+            <div class="bar-row"><small><span>Expired</span><span>{{ stats.expired }}</span></small><div class="bar-track"><div class="bar-fill" style="width:{% widthratio stats.expired stats.total 100 %}%;background:var(--red-700);"></div></div></div>
+            <p class="form-hint">{{ stats.total }} food post{{ stats.total|pluralize }} tracked in total. Time-expired posts are counted as expired even before the scheduled cleanup runs.</p>
         </article>
-        <article class="impact-card">
-            <h3>Available Right Now</h3>
-            <p>{{ stats.available }}</p>
-        </article>
-        <article class="impact-card">
-            <h3>NGOs Registered</h3>
-            <p>{{ ngo_count }}</p>
-        </article>
-        <article class="impact-card">
-            <h3>Volunteers Active</h3>
-            <p>{{ volunteer_count }}</p>
+
+        <article class="card card-pad">
+            <div class="section-header"><h3>Community network</h3><svg class="icon" style="color:var(--green-600);"><use href="#i-users"/></svg></div>
+            <div class="profile-stat"><span>NGO partners</span><strong>{{ ngo_count }}</strong></div>
+            <div class="profile-stat"><span>Volunteer members</span><strong>{{ volunteer_count }}</strong></div>
+            <div class="profile-stat"><span>Total food posts</span><strong>{{ stats.total }}</strong></div>
+            <div class="profile-stat"><span>Meals shared</span><strong>{{ stats.meals_delivered }}</strong></div>
+            <a href="{% url 'leaderboard' %}" class="btn btn-ghost btn-sm btn-full mt-3"><svg class="icon icon-sm"><use href="#i-trophy"/></svg>Meet the community leaders</a>
         </article>
     </div>
-</section>
 
-<section class="container transparency-charts-section">
     <header class="section-head">
-        <h2 class="section-heading">Data Insights</h2>
-        <p class="section-sub">Live distribution of food categories, status, and monthly completed deliveries.</p>
+        <span class="eyebrow">Data insights</span>
+        <h2>Progress you can measure.</h2>
+        <p class="section-sub">Food categories, live post status, and completed delivery trends from the last 12 months.</p>
     </header>
 
-    <div class="transparency-chart-grid">
-        <article class="card chart-card chart-card-top">
-            <div class="chart-card-head">
-                <h3>Bar Chart - Food Category Breakdown</h3>
-            </div>
-            <div class="chart-canvas-wrap">
-                <canvas id="foodCategoryBarChart" aria-label="Food category distribution bar chart"></canvas>
-            </div>
+    <div class="chart-grid">
+        <article class="card chart-card">
+            <div class="chart-card-head"><h3>Food category breakdown</h3><p>All shared food posts by category</p></div>
+            <div class="chart-container"><canvas id="foodCategoryBarChart" role="img" aria-label="Bar chart showing food posts by category"></canvas></div>
         </article>
-
-        <article class="card chart-card chart-card-top">
-            <div class="chart-card-head">
-                <h3>Donut Chart - Food Status Distribution</h3>
-            </div>
-            <div class="chart-canvas-wrap chart-canvas-wrap-donut">
-                <canvas id="foodStatusDonutChart" aria-label="Food status distribution donut chart"></canvas>
-            </div>
+        <article class="card chart-card">
+            <div class="chart-card-head"><h3>Post status distribution</h3><p>Current food lifecycle status</p></div>
+            <div class="chart-container"><canvas id="foodStatusDonutChart" role="img" aria-label="Donut chart showing available, claimed, delivered, and expired food posts"></canvas></div>
         </article>
-
         <article class="card chart-card chart-card-wide">
-            <div class="chart-card-head">
-                <h3>Line Chart - Monthly Deliveries</h3>
-                <p>Last 12 months completed delivery trend</p>
-            </div>
-            <div class="chart-canvas-wrap">
-                <canvas id="monthlyDeliveriesLineChart" aria-label="Monthly deliveries line chart"></canvas>
-            </div>
+            <div class="chart-card-head"><h3>Monthly completed deliveries</h3><p>A rolling 12-month view of confirmed community deliveries</p></div>
+            <div class="chart-container"><canvas id="monthlyDeliveriesLineChart" role="img" aria-label="Line chart showing monthly completed deliveries"></canvas></div>
         </article>
     </div>
-</section>
 
-<section class="container how-section recent-deliveries-section">
-    <header class="section-head">
-        <h2 class="section-heading">Recent Deliveries</h2>
-    </header>
+    <section class="admin-section" aria-labelledby="recent-deliveries-title">
+        <div class="section-header"><div><h2 id="recent-deliveries-title">Recent deliveries</h2><p class="muted" style="font-size:.85rem;">The latest completed food journeys in the community.</p></div><span class="badge badge-delivered">{{ completed_deliveries }} completed</span></div>
+        <article class="card">
+            {% if recent_deliveries %}
+                <div class="delivery-timeline">
+                    {% for delivery in recent_deliveries %}
+                        <div class="delivery-timeline-item">
+                            <span class="timeline-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span>
+                            <div class="timeline-content"><strong>{{ delivery.food_request.food_post.title }}</strong><span>{{ delivery.food_request.food_post.donor.full_name }} → {{ delivery.food_request.ngo.full_name }}</span></div>
+                            <time class="timeline-time" datetime="{{ delivery.delivered_at|date:'c' }}">{{ delivery.delivered_at|date:"d M Y" }}</time>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state"><div class="empty-icon"><svg class="icon icon-lg"><use href="#i-truck"/></svg></div><h3>The first delivery is waiting</h3><p>Completed food journeys will appear here as the community grows.</p></div>
+            {% endif %}
+        </article>
+    </section>
 
-    {% if recent_deliveries %}
-        <div class="card">
-            {% for delivery in recent_deliveries %}
-                <article class="request-card recent-delivery-card">
-                    <div class="recent-delivery-main">
-                        <p class="recent-delivery-title">&#9989; {{ delivery.food_request.food_post.title }}</p>
-                        <p class="recent-delivery-route">
-                            From {{ delivery.food_request.food_post.donor.full_name }} &#8594; {{ delivery.food_request.ngo.full_name }}
-                        </p>
-                    </div>
-                    <small class="recent-delivery-time">{{ delivery.delivered_at|date:"d M Y, h:i A" }}</small>
-                </article>
-            {% endfor %}
+    <section class="admin-section" aria-labelledby="trust-title">
+        <header class="section-head"><span class="eyebrow">Built on trust</span><h2 id="trust-title">Clear steps. Shared accountability.</h2></header>
+        <div class="steps-grid">
+            <article class="step-card"><div class="step-circle"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></div><h3 class="step-title">Live status</h3><p class="step-desc">Every post moves through visible, expiry-aware statuses from available to delivered.</p></article>
+            <article class="step-card"><div class="step-circle"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></div><h3 class="step-title">OTP confirmation</h3><p class="step-desc">Pickup and delivery are verified with one-time codes to prevent false completions.</p></article>
+            <article class="step-card"><div class="step-circle"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></div><h3 class="step-title">Role accountability</h3><p class="step-desc">Donors, NGOs, and volunteers each have clear responsibilities and ratings.</p></article>
+            <article class="step-card"><div class="step-circle"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></div><h3 class="step-title">Admin oversight</h3><p class="step-desc">Reports, expiring donations, and delivery activity are monitored centrally.</p></article>
         </div>
-    {% else %}
-        <div class="empty-state card">
-            <p>No recent completed deliveries yet.</p>
+    </section>
+
+    {% if not request.user.is_authenticated %}
+        <div class="welcome-banner">
+            <div><h2>Be part of the impact.</h2><p>Share food, request support, or deliver a meal. Every role moves the community forward.</p></div>
+            <div class="banner-actions"><a href="{% url 'register' %}" class="btn btn-primary">Create an account <svg class="icon"><use href="#i-arrow"/></svg></a></div>
         </div>
     {% endif %}
 </section>
-
-<section class="how-section container transparency-steps-section">
-    <header class="section-head">
-        <h2 class="section-heading">How We Ensure Transparency</h2>
-    </header>
-    <div class="steps-grid">
-        <article class="step-card">
-            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128065;</span></div>
-            <h3 class="step-title">Live Status</h3>
-            <p class="step-desc">Each post moves through visible statuses from available to delivered.</p>
-        </article>
-        <article class="step-card">
-            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128274;</span></div>
-            <h3 class="step-title">OTP Confirmation</h3>
-            <p class="step-desc">Deliveries are confirmed through OTP to prevent false completions.</p>
-        </article>
-        <article class="step-card">
-            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#129513;</span></div>
-            <h3 class="step-title">Role Accountability</h3>
-            <p class="step-desc">Donors, NGOs, and volunteers each have clear responsibilities.</p>
-        </article>
-        <article class="step-card">
-            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128737;</span></div>
-            <h3 class="step-title">Admin Oversight</h3>
-            <p class="step-desc">Admins monitor expired, pending, and delivered activities centrally.</p>
-        </article>
-    </div>
-</section>
-
-{% if not request.user.is_authenticated %}
-<section class="container">
-    <div class="welcome-banner">
-        <h3>Ready to contribute?</h3>
-        <p>Register now and be part of Bangladesh's food redistribution movement.</p>
-        <a href="{% url 'register' %}" class="btn hero-btn-primary btn-lg transparency-cta-btn">Create Account</a>
-    </div>
-</section>
-{% endif %}
 
 {{ category_chart_labels|json_script:"categoryChartLabels" }}
 {{ category_chart_values|json_script:"categoryChartValues" }}
@@ -159,273 +106,151 @@
 {{ status_chart_values|json_script:"statusChartValues" }}
 {{ monthly_chart_labels|json_script:"monthlyChartLabels" }}
 {{ monthly_chart_values|json_script:"monthlyChartValues" }}
+{% endblock %}
 
+{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
-    (function () {
-        function parseJSON(id, fallback) {
-            const node = document.getElementById(id);
-            if (!node) return fallback;
-            try {
-                return JSON.parse(node.textContent);
-            } catch (error) {
-                return fallback;
-            }
-        }
+(function () {
+    function parseJSON(id, fallback) {
+        const node = document.getElementById(id);
+        if (!node) return fallback;
+        try { return JSON.parse(node.textContent); } catch (error) { return fallback; }
+    }
 
-        if (typeof Chart === "undefined") {
-            return;
-        }
+    if (typeof Chart === 'undefined') return;
 
-        const categoryLabels = parseJSON("categoryChartLabels", []);
-        const categoryValues = parseJSON("categoryChartValues", []);
-        const statusLabels = parseJSON("statusChartLabels", []);
-        const statusValues = parseJSON("statusChartValues", []);
-        const monthlyLabels = parseJSON("monthlyChartLabels", []);
-        const monthlyValues = parseJSON("monthlyChartValues", []);
+    const categoryLabels = parseJSON('categoryChartLabels', []);
+    const categoryValues = parseJSON('categoryChartValues', []);
+    const statusLabels = parseJSON('statusChartLabels', []);
+    const statusValues = parseJSON('statusChartValues', []);
+    const monthlyLabels = parseJSON('monthlyChartLabels', []);
+    const monthlyValues = parseJSON('monthlyChartValues', []);
+    let charts = [];
 
-        let chartInstances = [];
+    function themeColors() {
+        const styles = getComputedStyle(document.documentElement);
+        const cssVar = function (name, fallback) { return styles.getPropertyValue(name).trim() || fallback; };
+        const dark = document.documentElement.dataset.theme === 'dark';
+        return {
+            text: dark ? '#c9d8cf' : '#334a3e',
+            muted: dark ? '#9aaca0' : '#64756c',
+            grid: dark ? 'rgba(160, 190, 172, .16)' : 'rgba(24, 49, 41, .09)',
+            surface: cssVar('--bg-surface', '#ffffff'),
+            border: cssVar('--border', '#dfe6dd'),
+            categories: ['#23865a', '#167477', '#a4660b', '#63bd8e'],
+            statuses: ['#23865a', '#e7a62c', '#167477', '#9aa69e'],
+            accent: '#23865a'
+        };
+    }
 
-        function getThemeColors() {
-            const rootStyles = getComputedStyle(document.documentElement);
-            const getVar = function (name, fallback) {
-                const value = rootStyles.getPropertyValue(name).trim();
-                return value || fallback;
-            };
-            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-            return {
-                text: isDark ? "#c9d1d9" : "#334155",
-                muted: isDark ? "#9ca3af" : "#64748b",
-                grid: isDark ? "rgba(139, 148, 158, 0.2)" : "rgba(15, 23, 42, 0.1)",
-                tooltipBg: isDark ? "#161b22" : "#ffffff",
-                tooltipBorder: isDark ? "#30363d" : "#cbd5e1",
-                category: [
-                    getVar("--green-700", "#1A7A4A"),
-                    getVar("--teal-700", "#0D7377"),
-                    getVar("--amber-700", "#B45309"),
-                    getVar("--green-400", "#4DC887"),
-                ],
-                status: [
-                    getVar("--green-600", "#22A060"),
-                    getVar("--amber-700", "#B45309"),
-                    getVar("--teal-700", "#0D7377"),
-                    isDark ? "#6b7280" : "#9ca3af",
-                ],
-                lineStroke: getVar("--green-600", "#22A060"),
-                lineFillTop: isDark ? "rgba(34, 160, 96, 0.35)" : "rgba(34, 160, 96, 0.28)",
-                lineFillBottom: isDark ? "rgba(34, 160, 96, 0.02)" : "rgba(34, 160, 96, 0.04)",
-            };
-        }
-
-        function getSharedOptions(colors) {
-            return {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: colors.text,
-                            font: {
-                                family: "Poppins",
-                                size: 12,
-                                weight: "600",
-                            },
-                            usePointStyle: true,
-                            pointStyle: "circle",
-                            boxWidth: 10,
-                            boxHeight: 10,
-                        },
-                    },
-                    tooltip: {
-                        backgroundColor: colors.tooltipBg,
-                        borderColor: colors.tooltipBorder,
-                        borderWidth: 1,
-                        titleColor: colors.text,
-                        bodyColor: colors.muted,
-                        padding: 10,
-                        titleFont: {
-                            family: "Poppins",
-                            size: 12,
-                            weight: "600",
-                        },
-                        bodyFont: {
-                            family: "DM Sans",
-                            size: 12,
-                            weight: "500",
-                        },
-                    },
+    function sharedOptions(colors) {
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: reducedMotion ? false : { duration: 650 },
+            plugins: {
+                legend: {
+                    labels: { color: colors.text, usePointStyle: true, pointStyle: 'circle', boxWidth: 9, padding: 16 }
                 },
-            };
-        }
-
-        function destroyCharts() {
-            chartInstances.forEach(function (chart) {
-                if (chart && typeof chart.destroy === "function") {
-                    chart.destroy();
+                tooltip: {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                    borderWidth: 1,
+                    titleColor: colors.text,
+                    bodyColor: colors.muted,
+                    padding: 11,
+                    cornerRadius: 10,
+                    displayColors: true
                 }
-            });
-            chartInstances = [];
-        }
-
-        function renderCharts() {
-            destroyCharts();
-
-            const barCanvas = document.getElementById("foodCategoryBarChart");
-            const donutCanvas = document.getElementById("foodStatusDonutChart");
-            const lineCanvas = document.getElementById("monthlyDeliveriesLineChart");
-            if (!barCanvas || !donutCanvas || !lineCanvas) return;
-
-            const colors = getThemeColors();
-            const shared = getSharedOptions(colors);
-
-            const barChart = new Chart(barCanvas, {
-                type: "bar",
-                data: {
-                    labels: categoryLabels,
-                    datasets: [
-                        {
-                            label: "Posts",
-                            data: categoryValues,
-                            backgroundColor: colors.category,
-                            borderRadius: 10,
-                            maxBarThickness: 48,
-                        },
-                    ],
-                },
-                options: {
-                    ...shared,
-                    plugins: {
-                        ...shared.plugins,
-                        legend: {
-                            display: false,
-                        },
-                    },
-                    scales: {
-                        x: {
-                            ticks: { color: colors.muted, font: { family: "DM Sans", weight: "600" } },
-                            grid: { display: false },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: colors.muted,
-                                precision: 0,
-                                stepSize: 1,
-                                font: { family: "DM Sans", weight: "600" },
-                            },
-                            grid: { color: colors.grid },
-                        },
-                    },
-                },
-            });
-
-            const hasStatusData = statusValues.some(function (value) {
-                return Number(value) > 0;
-            });
-            const safeDonutValues = hasStatusData ? statusValues : [1, 1, 1, 1];
-
-            const donutChart = new Chart(donutCanvas, {
-                type: "doughnut",
-                data: {
-                    labels: statusLabels,
-                    datasets: [
-                        {
-                            data: safeDonutValues,
-                            backgroundColor: colors.status,
-                            borderColor: "transparent",
-                            hoverOffset: 8,
-                        },
-                    ],
-                },
-                options: {
-                    ...shared,
-                    cutout: "66%",
-                    plugins: {
-                        ...shared.plugins,
-                        legend: {
-                            ...shared.plugins.legend,
-                            position: "bottom",
-                        },
-                        tooltip: {
-                            ...shared.plugins.tooltip,
-                            callbacks: {
-                                label: function (context) {
-                                    if (!hasStatusData) return context.label + ": 0";
-                                    return context.label + ": " + context.formattedValue;
-                                },
-                            },
-                        },
-                    },
-                },
-            });
-
-            const lineCtx = lineCanvas.getContext("2d");
-            const lineGradient = lineCtx.createLinearGradient(0, 0, 0, 320);
-            lineGradient.addColorStop(0, colors.lineFillTop);
-            lineGradient.addColorStop(1, colors.lineFillBottom);
-
-            const lineChart = new Chart(lineCanvas, {
-                type: "line",
-                data: {
-                    labels: monthlyLabels,
-                    datasets: [
-                        {
-                            label: "Completed Deliveries",
-                            data: monthlyValues,
-                            borderColor: colors.lineStroke,
-                            backgroundColor: lineGradient,
-                            fill: true,
-                            pointRadius: 3,
-                            pointHoverRadius: 5,
-                            pointBackgroundColor: colors.lineStroke,
-                            pointBorderColor: colors.lineStroke,
-                            borderWidth: 3,
-                            tension: 0.35,
-                        },
-                    ],
-                },
-                options: {
-                    ...shared,
-                    plugins: {
-                        ...shared.plugins,
-                        legend: {
-                            display: false,
-                        },
-                    },
-                    scales: {
-                        x: {
-                            ticks: { color: colors.muted, font: { family: "DM Sans", weight: "600" } },
-                            grid: { color: colors.grid },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0,
-                                stepSize: 1,
-                                color: colors.muted,
-                                font: { family: "DM Sans", weight: "600" },
-                            },
-                            grid: { color: colors.grid },
-                        },
-                    },
-                },
-            });
-
-            chartInstances.push(barChart, donutChart, lineChart);
-        }
-
-        renderCharts();
-
-        const html = document.documentElement;
-        const observer = new MutationObserver(function (mutations) {
-            const hasThemeChange = mutations.some(function (mutation) {
-                return mutation.attributeName === "data-theme";
-            });
-            if (hasThemeChange) {
-                renderCharts();
             }
-        });
-        observer.observe(html, { attributes: true, attributeFilter: ["data-theme"] });
-    })();
+        };
+    }
+
+    function renderCharts() {
+        charts.forEach(function (chart) { chart.destroy(); });
+        charts = [];
+        const barCanvas = document.getElementById('foodCategoryBarChart');
+        const donutCanvas = document.getElementById('foodStatusDonutChart');
+        const lineCanvas = document.getElementById('monthlyDeliveriesLineChart');
+        if (!barCanvas || !donutCanvas || !lineCanvas) return;
+
+        const colors = themeColors();
+        const shared = sharedOptions(colors);
+        const axisTicks = { color: colors.muted, font: { family: 'DM Sans', size: 11 } };
+
+        charts.push(new Chart(barCanvas, {
+            type: 'bar',
+            data: {
+                labels: categoryLabels,
+                datasets: [{ label: 'Food posts', data: categoryValues, backgroundColor: colors.categories, borderRadius: 9, maxBarThickness: 54 }]
+            },
+            options: {
+                ...shared,
+                plugins: { ...shared.plugins, legend: { display: false } },
+                scales: {
+                    x: { ticks: axisTicks, grid: { display: false }, border: { display: false } },
+                    y: { beginAtZero: true, ticks: { ...axisTicks, precision: 0 }, grid: { color: colors.grid }, border: { display: false } }
+                }
+            }
+        }));
+
+        charts.push(new Chart(donutCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{ data: statusValues, backgroundColor: colors.statuses, borderColor: colors.surface, borderWidth: 3, hoverOffset: 7 }]
+            },
+            options: {
+                ...shared,
+                cutout: '68%',
+                plugins: {
+                    ...shared.plugins,
+                    legend: { ...shared.plugins.legend, position: 'bottom' },
+                    tooltip: {
+                        ...shared.plugins.tooltip,
+                        callbacks: { label: function (context) { return context.label + ': ' + context.formattedValue; } }
+                    }
+                }
+            }
+        }));
+
+        const gradient = lineCanvas.getContext('2d').createLinearGradient(0, 0, 0, 320);
+        gradient.addColorStop(0, 'rgba(35, 134, 90, .28)');
+        gradient.addColorStop(1, 'rgba(35, 134, 90, .02)');
+        charts.push(new Chart(lineCanvas, {
+            type: 'line',
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: 'Completed deliveries',
+                    data: monthlyValues,
+                    borderColor: colors.accent,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: .35,
+                    borderWidth: 3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: colors.accent
+                }]
+            },
+            options: {
+                ...shared,
+                plugins: { ...shared.plugins, legend: { display: false } },
+                scales: {
+                    x: { ticks: axisTicks, grid: { color: colors.grid }, border: { display: false } },
+                    y: { beginAtZero: true, ticks: { ...axisTicks, precision: 0 }, grid: { color: colors.grid }, border: { display: false } }
+                }
+            }
+        }));
+    }
+
+    renderCharts();
+    new MutationObserver(function (mutations) {
+        if (mutations.some(function (mutation) { return mutation.attributeName === 'data-theme'; })) renderCharts();
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
 </script>
 {% endblock %}
