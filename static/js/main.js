@@ -37,7 +37,8 @@
         const menu = event.target.closest('details');
         if (menu) {
             closeMenus(menu);
-            if (window.innerWidth <= 900) closeNav();
+            const mobileExploreMenu = window.innerWidth <= 900 && menu.classList.contains('nav-dropdown');
+            if (!mobileExploreMenu) closeNav();
         } else if (!event.target.closest('.main-nav')) {
             closeMenus();
         }
