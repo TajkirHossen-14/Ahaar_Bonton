@@ -1,13 +1,19 @@
 import calendar
+import json
 from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
-from django.db.models import Case, Count, IntegerField, When
+from django.db import IntegrityError, transaction
+from django.db.models import Avg, Case, Count, IntegerField, Q, When
 from django.db.models.functions import TruncMonth
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 
 from food.forms import FoodPostForm
 from .models import (
@@ -23,6 +29,11 @@ from .models import (
 from food.services.matching import FoodMatcher
 from users.forms import CustomLoginForm, CustomRegistrationForm, ProfileUpdateForm
 from delivery.services.notification import notify
+from .forms import ReportForm
+
+
+OTP_MAX_ATTEMPTS = 5
+OTP_LOCK_SECONDS = 300
 
 
 def _require_role(request, allowed_roles):
@@ -30,6 +41,44 @@ def _require_role(request, allowed_roles):
         messages.error(request, "You do not have permission to access this page.")
         return redirect("dashboard")
     return None
+
+
+def _safe_next_url(request, fallback):
+    next_url = request.POST.get("next") or request.GET.get("next")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return next_url
+    return fallback
+
+
+def _otp_cache_key(request, delivery, stage):
+    return f"otp-attempts:{request.user.pk}:{stage}:{delivery.pk}"
+
+
+def _otp_state(request, delivery, stage):
+    key = _otp_cache_key(request, delivery, stage)
+    state = cache.get(key, {"count": 0, "locked_until": 0})
+    return state.get("locked_until", 0) > timezone.now().timestamp(), state, key
+
+
+def _record_failed_otp(request, delivery, stage):
+    locked, state, key = _otp_state(request, delivery, stage)
+    if locked:
+        return
+    state["count"] = state.get("count", 0) + 1
+    if state["count"] >= OTP_MAX_ATTEMPTS:
+        state = {
+            "count": 0,
+            "locked_until": timezone.now().timestamp() + OTP_LOCK_SECONDS,
+        }
+    cache.set(key, state, timeout=OTP_LOCK_SECONDS)
+
+
+def _clear_otp_attempts(request, delivery, stage):
+    cache.delete(_otp_cache_key(request, delivery, stage))
 
 
 # PUBLIC
@@ -46,9 +95,11 @@ def transparency_view(request):
     ).count()
     ngo_count = CustomUser.objects.filter(role=CustomUser.RoleChoices.NGO).count()
     completed_deliveries = Delivery.objects.filter(is_confirmed=True).count()
-    recent_deliveries = Delivery.objects.filter(is_confirmed=True).order_by(
-        "-delivered_at"
-    )[:8]
+    recent_deliveries = (
+        Delivery.objects.filter(is_confirmed=True)
+        .select_related("food_request__ngo", "food_request__food_post__donor", "volunteer")
+        .order_by("-delivered_at")[:8]
+    )
 
     category_counts_qs = FoodPost.objects.values("category").annotate(total=Count("id"))
     category_count_map = {row["category"]: row["total"] for row in category_counts_qs}
@@ -61,8 +112,6 @@ def transparency_view(request):
     category_chart_labels = [label for _, label in category_order]
     category_chart_values = [category_count_map.get(code, 0) for code, _ in category_order]
 
-    status_counts_qs = FoodPost.objects.values("status").annotate(total=Count("id"))
-    status_count_map = {row["status"]: row["total"] for row in status_counts_qs}
     status_order = [
         (FoodPost.StatusChoices.AVAILABLE, "Available"),
         (FoodPost.StatusChoices.CLAIMED, "Claimed"),
@@ -70,7 +119,12 @@ def transparency_view(request):
         (FoodPost.StatusChoices.EXPIRED, "Expired"),
     ]
     status_chart_labels = [label for _, label in status_order]
-    status_chart_values = [status_count_map.get(code, 0) for code, _ in status_order]
+    status_chart_values = [
+        stats["available"],
+        stats["claimed"],
+        stats["delivered"],
+        stats["expired"],
+    ]
 
     monthly_deliveries_qs = (
         Delivery.objects.filter(is_confirmed=True, delivered_at__isnull=False)
@@ -123,14 +177,19 @@ def register_view(request):
     if request.method == "POST":
         form = CustomRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save()
-            if user.role == CustomUser.RoleChoices.DONOR:
-                DonorProfile.objects.get_or_create(user=user)
-            elif user.role == CustomUser.RoleChoices.VOLUNTEER:
-                VolunteerProfile.objects.get_or_create(user=user)
-            login(request, user, backend="users.backends.EmailOrPhoneBackend")
-            messages.success(request, "Registration successful.")
-            return redirect(user.get_dashboard_url())
+            try:
+                with transaction.atomic():
+                    user = form.save()
+                    if user.role == CustomUser.RoleChoices.DONOR:
+                        DonorProfile.objects.get_or_create(user=user)
+                    elif user.role == CustomUser.RoleChoices.VOLUNTEER:
+                        VolunteerProfile.objects.get_or_create(user=user)
+            except IntegrityError:
+                messages.error(request, "An account with these details already exists.")
+            else:
+                login(request, user, backend="users.backends.EmailOrPhoneBackend")
+                messages.success(request, "Your account is ready. Welcome to AhaarBonton.")
+                return redirect(user.get_dashboard_url())
     else:
         form = CustomRegistrationForm()
 
@@ -148,17 +207,18 @@ def login_view(request):
         user = authenticate(request, username=identifier, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, "Login successful.")
-            return redirect(user.get_dashboard_url())
+            messages.success(request, "Welcome back. You are now signed in.")
+            return redirect(_safe_next_url(request, user.get_dashboard_url()))
         messages.error(request, "Invalid email/phone or password.")
 
     return render(request, "auth/login.html", {"form": form})
 
 
+@require_POST
 def logout_view(request):
     logout(request)
-    messages.info(request, "Logged out successfully.")
-    return redirect("/login/")
+    messages.info(request, "You have been logged out successfully.")
+    return redirect("login")
 
 
 @login_required
@@ -194,7 +254,10 @@ def donor_dashboard(request):
     ).count()
 
     total_posts = posts.count()
-    active_posts = posts.filter(status=FoodPost.StatusChoices.AVAILABLE).count()
+    active_posts = posts.filter(
+        status=FoodPost.StatusChoices.AVAILABLE,
+        expiry_time__gt=timezone.now(),
+    ).count()
     delivered_posts = posts.filter(status=FoodPost.StatusChoices.DELIVERED).count()
     expired_posts = posts.filter(status=FoodPost.StatusChoices.EXPIRED).count()
 
@@ -227,8 +290,6 @@ def add_food_post(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.donor = request.user
-            post.latitude = request.POST.get("latitude") or None
-            post.longitude = request.POST.get("longitude") or None
             post.save()
             messages.success(request, "Food post created.")
             return redirect("donor_dashboard")
@@ -253,10 +314,7 @@ def edit_food_post(request, pk):
     if request.method == "POST":
         form = FoodPostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
-            post = form.save(commit=False)
-            post.latitude = request.POST.get("latitude") or None
-            post.longitude = request.POST.get("longitude") or None
-            post.save()
+            form.save()
             messages.success(request, "Food post updated.")
             return redirect("donor_dashboard")
     else:
@@ -266,6 +324,7 @@ def edit_food_post(request, pk):
 
 
 @login_required
+@require_POST
 def delete_food_post(request, pk):
     denied = _require_role(request, [CustomUser.RoleChoices.DONOR])
     if denied:
@@ -296,6 +355,12 @@ def donor_requests(request):
     rejected_requests = all_requests.filter(status=FoodRequest.StatusChoices.REJECTED)
     completed_requests = all_requests.filter(status=FoodRequest.StatusChoices.COMPLETED)
 
+    donor_rated_delivery_ids = set(
+        Rating.objects.filter(
+            rater=request.user,
+            rating_type=Rating.RATER_TYPE_CHOICES[1][0],
+        ).values_list("delivery_id", flat=True)
+    )
     return render(
         request,
         "donor/requests.html",
@@ -306,6 +371,7 @@ def donor_requests(request):
             "rejected_requests": rejected_requests,
             "completed_requests": completed_requests,
             "pending_count": pending_requests.count(),
+            "donor_rated_delivery_ids": donor_rated_delivery_ids,
         },
     )
 
@@ -327,8 +393,20 @@ def handle_request(request, pk):
     )
     action = request.POST.get("action")
 
+    try:
+        if action == "approve":
+            delivery = food_request.approve()
+        elif action == "reject":
+            food_request.reject()
+            delivery = None
+        else:
+            messages.error(request, "Unknown action.")
+            return redirect("donor_requests")
+    except ValueError as exc:
+        messages.error(request, str(exc))
+        return redirect("donor_requests")
+
     if action == "approve":
-        delivery = food_request.approve()
         notify(
             recipient=food_request.ngo.email,
             subject="Food Request Approved",
@@ -338,9 +416,8 @@ def handle_request(request, pk):
             ),
             method="email",
         )
-        messages.success(request, "Request approved.")
-    elif action == "reject":
-        food_request.reject()
+        messages.success(request, "Request approved. A delivery is now open for volunteers.")
+    else:
         notify(
             recipient=food_request.ngo.email,
             subject="Food Request Rejected",
@@ -348,8 +425,6 @@ def handle_request(request, pk):
             method="email",
         )
         messages.warning(request, "Request rejected.")
-    else:
-        messages.error(request, "Unknown action.")
 
     return redirect("donor_requests")
 
@@ -365,7 +440,9 @@ def ngo_dashboard(request):
     posts = matcher.get_priority_posts()
     expiring = matcher.get_expiring_soon(6)
     requested_post_ids = set(
-        FoodRequest.objects.filter(ngo=request.user).values_list("food_post_id", flat=True)
+        FoodRequest.objects.filter(ngo=request.user)
+        .exclude(status=FoodRequest.StatusChoices.REJECTED)
+        .values_list("food_post_id", flat=True)
     )
     context = {
         "posts": posts,
@@ -394,24 +471,48 @@ def request_food(request, pk):
         messages.error(request, "This food post is not available for requests.")
         return redirect("ngo_dashboard")
 
-    already_requested = FoodRequest.objects.filter(
+    existing_request = FoodRequest.objects.filter(
         ngo=request.user,
         food_post=food_post,
-    ).exists()
-    if already_requested:
-        messages.warning(request, "You already requested this food post.")
+    ).first()
+    if existing_request and existing_request.status != FoodRequest.StatusChoices.REJECTED:
+        messages.warning(request, "You already have an active request for this food post.")
         return redirect("ngo_dashboard")
 
     if request.method == "POST":
-        message = request.POST.get("message", "")
-        FoodRequest.objects.create(ngo=request.user, food_post=food_post, message=message)
+        message = request.POST.get("message", "").strip()[:1000]
+        try:
+            with transaction.atomic():
+                locked_post = FoodPost.objects.select_for_update().get(pk=food_post.pk)
+                if locked_post.is_expired() or locked_post.status != FoodPost.StatusChoices.AVAILABLE:
+                    raise ValueError("This food post is no longer available.")
+                if existing_request:
+                    existing_request.status = FoodRequest.StatusChoices.PENDING
+                    existing_request.message = message
+                    existing_request.requested_at = timezone.now()
+                    existing_request.save(
+                        update_fields=["status", "message", "requested_at"]
+                    )
+                else:
+                    FoodRequest.objects.create(
+                        ngo=request.user,
+                        food_post=locked_post,
+                        message=message,
+                    )
+        except (ValueError, IntegrityError) as exc:
+            messages.error(
+                request,
+                str(exc) if isinstance(exc, ValueError) else "This request already exists.",
+            )
+            return redirect("ngo_dashboard")
+
         notify(
             recipient=food_post.donor.email,
             subject="New Food Request Received",
             message=f"{request.user.full_name} requested your post '{food_post.title}'.",
             method="email",
         )
-        messages.success(request, "Food request submitted.")
+        messages.success(request, "Food request submitted. You can track it in My Requests.")
         return redirect("ngo_my_requests")
 
     return render(
@@ -442,10 +543,25 @@ def ngo_my_requests(request):
         )
         .order_by("status_priority", "-requested_at")
     )
+    ngo_ratings = Rating.objects.filter(
+        rater=request.user,
+        rating_type__in=["ngo_to_donor", "ngo_to_volunteer"],
+    ).values_list("rating_type", "delivery_id")
+    ngo_donor_rated_delivery_ids = {
+        delivery_id for rating_type, delivery_id in ngo_ratings if rating_type == "ngo_to_donor"
+    }
+    ngo_volunteer_rated_delivery_ids = {
+        delivery_id for rating_type, delivery_id in ngo_ratings if rating_type == "ngo_to_volunteer"
+    }
     return render(
         request,
         "ngo/my_requests.html",
-        {"my_requests": requests_qs, "requests": requests_qs},
+        {
+            "my_requests": requests_qs,
+            "requests": requests_qs,
+            "ngo_donor_rated_delivery_ids": ngo_donor_rated_delivery_ids,
+            "ngo_volunteer_rated_delivery_ids": ngo_volunteer_rated_delivery_ids,
+        },
     )
 
 
@@ -456,19 +572,35 @@ def volunteer_dashboard(request):
     if denied:
         return denied
 
-    available_deliveries = Delivery.objects.filter(
-        volunteer__isnull=True,
-        is_confirmed=False,
-    ).select_related("food_request", "food_request__food_post", "food_request__ngo")
+    available_deliveries = (
+        Delivery.objects.filter(
+            volunteer__isnull=True,
+            is_confirmed=False,
+            status=Delivery.StatusChoices.PENDING,
+            food_request__status=FoodRequest.StatusChoices.APPROVED,
+            food_request__food_post__status=FoodPost.StatusChoices.CLAIMED,
+            food_request__food_post__expiry_time__gt=timezone.now(),
+        )
+        .select_related(
+            "food_request",
+            "food_request__food_post",
+            "food_request__food_post__donor",
+            "food_request__ngo",
+        )
+        .order_by("food_request__food_post__expiry_time")
+    )
     my_deliveries = Delivery.objects.filter(volunteer=request.user).select_related(
         "food_request",
         "food_request__food_post",
+        "food_request__food_post__donor",
         "food_request__ngo",
     )
     volunteer_profile, _ = VolunteerProfile.objects.get_or_create(user=request.user)
 
     available_count = available_deliveries.count()
     my_count = my_deliveries.count()
+    completed_count = my_deliveries.filter(is_confirmed=True).count()
+    active_count = my_deliveries.filter(is_confirmed=False).count()
     return render(
         request,
         "volunteer/dashboard.html",
@@ -477,27 +609,44 @@ def volunteer_dashboard(request):
             "my_deliveries": my_deliveries,
             "available_count": available_count,
             "my_count": my_count,
+            "completed_count": completed_count,
+            "active_count": active_count,
             "volunteer_trust_score": volunteer_profile.trust_score,
+            "volunteer_profile": volunteer_profile,
         },
     )
 
 
 @login_required
+@require_POST
 def accept_delivery(request, pk):
     if request.user.role != 'volunteer':
         messages.error(request, 'Access denied.')
         return redirect('/')
-    if request.method != 'POST':
-        return redirect('volunteer_dashboard')
-
-    delivery = get_object_or_404(
-        Delivery,
-        pk=pk,
-        volunteer__isnull=True,
-        is_confirmed=False
-    )
-    delivery.volunteer = request.user
-    delivery.save()
+    try:
+        with transaction.atomic():
+            delivery = (
+                Delivery.objects.select_for_update()
+                .select_related("food_request__food_post")
+                .get(
+                    pk=pk,
+                    volunteer__isnull=True,
+                    is_confirmed=False,
+                    status=Delivery.StatusChoices.PENDING,
+                )
+            )
+            food_post = delivery.food_request.food_post
+            if (
+                delivery.food_request.status != FoodRequest.StatusChoices.APPROVED
+                or food_post.status != FoodPost.StatusChoices.CLAIMED
+                or food_post.is_expired()
+            ):
+                raise ValueError("This delivery is no longer available.")
+            delivery.volunteer = request.user
+            delivery.save(update_fields=["volunteer"])
+    except (Delivery.DoesNotExist, ValueError):
+        messages.error(request, "This delivery is no longer available or was already accepted.")
+        return redirect("volunteer_dashboard")
 
     notify(
         recipient=(
@@ -531,6 +680,7 @@ def accept_delivery(request, pk):
 
 
 @login_required
+@require_POST
 def confirm_pickup(request, pk):
     """
     Step 1 of 2.
@@ -540,24 +690,26 @@ def confirm_pickup(request, pk):
     if request.user.role != 'volunteer':
         messages.error(request, 'Access denied.')
         return redirect('/')
-    if request.method != 'POST':
-        return redirect('volunteer_dashboard')
-
     delivery = get_object_or_404(
         Delivery,
         pk=pk,
         volunteer=request.user,
-        pickup_confirmed=False
     )
 
     entered_otp = request.POST.get('otp', '').strip()
     if not entered_otp:
-        messages.error(request, 'Please enter the OTP.')
+        messages.error(request, 'Please enter the 6-digit OTP.')
         return redirect('volunteer_dashboard')
 
-    success = delivery.confirm_pickup(entered_otp)
+    locked, _, _ = _otp_state(request, delivery, 'pickup')
+    if locked:
+        messages.error(request, 'Too many incorrect attempts. Try again in 5 minutes.')
+        return redirect('volunteer_dashboard')
 
-    if success:
+    result = delivery.confirm_pickup(entered_otp)
+
+    if result == 'success':
+        _clear_otp_attempts(request, delivery, 'pickup')
         # Notify NGO that food is on the way
         # Also send them the delivery OTP
         notify(
@@ -585,17 +737,26 @@ def confirm_pickup(request, pk):
             'The NGO has been notified that '
             'food is on the way.'
         )
+    elif result == 'already_confirmed':
+        messages.info(request, 'Pickup was already confirmed.')
+    elif result == 'expired':
+        messages.error(request, 'This food post has expired and cannot be picked up.')
+    elif result == 'not_assigned':
+        messages.error(request, 'This delivery is not assigned to you.')
+    elif result == 'not_available':
+        messages.error(request, 'This delivery is no longer active.')
     else:
+        _record_failed_otp(request, delivery, 'pickup')
         messages.error(
             request,
-            'Incorrect Pickup OTP. '
-            'Please get the correct OTP from the donor.'
+            'Incorrect Pickup OTP. Please get the correct OTP from the donor.'
         )
 
     return redirect('volunteer_dashboard')
 
 
 @login_required
+@require_POST
 def confirm_delivery(request, pk):
     """
     Step 2 of 2.
@@ -606,43 +767,32 @@ def confirm_delivery(request, pk):
     if request.user.role != 'volunteer':
         messages.error(request, 'Access denied.')
         return redirect('/')
-    if request.method != 'POST':
-        return redirect('volunteer_dashboard')
-
     delivery = get_object_or_404(
         Delivery,
         pk=pk,
         volunteer=request.user,
-        delivery_confirmed=False
     )
 
     entered_otp = request.POST.get('otp', '').strip()
     if not entered_otp:
-        messages.error(request, 'Please enter the OTP.')
+        messages.error(request, 'Please enter the 6-digit OTP.')
+        return redirect('volunteer_dashboard')
+
+    locked, _, _ = _otp_state(request, delivery, 'delivery')
+    if locked:
+        messages.error(request, 'Too many incorrect attempts. Try again in 5 minutes.')
         return redirect('volunteer_dashboard')
 
     result = delivery.confirm_delivery(entered_otp)
-    volunteer_profile, _ = VolunteerProfile.objects.get_or_create(user=request.user)
 
     if result == 'pickup_first':
-        volunteer_profile.decrease_score()
         messages.error(
             request,
-            'You must confirm pickup first '
-            'before confirming delivery.'
+            'You must confirm pickup first before confirming delivery.'
         )
 
     elif result == 'success':
-        volunteer_profile.increase_score()
-        # Update donor trust score
-        try:
-            profile = DonorProfile.objects.get(
-                user=delivery.food_request.food_post.donor
-            )
-            profile.increase_score()
-        except DonorProfile.DoesNotExist:
-            pass
-
+        _clear_otp_attempts(request, delivery, 'delivery')
         # Notify donor
         notify(
             recipient=(
@@ -669,12 +819,19 @@ def confirm_delivery(request, pk):
             'Food has reached the NGO.'
         )
 
+    elif result == 'already_confirmed':
+        messages.info(request, 'This delivery was already completed.')
+    elif result == 'expired':
+        messages.error(request, 'This food post has expired and cannot be delivered.')
+    elif result == 'not_assigned':
+        messages.error(request, 'This delivery is not assigned to you.')
+    elif result == 'not_available':
+        messages.error(request, 'This delivery is no longer active.')
     else:
-        volunteer_profile.decrease_score()
+        _record_failed_otp(request, delivery, 'delivery')
         messages.error(
             request,
-            'Incorrect Delivery OTP. '
-            'Please get the correct OTP from the NGO.'
+            'Incorrect Delivery OTP. Please get the correct OTP from the NGO.'
         )
 
     return redirect('volunteer_dashboard')
@@ -715,11 +872,16 @@ def admin_dashboard(request):
     recent_posts = FoodPost.objects.select_related("donor").order_by("-created_at")[:10]
     expiring_posts = FoodPost.objects.filter(
         status=FoodPost.StatusChoices.AVAILABLE,
+        expiry_time__gt=timezone.now(),
         expiry_time__lte=timezone.now() + timedelta(hours=6),
     ).order_by("expiry_time")
     recent_requests = FoodRequest.objects.select_related("ngo", "food_post").order_by(
         "-requested_at"
     )[:8]
+    recent_reports = Report.objects.filter(status="pending").select_related(
+        "reporter", "reported_post", "reported_user"
+    )[:8]
+    pending_report_count = Report.objects.filter(status="pending").count()
     delivery_stats = {
         "total": Delivery.objects.count(),
         "pending": Delivery.objects.filter(status=Delivery.StatusChoices.PENDING).count(),
@@ -738,6 +900,8 @@ def admin_dashboard(request):
         "recent_posts": recent_posts,
         "expiring_posts": expiring_posts,
         "recent_requests": recent_requests,
+        "recent_reports": recent_reports,
+        "pending_report_count": pending_report_count,
         "delivery_stats": delivery_stats,
         # Phase 9 explicit context
         "total_users": total_users,
@@ -754,6 +918,7 @@ def admin_dashboard(request):
 
 
 @login_required
+@require_POST
 def admin_expire_food(request):
     denied = _require_role(request, [CustomUser.RoleChoices.ADMIN])
     if denied:
@@ -780,83 +945,67 @@ def custom_403(request, exception):
 @login_required
 def report_post(request, post_pk):
     post = get_object_or_404(FoodPost, pk=post_pk)
-    if request.method == 'POST':
-        reason = request.POST.get('reason')
-        description = request.POST.get('description', '')
+    if post.donor_id == request.user.pk:
+        messages.error(request, "You cannot report your own food post.")
+        return redirect(request.user.get_dashboard_url())
 
-        # Already reported check
-        already = Report.objects.filter(
-            reporter=request.user,
-            reported_post=post
-        ).exists()
-
-        if already:
-            messages.warning(
-                request,
-                'You have already reported this post.'
-            )
-            return redirect('ngo_dashboard')
-
-        Report.objects.create(
-            reporter=request.user,
-            report_type='post',
-            reported_post=post,
-            reason=reason,
-            description=description
-        )
-        messages.success(
-            request,
-            'Report submitted. Our team will review it.'
-        )
-        return redirect('ngo_dashboard')
+    form = ReportForm(request.POST or None, report_type="post")
+    if request.method == "POST" and form.is_valid():
+        try:
+            with transaction.atomic():
+                Report.objects.create(
+                    reporter=request.user,
+                    report_type="post",
+                    reported_post=post,
+                    reason=form.cleaned_data["reason"],
+                    description=form.cleaned_data["description"],
+                )
+        except IntegrityError:
+            messages.warning(request, "You have already reported this post.")
+        else:
+            messages.success(request, "Report submitted. Our team will review it.")
+        return redirect(request.user.get_dashboard_url())
 
     return render(
-        request, 'reports/report_post.html',
-        {'post': post}
+        request,
+        "reports/report_post.html",
+        {"post": post, "form": form},
     )
 
 
 @login_required
 def report_user(request, user_pk):
-    reported = get_object_or_404(
-        CustomUser, pk=user_pk
-    )
-    if request.method == 'POST':
-        reason = request.POST.get('reason')
-        description = request.POST.get('description', '')
+    reported = get_object_or_404(CustomUser, pk=user_pk)
+    if reported.pk == request.user.pk:
+        messages.error(request, "You cannot report your own account.")
+        return redirect("user_profile", user_pk=reported.pk)
 
-        already = Report.objects.filter(
-            reporter=request.user,
-            reported_user=reported
-        ).exists()
-
-        if already:
-            messages.warning(
-                request,
-                'You have already reported this user.'
-            )
-            return redirect('/')
-
-        Report.objects.create(
-            reporter=request.user,
-            report_type='user',
-            reported_user=reported,
-            reason=reason,
-            description=description
-        )
-        messages.success(
-            request,
-            'Report submitted. Our team will review it.'
-        )
-        return redirect('/')
+    form = ReportForm(request.POST or None, report_type="user")
+    if request.method == "POST" and form.is_valid():
+        try:
+            with transaction.atomic():
+                Report.objects.create(
+                    reporter=request.user,
+                    report_type="user",
+                    reported_user=reported,
+                    reason=form.cleaned_data["reason"],
+                    description=form.cleaned_data["description"],
+                )
+        except IntegrityError:
+            messages.warning(request, "You have already reported this user.")
+        else:
+            messages.success(request, "Report submitted. Our team will review it.")
+        return redirect("user_profile", user_pk=reported.pk)
 
     return render(
-        request, 'reports/report_user.html',
-        {'reported_user': reported}
+        request,
+        "reports/report_user.html",
+        {"reported_user": reported, "form": form},
     )
 
 
 @login_required
+@require_POST
 def submit_rating(request, delivery_pk):
     """
     Handles rating submission after delivery complete.
@@ -865,9 +1014,6 @@ def submit_rating(request, delivery_pk):
     - Donor rates Volunteer
     - NGO rates Volunteer
     """
-    if request.method != 'POST':
-        return redirect('/')
-
     delivery = get_object_or_404(
         Delivery, pk=delivery_pk,
         is_confirmed=True
@@ -877,19 +1023,14 @@ def submit_rating(request, delivery_pk):
     score = request.POST.get('score')
     comment = request.POST.get('comment', '')
 
-    # Validate rating type based on user role
-    valid_types = {
-        'ngo': [
-            'ngo_to_donor',
-            'ngo_to_volunteer'
-        ],
-        'donor': ['donor_to_volunteer'],
+    participant_checks = {
+        "ngo_to_donor": request.user.pk == delivery.food_request.ngo_id,
+        "donor_to_volunteer": request.user.pk == delivery.food_request.food_post.donor_id,
+        "ngo_to_volunteer": request.user.pk == delivery.food_request.ngo_id,
     }
-
-    user_role = request.user.role
-    if rating_type not in valid_types.get(user_role, []):
-        messages.error(request, 'Invalid rating type.')
-        return redirect('/')
+    if not participant_checks.get(rating_type, False):
+        messages.error(request, "You are not allowed to submit this rating.")
+        return redirect(request.user.get_dashboard_url())
 
     # Determine who is being rated
     rated_user = None
@@ -904,20 +1045,6 @@ def submit_rating(request, delivery_pk):
         messages.error(request, 'Could not find user to rate.')
         return redirect('/')
 
-    # Check already rated
-    already_rated = Rating.objects.filter(
-        rater=request.user,
-        delivery=delivery,
-        rating_type=rating_type
-    ).exists()
-
-    if already_rated:
-        messages.warning(
-            request,
-            'You have already submitted this rating.'
-        )
-        return redirect('/')
-
     # Validate score
     try:
         score = int(score)
@@ -929,30 +1056,26 @@ def submit_rating(request, delivery_pk):
         )
         return redirect('/')
 
-    # Create rating
-    Rating.objects.create(
-        rater=request.user,
-        rated_user=rated_user,
-        delivery=delivery,
-        rating_type=rating_type,
-        score=score,
-        comment=comment
-    )
+    comment = comment.strip()[:1000]
+    try:
+        with transaction.atomic():
+            _, created = Rating.objects.get_or_create(
+                rater=request.user,
+                rated_user=rated_user,
+                delivery=delivery,
+                rating_type=rating_type,
+                defaults={"score": score, "comment": comment},
+            )
+    except IntegrityError:
+        created = False
 
-    messages.success(
-        request,
-        f'Thank you! Your rating has been submitted.'
-    )
-
-    # Redirect back to appropriate dashboard
-    if request.user.role == 'donor':
-        return redirect('donor_requests')
-    elif request.user.role == 'ngo':
-        return redirect('ngo_my_requests')
-    return redirect('/')
+    if created:
+        messages.success(request, "Thank you. Your rating has been submitted.")
+    else:
+        messages.warning(request, "You have already submitted this rating.")
+    return redirect(request.user.get_dashboard_url())
 
 
-@login_required
 def user_profile(request, user_pk):
     """
     Public profile page showing ratings and reviews.
@@ -971,6 +1094,12 @@ def user_profile(request, user_pk):
         score_breakdown[i] = ratings.filter(
             score=i).count()
 
+    trust_score = None
+    if profile_user.role == CustomUser.RoleChoices.DONOR:
+        trust_score = getattr(profile_user, "donor_profile", None)
+    elif profile_user.role == CustomUser.RoleChoices.VOLUNTEER:
+        trust_score = getattr(profile_user, "volunteer_profile", None)
+
     context = {
         'profile_user': profile_user,
         'ratings': ratings,
@@ -978,6 +1107,7 @@ def user_profile(request, user_pk):
         'rating_count': rating_count,
         'rating_label': rating_label,
         'score_breakdown': score_breakdown,
+        'trust_profile': trust_score,
     }
     return render(
         request, 'profiles/user_profile.html', context
@@ -985,88 +1115,117 @@ def user_profile(request, user_pk):
 
 
 def leaderboard_view(request):
-    from django.db.models import Count, Avg, Q
-
-    # ── TYPE 1: Activity-based rankings ──────────
-    activity_donors = CustomUser.objects.filter(
-        role='donor'
-    ).annotate(
-        delivered_count=Count(
-            'food_posts',
-            filter=Q(food_posts__status='delivered')
+    activity_donors = (
+        CustomUser.objects.filter(role=CustomUser.RoleChoices.DONOR)
+        .annotate(
+            delivered_count=Count(
+                "food_posts",
+                filter=Q(food_posts__status=FoodPost.StatusChoices.DELIVERED),
+            )
         )
-    ).filter(
-        delivered_count__gt=0
-    ).order_by('-delivered_count')[:10]
-
-    activity_volunteers = CustomUser.objects.filter(
-        role='volunteer'
-    ).annotate(
-        delivery_count=Count(
-            'deliveries',
-            filter=Q(deliveries__is_confirmed=True)
+        .filter(delivered_count__gt=0)
+        .order_by("-delivered_count", "full_name")[:10]
+    )
+    activity_volunteers = (
+        CustomUser.objects.filter(role=CustomUser.RoleChoices.VOLUNTEER)
+        .annotate(
+            delivery_count=Count(
+                "deliveries",
+                filter=Q(deliveries__is_confirmed=True),
+            )
         )
-    ).filter(
-        delivery_count__gt=0
-    ).order_by('-delivery_count')[:10]
+        .filter(delivery_count__gt=0)
+        .order_by("-delivery_count", "full_name")[:10]
+    )
+    rating_donors = (
+        CustomUser.objects.filter(role=CustomUser.RoleChoices.DONOR)
+        .annotate(
+            avg_score=Avg("ratings_received__score"),
+            rating_count=Count("ratings_received"),
+        )
+        .filter(rating_count__gt=0)
+        .order_by("-avg_score", "-rating_count", "full_name")[:10]
+    )
+    rating_volunteers = (
+        CustomUser.objects.filter(role=CustomUser.RoleChoices.VOLUNTEER)
+        .annotate(
+            avg_score=Avg("ratings_received__score"),
+            rating_count=Count("ratings_received"),
+        )
+        .filter(rating_count__gt=0)
+        .order_by("-avg_score", "-rating_count", "full_name")[:10]
+    )
+    trust_donors = (
+        CustomUser.objects.filter(
+            role=CustomUser.RoleChoices.DONOR,
+            donor_profile__isnull=False,
+        )
+        .select_related("donor_profile")
+        .order_by("-donor_profile__trust_score", "full_name")[:10]
+    )
+    trust_volunteers = (
+        CustomUser.objects.filter(
+            role=CustomUser.RoleChoices.VOLUNTEER,
+            volunteer_profile__isnull=False,
+        )
+        .select_related("volunteer_profile")
+        .order_by("-volunteer_profile__trust_score", "full_name")[:10]
+    )
 
-    # ── TYPE 2: Rating-based rankings ─────────────
-    rating_donors = CustomUser.objects.filter(
-        role='donor'
-    ).annotate(
-        avg_score=Avg('ratings_received__score'),
-        rating_count=Count('ratings_received')
-    ).filter(
-        rating_count__gt=0
-    ).order_by('-avg_score')[:10]
-
-    rating_volunteers = CustomUser.objects.filter(
-        role='volunteer'
-    ).annotate(
-        avg_score=Avg('ratings_received__score'),
-        rating_count=Count('ratings_received')
-    ).filter(
-        rating_count__gt=0
-    ).order_by('-avg_score')[:10]
-
-    return render(request, 'leaderboard.html', {
-        'activity_donors':     activity_donors,
-        'activity_volunteers': activity_volunteers,
-        'rating_donors':       rating_donors,
-        'rating_volunteers':   rating_volunteers,
+    return render(request, "leaderboard.html", {
+        "activity_donors": activity_donors,
+        "activity_volunteers": activity_volunteers,
+        "rating_donors": rating_donors,
+        "rating_volunteers": rating_volunteers,
+        "trust_donors": trust_donors,
+        "trust_volunteers": trust_volunteers,
     })
 
 
 def food_map_view(request):
-    import json
-
     posts = (
-        FoodPost.objects.filter(status='available')
+        FoodPost.objects.filter(
+            status=FoodPost.StatusChoices.AVAILABLE,
+            expiry_time__gt=timezone.now(),
+        )
         .exclude(latitude=None)
         .exclude(longitude=None)
-        .select_related('donor')
+        .select_related("donor")
+        .order_by("expiry_time")
     )
 
     posts_data = []
     for post in posts:
-        posts_data.append({
-            'id': post.pk,
-            'title': post.title,
-            'quantity': post.quantity,
-            'category': post.get_category_display(),
-            'location': post.location,
-            'lat': float(post.latitude),
-            'lng': float(post.longitude),
-            'expiry': post.time_remaining(),
-            'donor': post.donor.full_name,
-            'request_url': f'/ngo/request/{post.pk}/',
-        })
+        posts_data.append(
+            {
+                "id": post.pk,
+                "title": post.title,
+                "quantity": post.quantity,
+                "category": post.get_category_display(),
+                "location": post.location,
+                "lat": round(float(post.latitude), 6 if request.user.is_authenticated else 3),
+                "lng": round(float(post.longitude), 6 if request.user.is_authenticated else 3),
+                "expiry": post.expiry_time.isoformat(),
+                "donor": post.donor.full_name,
+                "request_url": (
+                    reverse("request_food", kwargs={"pk": post.pk})
+                    if getattr(request.user, "role", None) == CustomUser.RoleChoices.NGO
+                    else None
+                ),
+            }
+        )
 
-    return render(request, 'food_map.html', {
-        'posts': posts,
-        'posts_json': json.dumps(posts_data),
-        'total': posts.count(),
-    })
+    return render(
+        request,
+        "food_map.html",
+        {
+            "posts": posts,
+            "posts_data": posts_data,
+            "posts_json": json.dumps(posts_data),
+            "total": posts.count(),
+            "can_request": getattr(request.user, "role", None) == CustomUser.RoleChoices.NGO,
+        },
+    )
 
 
 def heatmap_view(request):
@@ -1079,20 +1238,18 @@ def heatmap_view(request):
         longitude=None
     )
 
-    # Heatmap data: [lat, lng, intensity]
+    # Aggregate approximate coordinates so public heatmaps do not reveal exact addresses.
     heat_data = []
     for post in posts:
-        # Higher intensity for recent/delivered posts
         intensity = 0.5
-        if post.status == 'delivered':
+        if post.status == FoodPost.StatusChoices.DELIVERED:
             intensity = 1.0
-        elif post.status == 'available':
+        elif post.status == FoodPost.StatusChoices.AVAILABLE and not post.is_expired():
             intensity = 0.7
-
         heat_data.append([
-            float(post.latitude),
-            float(post.longitude),
-            intensity
+            round(float(post.latitude), 3),
+            round(float(post.longitude), 3),
+            intensity,
         ])
 
     # Stats by status
@@ -1107,7 +1264,7 @@ def heatmap_view(request):
     }
 
     return render(request, 'heatmap.html', {
-        'heat_data': json.dumps(heat_data),
+        'heat_data': heat_data,
         'stats':     stats,
     })
 
