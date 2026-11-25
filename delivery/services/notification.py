@@ -1,4 +1,7 @@
+import logging
 from abc import ABC, abstractmethod
+
+logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -30,15 +33,20 @@ class EmailNotification(BaseNotification):
             if isinstance(self.recipient, (list, tuple, set))
             else [self.recipient]
         )
-        send_mail(
+        sent = send_mail(
             subject=self.subject,
             message=self.message,
             from_email=getattr(
                 settings, "DEFAULT_FROM_EMAIL", "no-reply@ahaarbonton.local"
             ),
             recipient_list=recipient_list,
-            fail_silently=False,
+            fail_silently=True,
         )
+        if not sent:
+            logger.warning(
+                "Notification was not sent",
+                extra={"recipient": self.recipient, "subject": self.subject},
+            )
         self.log()
 
 
