@@ -2,10 +2,120 @@
 {% block page_title %}NGO dashboard - AhaarBonton{% endblock %}
 {% block content %}
 <section class="container page-section">
-    <div class="dashboard-hero"><div><span class="eyebrow">NGO workspace</span><h1>Find food. Nourish community.</h1><p>Welcome, {{ request.user.full_name|truncatechars:30 }}. Browse donations closest to expiry first.</p></div><div class="banner-actions"><a href="{% url 'ngo_my_requests' %}" class="btn btn-ghost"><svg class="icon"><use href="#i-mail"/></svg>My requests</a><a href="{% url 'food_map' %}" class="btn btn-primary"><svg class="icon"><use href="#i-map"/></svg>Food map</a></div></div>
-    {% if expiring_count %}<div class="alert alert-warning"><svg class="icon alert-icon"><use href="#i-clock"/></svg><span><strong>{{ expiring_count }} donation{{ expiring_count|pluralize }}</strong> will expire within six hours. Prioritize these requests.</span></div>{% endif %}
-    <div class="filter-bar" aria-label="Filter food posts"><button type="button" class="filter-btn active" data-filter="all">All food</button><button type="button" class="filter-btn" data-filter="expiring">Expiring soon</button><button type="button" class="filter-btn" data-filter="cooked">Cooked</button><button type="button" class="filter-btn" data-filter="raw">Raw</button><button type="button" class="filter-btn" data-filter="packaged">Packaged</button><button type="button" class="filter-btn" data-filter="bakery">Bakery</button></div>
-    <div class="section-header"><div><h2 id="postCount">{{ posts|length }} food post{{ posts|length|pluralize }} available</h2><p class="muted" style="font-size:.85rem;">Choose the donations that fit your community’s needs.</p></div><a href="{% url 'heatmap' %}" class="btn btn-ghost btn-sm"><svg class="icon icon-sm"><use href="#i-layers"/></svg>Community heatmap</a></div>
-    {% if posts %}<div class="ngo-grid">{% for post in posts %}<article class="ngo-food-card" data-category="{{ post.category }}" data-expiring="{% if post.expires_within_six_hours %}yes{% else %}no{% endif %}"><div class="food-media"><span class="category-badge">{{ post.get_category_display }}</span>{% if post.image %}<img src="{{ post.image.url }}" alt="{{ post.title }}">{% else %}<div class="food-placeholder"><svg class="icon icon-lg"><use href="#i-box"/></svg></div>{% endif %}</div><div class="food-card-body"><div class="food-title-row"><h4>{{ post.title }}</h4>{% if post.expires_within_six_hours %}<span class="badge badge-pending">Urgent</span>{% endif %}</div><p class="food-meta">{{ post.quantity }} servings · {{ post.get_category_display }}</p><p class="food-meta"><svg class="icon icon-sm"><use href="#i-pin"/></svg>{{ post.location|truncatechars:48 }}</p><p class="food-card-desc">{{ post.description|truncatechars:120 }}</p><div class="expiry-countdown" data-expiry="{{ post.expiry_time|date:'c' }}">{{ post.time_remaining }}</div><div class="donor-tag"><a href="{% url 'user_profile' post.donor.pk %}"><svg class="icon icon-sm"><use href="#i-user"/></svg>{{ post.donor.full_name }}</a>{% with avg=post.donor.get_average_rating %}{% if avg %} · <span>★ {{ avg }}</span>{% endif %}{% endwith %}</div><div class="food-card-actions">{% if post.pk in requested_post_ids %}<button type="button" class="btn btn-secondary btn-sm" disabled><svg class="icon icon-sm"><use href="#i-check"/></svg>Request sent</button>{% else %}<a href="{% url 'request_food' post.pk %}" class="btn btn-primary btn-sm">Request food <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>{% endif %}<a href="{% url 'report_post' post.pk %}" class="muted" style="font-size:.73rem;"><svg class="icon icon-sm"><use href="#i-flag"/></svg>Report</a></div></div></article>{% endfor %}</div><div id="noResults" class="empty-state hidden"><h3>No matching donations</h3><p>Try another category or check back soon.</p></div>{% else %}<div class="empty-state"><div class="empty-icon"><svg class="icon icon-lg"><use href="#i-search"/></svg></div><h3>No food available right now</h3><p>New donations appear here as soon as donors share them.</p><a href="{% url 'food_map' %}" class="btn btn-ghost">View the food map</a></div>{% endif %}
+    <div class="dashboard-hero">
+        <div>
+            <span class="eyebrow">NGO workspace</span>
+            <h1>Find food. Nourish community.</h1>
+            <p>Welcome, {{ request.user.full_name|truncatechars:30 }}. Browse donations closest to expiry first and request what your community can use.</p>
+        </div>
+        <div class="banner-actions">
+            <a href="{% url 'ngo_my_requests' %}" class="btn btn-ghost">
+                <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>My requests
+            </a>
+            <a href="{% url 'food_map' %}" class="btn btn-primary">
+                <svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>Food map
+            </a>
+        </div>
+    </div>
+
+    {% if expiring_count %}
+    <div class="alert alert-warning" role="status">
+        <svg class="icon alert-icon" aria-hidden="true"><use href="#i-clock"/></svg>
+        <span><strong>{{ expiring_count }} donation{{ expiring_count|pluralize }}</strong> will expire within six hours. Prioritize food your team can collect safely.</span>
+        <a href="#available-food-heading">Review donations</a>
+    </div>
+    {% endif %}
+
+    {% if posts %}
+    <div class="filter-bar" role="group" aria-label="Filter available food posts">
+        <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">All food</button>
+        <button type="button" class="filter-btn" data-filter="expiring" aria-pressed="false">Expiring soon</button>
+        <button type="button" class="filter-btn" data-filter="cooked" aria-pressed="false">Cooked</button>
+        <button type="button" class="filter-btn" data-filter="raw" aria-pressed="false">Raw</button>
+        <button type="button" class="filter-btn" data-filter="packaged" aria-pressed="false">Packaged</button>
+        <button type="button" class="filter-btn" data-filter="bakery" aria-pressed="false">Bakery</button>
+    </div>
+    {% endif %}
+
+    <section class="workspace-section" aria-labelledby="available-food-heading">
+        <div class="section-header">
+            <div>
+                <span class="eyebrow">Available now</span>
+                <h2 id="postCount" aria-live="polite">{{ posts|length }} food post{{ posts|length|pluralize }} available</h2>
+                <p class="section-description">Choose donations that fit your community’s needs and collection capacity.</p>
+            </div>
+            <a href="{% url 'heatmap' %}" class="btn btn-ghost btn-sm">
+                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-layers"/></svg>Community heatmap
+            </a>
+        </div>
+
+        {% if posts %}
+        <div class="ngo-grid">
+            {% for post in posts %}
+            <article class="ngo-food-card" data-category="{{ post.category }}" data-expiring="{% if post.expires_within_six_hours %}yes{% else %}no{% endif %}">
+                <div class="food-media">
+                    <span class="category-badge">{{ post.get_category_display }}</span>
+                    {% if post.expires_within_six_hours %}
+                    <span class="badge badge-pending category-badge category-badge-urgent">Urgent</span>
+                    {% endif %}
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" loading="lazy">
+                    {% else %}
+                    <div class="food-placeholder"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-box"/></svg></div>
+                    {% endif %}
+                </div>
+                <div class="food-card-body">
+                    <div class="food-card-heading">
+                        <h3>{{ post.title }}</h3>
+                        <p class="food-meta">{{ post.quantity }} serving{{ post.quantity|pluralize }} · {{ post.get_category_display }}</p>
+                    </div>
+                    <p class="food-meta"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pin"/></svg>{{ post.location|truncatechars:52 }}</p>
+                    <p class="food-card-desc">{{ post.description|truncatechars:135 }}</p>
+                    <div class="expiry-countdown" data-expiry="{{ post.expiry_time|date:'c' }}">{{ post.time_remaining_display }}</div>
+                    <div class="donor-tag">
+                        <a href="{% url 'user_profile' post.donor.pk %}">
+                            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-user"/></svg>{{ post.donor.full_name }}
+                        </a>
+                        {% if post.donor_avg_rating %}
+                        <span aria-label="Rated {{ post.donor_avg_rating|floatformat:1 }} out of 5">★ {{ post.donor_avg_rating|floatformat:1 }}</span>
+                        {% else %}
+                        <span>New donor</span>
+                        {% endif %}
+                    </div>
+                    <div class="food-card-footer">
+                        <div class="food-card-actions">
+                            {% if post.pk in requested_post_ids %}
+                            <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg>Request sent
+                            </button>
+                            {% else %}
+                            <a href="{% url 'request_food' post.pk %}" class="btn btn-primary btn-sm">
+                                Request food<svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"/></svg>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'report_post' post.pk %}" class="btn btn-ghost btn-sm" aria-label="Report {{ post.title }}">
+                                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-flag"/></svg><span aria-hidden="true">Report</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        <div id="noResults" class="empty-state hidden" role="status">
+            <div class="empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-search"/></svg></div>
+            <h3>No matching donations</h3>
+            <p>Try another category or check back soon for newly shared food.</p>
+            <a href="{% url 'ngo_dashboard' %}" class="btn btn-ghost btn-sm">Reset filters</a>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-search"/></svg></div>
+            <h3>No food available right now</h3>
+            <p>New donations appear here as soon as donors share them. You can also check the map for nearby pickup points.</p>
+            <a href="{% url 'food_map' %}" class="btn btn-ghost empty-action-btn">View the food map</a>
+        </div>
+        {% endif %}
+    </section>
 </section>
 {% endblock %}
