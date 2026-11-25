@@ -1,80 +1,78 @@
 {% extends 'base.html' %}
 {% load static %}
-
-{% block page_title %}Login - AhaarBonton{% endblock %}
+{% block page_title %}Log in - AhaarBonton{% endblock %}
+{% block body_class %}auth-page{% endblock %}
 
 {% block content %}
 <section class="auth-wrapper">
-    <div class="auth-card">
-        <header class="auth-header">
-            <div class="auth-logo">
-                <img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt="AhaarBonton Logo">
+    <div class="auth-shell auth-shell-login">
+        <aside class="auth-story" aria-label="About AhaarBonton">
+            <a href="{% url 'home' %}" class="brand" aria-label="AhaarBonton home">
+                <span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span>
+                <span class="brand-name">Ahaar<span>Bonton</span></span>
+            </a>
+            <div class="auth-network" aria-hidden="true">
+                <svg class="auth-network-lines" viewBox="0 0 520 340" fill="none">
+                    <circle cx="260" cy="170" r="118"/>
+                    <circle cx="260" cy="170" r="154"/>
+                    <path d="M92 86C190 86 184 170 260 170S330 254 428 254"/>
+                    <path d="M92 254C190 254 184 170 260 170S330 86 428 86"/>
+                </svg>
+                <div class="auth-network-center"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></div>
+                <div class="auth-network-node node-donor"><svg class="icon"><use href="#i-box"/></svg><span>Donor</span></div>
+                <div class="auth-network-node node-ngo"><svg class="icon"><use href="#i-building"/></svg><span>NGO</span></div>
+                <div class="auth-network-node node-volunteer"><svg class="icon"><use href="#i-truck"/></svg><span>Volunteer</span></div>
             </div>
+            <div class="auth-story-copy">
+                <span class="auth-story-eyebrow">Every meal matters</span>
+                <h2>Good food moves when people connect.</h2>
+                <p>Your account brings food posts, requests, deliveries, and community impact into one clear workspace.</p>
+                <ul class="auth-story-list">
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Follow every request and delivery</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Verify handovers with one-time codes</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Build trust through completed actions</li>
+                </ul>
+                <div class="auth-story-proof"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Verified handovers. Private by design.</div>
+            </div>
+        </aside>
 
-            <h2>Welcome Back</h2>
-            <p>Log in to continue reducing food waste and increasing impact.</p>
-        </header>
-
-        <form method="post" action="{% url 'login' %}">
-            {% csrf_token %}
-
-            <div>
-                <label for="id_identifier">Email or Phone Number</label>
-                <input
-                    type="text"
-                    id="id_identifier"
-                    name="identifier"
-                    value="{{ form.identifier.value|default:'' }}"
-                    placeholder="you@example.com or +8801XXXXXXXXX"
-                    required
-                >
-                {% if form.identifier.errors %}
-                    <p class="location-error">{{ form.identifier.errors.0 }}</p>
+        <div class="auth-card">
+            <header class="auth-header">
+                <div class="auth-logo"><svg aria-hidden="true"><use href="#i-leaf"/></svg></div>
+                <h1>Welcome back</h1>
+                <p>Log in to continue your community food-sharing journey.</p>
+            </header>
+            <form method="post" action="{% url 'login' %}" novalidate data-enhanced-form>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                <div class="form-summary hidden" data-form-summary role="alert" tabindex="-1"></div>
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
                 {% endif %}
-            </div>
-
-            <div class="password-wrapper">
-                <label for="password">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    required
-                >
-                <button
-                    id="togglePassword"
-                    class="password-toggle"
-                    type="button"
-                    aria-label="Show password"
-                    aria-pressed="false"
-                >
-                    <span class="eye-icon" aria-hidden="true">&#128065;</span>
-                </button>
-                {% if form.password.errors %}
-                    <p class="location-error">{{ form.password.errors.0 }}</p>
-                {% endif %}
-            </div>
-
-            <div style="text-align:right; margin-top:-0.5rem;
-                        margin-bottom:1rem;">
-                <a href="{% url 'password_reset' %}"
-                   style="font-size:0.82rem;
-                          color:var(--muted);
-                          text-decoration:none;
-                          transition:var(--transition);"
-                   onmouseover="this.style.color='var(--green-700)'"
-                   onmouseout="this.style.color='var(--muted)'">
-                    Forgot password?
-                </a>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-lg btn-full">Login</button>
-        </form>
-
-        <footer class="auth-footer">
-            <p>New here? <a href="{% url 'register' %}" class="auth-link">Create an account</a></p>
-        </footer>
+                <div class="form-group">
+                    <label for="id_identifier">Email or phone number</label>
+                    <div class="input-with-icon">
+                        <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
+                        <input type="text" id="id_identifier" name="identifier" value="{{ form.identifier.value|default:'' }}" autocomplete="username" placeholder="you@example.com or +8801XXXXXXXXX" required>
+                    </div>
+                    {{ form.identifier.errors }}
+                </div>
+                <div class="form-group">
+                    <label for="id_password">Password</label>
+                    <div class="password-field input-with-icon">
+                        <svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>
+                        <input type="password" id="id_password" name="password" autocomplete="current-password" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle" data-target="id_password" aria-label="Show password" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></button>
+                    </div>
+                    {{ form.password.errors }}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'password_reset' %}" class="muted auth-inline-link">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-full">Log in <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            </form>
+            <footer class="auth-footer">New to AhaarBonton? <a href="{% url 'register' %}">Create an account</a></footer>
+        </div>
     </div>
 </section>
 {% endblock %}
