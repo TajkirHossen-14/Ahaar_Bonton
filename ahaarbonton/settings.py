@@ -6,14 +6,35 @@ import os
 from pathlib import Path
 
 from django.contrib.messages import constants as messages
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production.
-SECRET_KEY = "django-insecure-change-me-in-production"
-DEBUG = True
-ALLOWED_HOSTS: list[str] = []
+# Environment-specific configuration. Local development works without a .env file.
+def env_bool(name, default=False):
+    return os.getenv(name, str(default)).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def env_list(name, default=""):
+    return [item.strip() for item in os.getenv(name, default).split(",") if item.strip()]
+
+
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-local-development-only-change-before-deploying",
+)
+DEBUG = env_bool("DJANGO_DEBUG", True)
+ALLOWED_HOSTS: list[str] = env_list(
+    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]" if DEBUG else ""
+)
+CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
+
+if not DEBUG:
+    if not os.getenv("DJANGO_SECRET_KEY") or SECRET_KEY.startswith("django-insecure-"):
+        raise ImproperlyConfigured("Set a strong DJANGO_SECRET_KEY when DEBUG is disabled.")
+    if not ALLOWED_HOSTS:
+        raise ImproperlyConfigured("Set DJANGO_ALLOWED_HOSTS when DEBUG is disabled.")
 
 # Application definition
 INSTALLED_APPS = [
@@ -90,7 +111,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Media files
 MEDIA_URL = "/media/"
@@ -114,30 +136,42 @@ LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/login/"
 
 # ── Email Configuration ───────────────────────────
-# Development: emails print to console
-EMAIL_BACKEND      = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'AhaarBonton <noreply@ahaarbonton.com>'
-EMAIL_HOST_USER    = ''
-
-# ── Production Email (Gmail SMTP) ─────────────────
-# When deploying, comment out the console backend above
-# and uncomment these lines:
-#
-# EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST          = 'smtp.gmail.com'
-# EMAIL_PORT          = 587
-# EMAIL_USE_TLS       = True
-# EMAIL_HOST_USER     = 'your@gmail.com'
-# EMAIL_HOST_PASSWORD = 'your_gmail_app_password'
-# DEFAULT_FROM_EMAIL  = 'AhaarBonton <your@gmail.com>'
+EMAIL_BACKEND = os.getenv(
+    "DJANGO_EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend" if DEBUG else "django.core.mail.backends.smtp.EmailBackend",
+)
+EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("DJANGO_EMAIL_PORT", "587"))
+EMAIL_USE_TLS = env_bool("DJANGO_EMAIL_USE_TLS", True)
+EMAIL_HOST_USER = os.getenv("DJANGO_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("DJANGO_EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DJANGO_DEFAULT_FROM_EMAIL", "AhaarBonton <noreply@ahaarbonton.com>"
+)
+EMAIL_TIMEOUT = 10
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 
 # ── Password Reset ────────────────────────────────
-PASSWORD_RESET_TIMEOUT = 86400  # Link expires in 24 hours
+PASSWORD_RESET_TIMEOUT = 3600  # Link expires in 1 hour
+
+# Secure defaults for deployed environments.
+if not DEBUG:
+    SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = int(os.getenv("DJANGO_HSTS_SECONDS", "31536000"))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+    X_FRAME_OPTIONS = "DENY"
 
 # Django messages CSS tag mapping
 MESSAGE_TAGS = {
-    messages.INFO: "message-info",
-    messages.SUCCESS: "message-success",
-    messages.WARNING: "message-warning",
-    messages.ERROR: "message-error",
+    messages.INFO: "info",
+    messages.SUCCESS: "success",
+    messages.WARNING: "warning",
+    messages.ERROR: "error",
 }
