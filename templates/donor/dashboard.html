@@ -1,108 +1,139 @@
 {% extends 'base.html' %}
-
-{% block page_title %}Donor Dashboard - AhaarBonton{% endblock %}
-
+{% block page_title %}Donor dashboard - AhaarBonton{% endblock %}
 {% block content %}
-<section class="container">
-    <div class="welcome-banner">
-        <h2>Welcome back, {{ user.full_name }}!</h2>
-        <p>Manage your active posts, track completed deliveries, and respond to NGO requests.</p>
+<section class="container page-section">
+    <div class="dashboard-hero">
+        <div>
+            <span class="eyebrow">Donor workspace</span>
+            <h1>Welcome back, {{ request.user.full_name|truncatechars:32 }}</h1>
+            <p>Every shared meal starts with a clear, caring donor. Here’s what is happening with your donations.</p>
+        </div>
         <div class="banner-actions">
-            <a href="{% url 'donor_requests' %}" class="btn btn-ghost btn-sm">📬 Requests ({{ pending_count }})</a>
-            <a href="{% url 'add_food' %}" class="btn btn-primary btn-sm">+ Add Food Post</a>
+            <a href="{% url 'donor_requests' %}" class="btn btn-ghost">
+                <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>Requests{% if pending_count %} ({{ pending_count }}){% endif %}
+            </a>
+            <a href="{% url 'add_food' %}" class="btn btn-primary">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Share food
+            </a>
         </div>
     </div>
-</section>
 
-<section class="container">
-    <div class="stats-grid">
+    {% if pending_count %}
+    <div class="alert alert-warning" role="status">
+        <svg class="icon alert-icon" aria-hidden="true"><use href="#i-clock"/></svg>
+        <span><strong>{{ pending_count }} NGO request{{ pending_count|pluralize }}</strong> waiting for your response.</span>
+        <a href="{% url 'donor_requests' %}#pending-heading">Review requests</a>
+    </div>
+    {% endif %}
+
+    <div class="stats-grid" aria-label="Donation overview">
         <article class="stat-card">
-            <div class="stat-icon">📊</div>
-            <h4>Total Posts</h4>
+            <div class="stat-card-top">
+                <h2>Total posts</h2>
+                <span class="stat-icon"><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg></span>
+            </div>
             <p>{{ total_posts }}</p>
+            <div class="stat-card-note">All food posts you have shared</div>
         </article>
         <article class="stat-card">
-            <div class="stat-icon" style="background: var(--green-600);">🟢</div>
-            <h4>Available</h4>
-            <p style="color: var(--green-700);">{{ active_posts }}</p>
+            <div class="stat-card-top">
+                <h2>Available now</h2>
+                <span class="stat-icon teal"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span>
+            </div>
+            <p>{{ active_posts }}</p>
+            <div class="stat-card-note">Ready for NGOs to request</div>
         </article>
         <article class="stat-card">
-            <div class="stat-icon" style="background: var(--teal-700);">✅</div>
-            <h4>Delivered</h4>
-            <p style="color: var(--teal-700);">{{ delivered_posts }}</p>
+            <div class="stat-card-top">
+                <h2>Delivered</h2>
+                <span class="stat-icon teal"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg></span>
+            </div>
+            <p>{{ delivered_posts }}</p>
+            <div class="stat-card-note">Donations that reached their community</div>
         </article>
         <article class="stat-card">
-            <div class="stat-icon" style="background: var(--amber-700);">⭐</div>
-            <h4>Trust Score</h4>
-            {% if donor_profile %}
-                <p style="color: var(--amber-700);">{{ donor_profile.trust_score }}</p>
-            {% else %}
-                <p style="color: var(--amber-700);">0</p>
-            {% endif %}
+            <div class="stat-card-top">
+                <h2>Trust score</h2>
+                <span class="stat-icon amber"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+            </div>
+            <p>{{ donor_profile.trust_score|default:0 }}<small class="muted">/ 100</small></p>
+            <div class="stat-card-note">Built through reliable donation follow-through</div>
         </article>
     </div>
-</section>
 
-<section class="container">
-    <header class="section-header">
-        <h3>My Food Posts</h3>
-        <span>{{ total_posts }} post{{ total_posts|pluralize }}</span>
-    </header>
+    <section class="workspace-section" aria-labelledby="food-posts-heading">
+        <div class="section-header">
+            <div>
+                <span class="eyebrow">Your donations</span>
+                <h2 id="food-posts-heading">Food posts</h2>
+                <p class="section-description">{{ total_posts }} post{{ total_posts|pluralize }} shared with the community{% if expired_posts %} · {{ expired_posts }} expired{% endif %}.</p>
+            </div>
+            <a href="{% url 'add_food' %}" class="btn btn-ghost btn-sm">
+                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg>New post
+            </a>
+        </div>
 
-    {% if posts %}
+        {% if posts %}
         <div class="food-grid">
             {% for post in posts %}
-                <article class="food-card">
-                    <div class="food-media">
-                        {% if post.image %}
-                            <img src="{{ post.image.url }}" alt="{{ post.title }}">
+            <article class="food-card">
+                <div class="food-media">
+                    <span class="category-badge">{{ post.get_category_display }}</span>
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" loading="lazy">
+                    {% else %}
+                    <div class="food-placeholder"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-box"/></svg></div>
+                    {% endif %}
+                </div>
+                <div class="food-card-body">
+                    <div class="card-status-line">
+                        <span>{{ post.created_at|date:"d M Y" }}</span>
+                        <span class="badge badge-{{ post.status }}">{{ post.get_status_display }}</span>
+                    </div>
+                    <div class="food-card-heading">
+                        <h3>{{ post.title }}</h3>
+                        <p class="food-meta">{{ post.quantity }} serving{{ post.quantity|pluralize }} · {{ post.get_category_display }}</p>
+                    </div>
+                    <p class="food-meta"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pin"/></svg>{{ post.location|truncatechars:52 }}</p>
+                    <p class="food-meta {% if post.is_expired %}expiry-red{% else %}expiry-green{% endif %}">
+                        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+                        {% if post.is_expired %}Expired{% else %}{{ post.time_remaining_display }} remaining{% endif %}
+                    </p>
+                    <div class="food-card-footer">
+                        {% if post.status == 'available' or post.status == 'expired' %}
+                        <div class="food-card-actions">
+                            <a href="{% url 'edit_food' post.pk %}" class="btn btn-secondary btn-sm">
+                                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"/></svg>Edit
+                            </a>
+                            <form method="post" action="{% url 'delete_food' post.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" data-confirm="Delete this food post permanently?">
+                                    <svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg>Delete
+                                </button>
+                            </form>
+                        </div>
+                        {% elif post.status == 'claimed' %}
+                        <p class="status-note">Collection is in progress. Follow the handover in your requests.</p>
+                        <a href="{% url 'donor_requests' %}#approved-heading" class="btn btn-ghost btn-sm">View delivery</a>
                         {% else %}
-                            <div class="food-placeholder">🍱</div>
+                        <p class="status-note">Thank you for helping this meal reach its community.</p>
+                        <a href="{% url 'donor_requests' %}#completed-heading" class="btn btn-ghost btn-sm">View outcome</a>
                         {% endif %}
                     </div>
-                    <div class="food-card-body">
-                        <div class="food-title-row">
-                            <h4>{{ post.title }}</h4>
-                            {% if post.status == 'available' %}
-                                <span class="badge-available">Available</span>
-                            {% elif post.status == 'claimed' %}
-                                <span class="badge-claimed">Claimed</span>
-                            {% elif post.status == 'delivered' %}
-                                <span class="badge-delivered">Delivered</span>
-                            {% elif post.status == 'expired' %}
-                                <span class="badge-expired">Expired</span>
-                            {% endif %}
-                        </div>
-
-                        <p class="food-meta">Quantity: {{ post.quantity }} · Category: {{ post.get_category_display }}</p>
-                        <p class="food-meta">Location: {{ post.location|truncatechars:45 }}</p>
-                        <p class="food-meta {% if post.is_expired %}expiry-red{% else %}expiry-green{% endif %}">
-                            Expiry: {{ post.expiry_time|date:"d M Y, h:i A" }}
-                        </p>
-
-                        <div class="food-card-actions">
-                            {% if post.status == 'available' or post.status == 'expired' %}
-                                <a href="{% url 'edit_food' post.pk %}" class="btn btn-secondary btn-sm">Edit</a>
-                                <form method="post" action="{% url 'delete_food' post.pk %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this food post?')">Delete</button>
-                                </form>
-                            {% elif post.status == 'claimed' %}
-                                <p class="status-note">⏳ Awaiting delivery</p>
-                            {% elif post.status == 'delivered' %}
-                                <p class="status-note">✅ Delivered</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </article>
+                </div>
+            </article>
             {% endfor %}
         </div>
-    {% else %}
-        <div class="empty-state card">
-            <h4>No food posts yet</h4>
-            <p>Start by adding your first surplus food post.</p>
-            <a href="{% url 'add_food' %}" class="btn btn-primary empty-action-btn">+ Add First Post</a>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-box"/></svg></div>
+            <h3>Your first donation starts here</h3>
+            <p>Share accurate food details and help a nearby community reduce waste. It takes only a few minutes.</p>
+            <a href="{% url 'add_food' %}" class="btn btn-primary empty-action-btn">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Share surplus food
+            </a>
         </div>
-    {% endif %}
+        {% endif %}
+    </section>
 </section>
 {% endblock %}
