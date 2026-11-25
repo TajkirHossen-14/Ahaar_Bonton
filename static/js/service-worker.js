@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ahaarbonton-v3';
+const CACHE_NAME = 'ahaarbonton-v9';
 const OFFLINE_PATH = '/offline/';
 const STATIC_ASSETS = ['/static/css/style.css', '/static/js/main.js', OFFLINE_PATH];
 
