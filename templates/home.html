@@ -1,152 +1,194 @@
 {% extends 'base.html' %}
 {% load static %}
-
-{% block page_title %}AhaarBonton{% endblock %}
+{% block page_title %}AhaarBonton – Every Meal Matters{% endblock %}
+{% block body_class %}home-page{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <div class="container hero-grid">
-        <div class="hero-content">
-            <p class="hero-eyebrow">&#127793; Bangladesh's Surplus Food Redistribution Platform</p>
-            <h1>Every Meal Matters.</h1>
-            <p>
-                AhaarBonton connects donors, NGOs, volunteers, and communities to move surplus food quickly, safely, and transparently.
-            </p>
-            <div class="hero-actions">
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="btn hero-btn-primary btn-lg">Go to Dashboard</a>
-                {% else %}
-                    <a href="{% url 'register' %}" class="btn hero-btn-primary btn-lg">Get Started</a>
-                    <a href="{% url 'login' %}" class="btn hero-btn-ghost btn-lg">Login</a>
-                {% endif %}
+<section class="home-hero">
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-content">
+                <div class="hero-kicker"><span class="status-dot" aria-hidden="true"></span>Bangladesh’s Surplus Food Redistribution Platform</div>
+                <h1 class="hero-title">Every Meal<br><span>Matters.</span></h1>
+                <p class="hero-copy">AhaarBonton connects surplus food with communities through donors, NGOs, and volunteers – quickly, safely, and transparently.</p>
+                <div class="hero-actions">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Go to your dashboard <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                        <a href="{% url 'food_map' %}" class="btn btn-ghost btn-lg"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>Explore food</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                        <a href="{% url 'food_map' %}" class="btn btn-ghost btn-lg"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>Explore food</a>
+                    {% endif %}
+                </div>
+                <ul class="hero-assurances" aria-label="Platform benefits">
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Free to join</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>OTP-verified handovers</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Privacy-first locations</li>
+                </ul>
             </div>
-            <div class="hero-mini-row">
-                <article class="hero-mini-card">
-                    <span class="hero-mini-kicker">Live Available</span>
-                    <strong>{{ stats.available }}</strong>
-                </article>
-                <article class="hero-mini-card">
-                    <span class="hero-mini-kicker">Meals Delivered</span>
-                    <strong>{{ stats.delivered }}</strong>
-                </article>
-            </div>
-        </div>
 
-        <div class="hero-visual" aria-hidden="true">
-            <img
-                src="{% static 'img/Home Illustration 2.png' %}"
-                alt="AhaarBonton Illustration"
-                class="hero-illustration-plain"
-            >
+            <div class="hero-art">
+                <img src="{% static 'img/Home Illustration 2.png' %}" alt="Community members sharing boxes of surplus food" class="hero-illustration" width="1024" height="683" fetchpriority="high">
+                <div class="hero-route" aria-label="Donor to NGO to volunteer, with successful deliveries tracked">
+                    <div class="route-person"><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg><span>Donor</span></div>
+                    <div class="route-person"><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg><span>NGO</span></div>
+                    <div class="route-person"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg><span>Volunteer</span></div>
+                    <div class="route-person route-deliveries"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span><strong>{{ stats.delivered }}</strong>Successful deliveries</span></div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="container">
-    <div class="impact-row">
-        <article class="impact-card">
-            <h3>Total Posts</h3>
-            <p>{{ stats.total }}</p>
-        </article>
-        <article class="impact-card">
-            <h3>Delivered</h3>
-            <p>{{ stats.delivered }}</p>
-        </article>
-        <article class="impact-card">
-            <h3>Available</h3>
-            <p>{{ stats.available }}</p>
-        </article>
-        <article class="impact-card">
-            <h3>Expired</h3>
-            <p>{{ stats.expired }}</p>
-        </article>
+<section class="container home-impact-section" aria-label="Live community impact">
+    <div class="home-impact">
+        <article class="impact-stat"><strong>{{ stats.total }}</strong><span>Community food posts</span></article>
+        <article class="impact-stat"><strong>{{ stats.available }}</strong><span>Available right now</span></article>
+        <article class="impact-stat"><strong>{{ stats.delivered }}</strong><span>Successful deliveries</span></article>
     </div>
 </section>
 
-<section class="container home-feature-band">
-    <article class="home-feature-card">
-        <h3>&#9889; Fast Matching</h3>
-        <p>Urgent food gets priority through expiry-aware listing and quick NGO requests.</p>
-    </article>
-    <article class="home-feature-card">
-        <h3>&#128274; Safe Handover</h3>
-        <p>Pickup and delivery both use OTP confirmation, so fake completion is minimized.</p>
-    </article>
-    <article class="home-feature-card">
-        <h3>&#128202; Transparent Impact</h3>
-        <p>Everyone can see platform outcomes through public impact stats and delivery records.</p>
-    </article>
-</section>
-
-<section class="how-section container home-how-section">
-    <header class="section-head">
-        <h2 class="section-heading">How AhaarBonton Works</h2>
-        <p class="section-sub">Simple steps that turn surplus into support.</p>
+<section class="container home-section" aria-labelledby="why-title">
+    <header class="home-section-head">
+        <div>
+            <span class="eyebrow">Why AhaarBonton</span>
+            <h2 id="why-title">Built for the moments that matter.</h2>
+        </div>
     </header>
-    <div class="steps-grid">
-        <article class="step-card">
-            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128230;</span></div>
-            <h3 class="step-title">Donors Post Food</h3>
-            <p class="step-desc">Share details, location, and expiry time for surplus items.</p>
+    <div class="feature-grid">
+        <article class="feature-card">
+            <div class="feature-card-top"><span class="feature-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-clock"/></svg></span><span class="feature-number">01</span></div>
+            <h3>Urgency-aware matching</h3>
+            <p>Donations closest to their safe expiry are surfaced first, helping the right NGO act before good food is lost.</p>
+            <a href="{% url 'food_map' %}" class="feature-link">See how food is prioritized <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </article>
-        <article class="step-card">
-            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#129309;</span></div>
-            <h3 class="step-title">NGOs Request Quickly</h3>
-            <p class="step-desc">Nearby NGOs browse and request food based on urgency.</p>
+        <article class="feature-card">
+            <div class="feature-card-top"><span class="feature-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="feature-number">02</span></div>
+            <h3>Accountable handovers</h3>
+            <p>Separate pickup and delivery codes keep every transition verified, traceable, and clear for everyone involved.</p>
+            <a href="{% url 'transparency' %}" class="feature-link">Explore our trust model <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </article>
-        <article class="step-card">
-            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128666;</span></div>
-            <h3 class="step-title">Volunteers Deliver</h3>
-            <p class="step-desc">Volunteers pick up and complete handover using OTP confirmation.</p>
+        <article class="feature-card">
+            <div class="feature-card-top"><span class="feature-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="feature-number">03</span></div>
+            <h3>Impact you can see</h3>
+            <p>Live statistics, public delivery records, and community rankings make progress visible – not just promised.</p>
+            <a href="{% url 'transparency' %}" class="feature-link">View the impact dashboard <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </article>
-        <article class="step-card">
-            <div class="step-circle"><span class="step-icon" aria-hidden="true">&#128200;</span></div>
-            <h3 class="step-title">Impact Is Tracked</h3>
-            <p class="step-desc">Every successful delivery improves transparency and accountability.</p>
-        </article>
+    </div>
+</section>
+
+<section class="process-section" id="how-it-works" aria-labelledby="process-title">
+    <div class="container home-section process-layout">
+        <div class="process-intro">
+            <span class="eyebrow">Simple by design</span>
+            <h2 id="process-title">From surplus to shared meals.</h2>
+            <p>Four clear steps. One connected community. Each person knows what to do, what happens next, and how their contribution creates impact.</p>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary">Go to your workspace <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn btn-primary">Find your role <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            {% endif %}
+        </div>
+        <div class="process-list">
+            <article class="process-item">
+                <span class="process-number">01</span>
+                <div><h3>Donors share food</h3><p>Post the quantity, pickup details, food condition, and a safe expiry deadline.</p></div>
+                <svg class="icon" aria-hidden="true"><use href="#i-box"/></svg>
+            </article>
+            <article class="process-item">
+                <span class="process-number">02</span>
+                <div><h3>NGOs request support</h3><p>Discover nearby donations and request what your community actually needs.</p></div>
+                <svg class="icon" aria-hidden="true"><use href="#i-building"/></svg>
+            </article>
+            <article class="process-item">
+                <span class="process-number">03</span>
+                <div><h3>Volunteers complete the route</h3><p>Accept a delivery, confirm pickup, and verify the final handover with an OTP.</p></div>
+                <svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>
+            </article>
+            <article class="process-item">
+                <span class="process-number">04</span>
+                <div><h3>The community sees the impact</h3><p>Completed deliveries build trust, inform better decisions, and encourage more sharing.</p></div>
+                <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="trust-band" aria-labelledby="trust-title">
+    <div class="container trust-layout">
+        <div class="trust-copy">
+            <span class="eyebrow">Careful by design</span>
+            <h2 id="trust-title">Good intentions.<br>Strong safeguards.</h2>
+            <p>Food sharing only works when people trust the process. That is why safety and transparency are built into the platform – not added as an afterthought.</p>
+            <a href="{% url 'transparency' %}" class="btn btn-ghost">How accountability works <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+        <div class="trust-grid">
+            <article class="trust-card"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-clock"/></svg><h3>Expiry-aware</h3><p>Time-sensitive donations stay prioritized and visible until they are safely resolved.</p></article>
+            <article class="trust-card"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-lock"/></svg><h3>Verified transitions</h3><p>One-time codes confirm pickup and delivery with the people actually involved.</p></article>
+            <article class="trust-card"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-shield"/></svg><h3>Privacy-conscious</h3><p>Public map pins are rounded, and donors are guided to share only the pickup detail their community needs.</p></article>
+            <article class="trust-card"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-flag"/></svg><h3>Community oversight</h3><p>Reporting, ratings, and admin review help keep the network accountable.</p></article>
+        </div>
     </div>
 </section>
 
 {% if not request.user.is_authenticated %}
-<section class="container">
+<section class="container home-section" aria-labelledby="roles-title">
+    <header class="home-section-head">
+        <div><span class="eyebrow">Find your place</span><h2 id="roles-title">One platform. Three ways to help.</h2></div>
+    </header>
     <div class="role-cards-grid">
-        <article class="role-card">
-            <h3>
-                <span class="role-icon role-icon-donor" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M4 7h16v2H4zM6 10h12l-1 7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2zM9 5h6v2H9z"/>
-                    </svg>
-                </span>
-                Donor
-            </h3>
-            <p>List extra food and help reduce waste from homes, events, and restaurants.</p>
-            <a href="{% url 'register' %}" class="btn btn-primary btn-sm role-join-btn">Join as Donor</a>
+        <article class="role-card-premium">
+            <div class="role-card-top"><span class="role-icon"><svg aria-hidden="true"><use href="#i-box"/></svg></span><span class="role-card-number">FOR DONORS</span></div>
+            <h3>Turn surplus into support.</h3>
+            <p>Share safe, usable food from your home, business, or community event.</p>
+            <ul class="role-benefits"><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Create clear food posts</li><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Review NGO requests</li><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Track every handover</li></ul>
+            <a href="{% url 'register' %}?role=donor" class="btn btn-secondary">Become a donor <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </article>
-        <article class="role-card">
-            <h3>
-                <span class="role-icon role-icon-ngo" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M3 21h18v-2H3zm2-4h4V7H5zm5 0h4V3h-4zm5 0h4V10h-4z"/>
-                    </svg>
-                </span>
-                NGO
-            </h3>
-            <p>Discover urgent available posts and request food for your communities.</p>
-            <a href="{% url 'register' %}" class="btn btn-primary btn-sm role-join-btn">Join as NGO</a>
+        <article class="role-card-premium">
+            <div class="role-card-top"><span class="role-icon"><svg aria-hidden="true"><use href="#i-building"/></svg></span><span class="role-card-number">FOR NGOs</span></div>
+            <h3>Find food for your community.</h3>
+            <p>Request the donations your organization needs and coordinate delivery in one place.</p>
+            <ul class="role-benefits"><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Browse nearby donations</li><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Prioritize urgent food</li><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Follow request progress</li></ul>
+            <a href="{% url 'register' %}?role=ngo" class="btn btn-secondary">Join as an NGO <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </article>
-        <article class="role-card">
-            <h3>
-                <span class="role-icon role-icon-volunteer" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M3 6h11v9H3zm12 3h3l3 3v3h-6zM7 19a2 2 0 1 1 0-4 2 2 0 0 1 0 4m10 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4"/>
-                    </svg>
-                </span>
-                Volunteer
-            </h3>
-            <p>Accept delivery tasks and make sure food reaches people safely.</p>
-            <a href="{% url 'register' %}" class="btn btn-primary btn-sm role-join-btn">Join as Volunteer</a>
+        <article class="role-card-premium">
+            <div class="role-card-top"><span class="role-icon"><svg aria-hidden="true"><use href="#i-truck"/></svg></span><span class="role-card-number">FOR VOLUNTEERS</span></div>
+            <h3>Make the final connection.</h3>
+            <p>Pick up nearby donations and help good food reach the people who need it.</p>
+            <ul class="role-benefits"><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Choose delivery tasks</li><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Follow clear pickup steps</li><li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Build community trust</li></ul>
+            <a href="{% url 'register' %}?role=volunteer" class="btn btn-secondary">Become a volunteer <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </article>
     </div>
 </section>
 {% endif %}
+
+<section class="container home-section" aria-labelledby="faq-title">
+    <div class="faq-layout">
+        <header class="section-head">
+            <span class="eyebrow">Good to know</span>
+            <h2 id="faq-title">Questions, answered clearly.</h2>
+            <p class="section-sub">A few things to know before you share, request, or deliver food.</p>
+        </header>
+        <div class="faq-list">
+            <details class="faq-item"><summary>Who can join AhaarBonton?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Donors, NGOs, and volunteers can create an account. Choose the role that matches how you want to participate; each workspace is tailored to that responsibility.</p></details>
+            <details class="faq-item"><summary>How is food safety handled?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Donors provide the food condition, packaging details, and a safe expiry deadline. Urgent posts are prioritized, while pickup and delivery are confirmed through one-time codes.</p></details>
+            <details class="faq-item"><summary>Is my exact location public?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Map pins are rounded for privacy, but the pickup address or landmark you enter appears on food listings. Share only the detail needed for coordination, and request participants can use the workflow to arrange the handover.</p></details>
+            <details class="faq-item"><summary>Does it cost anything to participate?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Joining and using the core food-sharing workflow is free. AhaarBonton is designed to reduce food waste and strengthen community access, not to create a barrier to participation.</p></details>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="home-cta">
+        <div>
+            <h2>{% if request.user.is_authenticated %}Your next action can feed a community.{% else %}A little surplus. A lot of possibility.{% endif %}</h2>
+            <p>{% if request.user.is_authenticated %}Explore available donations, follow your deliveries, or see how the community is progressing.{% else %}Join a community turning good food into shared meals – one clear, verified handover at a time.{% endif %}</p>
+        </div>
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'food_map' %}" class="btn btn-lg">Explore the food map <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        {% else %}
+            <a href="{% url 'register' %}" class="btn btn-lg">Create your account <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        {% endif %}
+    </div>
+</section>
 {% endblock %}
