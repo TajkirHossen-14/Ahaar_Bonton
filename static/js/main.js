@@ -36,7 +36,11 @@ const themeToggle = document.getElementById('themeToggle');
             if (open) {
                 closeMenus();
                 const firstItem = mainNav.querySelector('a[href], summary');
-                if (firstItem) firstItem.focus();
+                if (firstItem) {
+                    window.setTimeout(function () {
+                        if (mainNav.classList.contains('open')) firstItem.focus({ preventScroll: true });
+                    }, 60);
+                }
             }
         });
     }
@@ -434,7 +438,7 @@ const themeToggle = document.getElementById('themeToggle');
             input.type = show ? 'text' : 'password';
             button.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
             button.setAttribute('aria-pressed', String(show));
-            button.querySelector('use').setAttribute('href', show ? '#i-eye-off' : '#i-eye');
+            button.querySelector('use').setAttribute('href', show ? '#i-eye' : '#i-eye-off');
         });
     });
 
