@@ -3,164 +3,207 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AhaarBonton connects surplus food with communities through donors, NGOs, and volunteers.">
+    <meta name="theme-color" content="#176b45">
     <title>{% block page_title %}AhaarBonton{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Poppins:wght@400;500;600;700;800&family=Ubuntu:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
     <script>
-        (function () 
-         {
-            var storageKey = "ahaar_theme_preference";
-            var savedMode = null;
-            try 
-            {
-                savedMode = localStorage.getItem(storageKey);
-            } catch (error) 
-            {
-                savedMode = null;
-            }
-            var mode = savedMode === "light" || savedMode === "dark" || savedMode === "system" ? savedMode : "system";
-            var resolved = mode;
-            if (mode === "system") 
-            {
-                var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-                resolved = prefersDark ? "dark" : "light";
-            }
-            document.documentElement.setAttribute("data-theme-mode", mode);
-            document.documentElement.setAttribute("data-theme", resolved);
+        (function () {
+            var key = "ahaar_theme_preference";
+            var mode = "system";
+            try { mode = localStorage.getItem(key) || "system"; } catch (error) {}
+            if (!["light", "dark", "system"].includes(mode)) mode = "system";
+            var resolved = mode === "system"
+                ? (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+                : mode;
+            document.documentElement.dataset.themeMode = mode;
+            document.documentElement.dataset.theme = resolved;
         })();
     </script>
-    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon/favicon-96x96.png' %}">
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon/favicon.svg' %}">
-    <link rel="shortcut icon" href="{% static 'favicon/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon/favicon-96x96.png' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
-    <meta name="apple-mobile-web-app-title" content="AhaarBonton">
     <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#1A7A4A">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
-<body>
-    <nav class="site-nav">
-        <div class="nav-inner">
-            <a href="{% url 'home' %}" class="logo">
-                <span class="logo-box">
-                    <img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt="AhaarBonton Logo">
-                </span>
-                <span class="logo-text">AhaarBonton</span>
+<body class="{% block body_class %}{% endblock %}">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C12 3 5 6 5 13a6 6 0 0 0 6 6c7 0 9-8 9-15Z"/><path d="M4 21 15 10"/></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></symbol>
+        <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+        <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H3v2a4 4 0 0 0 4 4M17 6h4v2a4 4 0 0 1-4 4"/></symbol>
+        <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"/><path d="M9 3v15M15 6v15"/></symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 10 5-10 5L2 8l10-5Z"/><path d="m2 12 10 5 10-5M2 16l10 5 10-5"/></symbol>
+        <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M18 15a6 6 0 0 1 4 6"/></symbol>
+        <symbol id="i-box" viewBox="0 0 24 24"><path d="m12 3 9 5v9l-9 5-9-5V8l9-5Z"/><path d="m3 8 9 5 9-5M12 13v9M7.5 5.5l9 5"/></symbol>
+        <symbol id="i-truck" viewBox="0 0 24 24"><path d="M3 6h11v11H3zM14 10h4l3 3v4h-7"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+        <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V7l8-4v18M12 9h8v12M2 21h20M8 9v1M8 13v1M8 17v1M16 13v1M16 17v1"/></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 3 7v5c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-4Z"/><path d="m8 12 3 3 5-6"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m8 10 4 4 4-4"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5M12 17v.1"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.1"/></symbol>
+        <symbol id="i-edit" viewBox="0 0 24 24"><path d="m14 5 5 5M4 20l5-1L20 8a2 2 0 0 0-5-5L4 14v6Z"/></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></symbol>
+        <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 22V3M5 4h12l-2 4 2 4H5"/></symbol>
+        <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="m3 3 18 18M10 5.2A11 11 0 0 1 12 5c6 0 10 7 10 7a18 18 0 0 1-3 4M6 6.5A18 18 0 0 0 2 12s4 7 10 7a11 11 0 0 0 5-1.2"/></symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/></symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10Z"/></symbol>
+        <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+        <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H4v16h6M14 8l4 4-4 4M8 12h10"/></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 8a8 8 0 0 1 13-2l1 2M4 16l1 2a8 8 0 0 0 13-2"/></symbol>
+        <symbol id="i-offline" viewBox="0 0 24 24"><path d="M2 8.5A16 16 0 0 1 22 8.5M5 12a11 11 0 0 1 14 0M8.5 15.5a6 6 0 0 1 7 0M12 19v.1M2 2l20 20"/></symbol>
+    </svg>
+
+    {% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}
+    <header class="site-header">
+        <div class="container nav-shell">
+            <a href="{% url 'home' %}" class="brand" aria-label="AhaarBonton home">
+                <span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span>
+                <span class="brand-name">Ahaar<span>Bonton</span></span>
             </a>
 
-            <div class="nav-right">
-                <div class="nav-menu" id="navMenu">
-                    {% if request.user.is_authenticated %}
-                        <a href="{% url 'home' %}" class="nav-link">Home</a>
-                        <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
-                        <a href="{% url 'transparency' %}" class="nav-link">Impact</a>
-                        <a href="{% url 'leaderboard' %}" class="nav-link">Leaderboard</a>
-                        <details class="user-menu" id="userMenu">
-                            <summary
-                                class="user-menu-toggle"
-                                id="userMenuToggle"
-                                aria-expanded="false"
-                                aria-haspopup="true"
-                                aria-controls="userMenuDropdown"
-                            >
-                                <span class="user-chip">
-                                    <span class="user-avatar">
-                                        {% if request.user.profile_pic %}
-                                            <img src="{{ request.user.profile_pic.url }}" alt="{{ request.user.full_name }}">
-                                        {% else %}
-                                            {{ request.user.full_name|default:request.user.email|slice:":1"|upper }}
-                                        {% endif %}
-                                    </span>
-                                    <span class="user-meta">
-                                        <span class="user-name">{{ request.user.full_name }}</span>
-                                        <span class="role-badge">{{ request.user.role|title }}</span>
-                                    </span>
-                                    <span class="user-menu-caret" aria-hidden="true">&#9662;</span>
-                                </span>
-                            </summary>
-                            <div class="user-menu-dropdown" id="userMenuDropdown" role="menu" aria-label="User menu">
-                                <a href="{% url 'profile' %}" class="user-menu-item" role="menuitem">Profile</a>
-                                <a href="{% url 'logout' %}" class="user-menu-item user-menu-item-logout" role="menuitem">Logout</a>
-                            </div>
-                        </details>
-                    {% else %}
-                        <a href="{% url 'home' %}" class="nav-link">Home</a>
-                        <a href="{% url 'transparency' %}" class="nav-link">Impact</a>
-                        <a href="{% url 'leaderboard' %}" class="nav-link">Leaderboard</a>
-                        <a href="{% url 'login' %}" class="nav-link">Login</a>
-                        <a href="{% url 'register' %}" class="btn btn-primary btn-sm">Get Started</a>
+            <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+                <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+                <a href="{% url 'home' %}#how-it-works" class="nav-link"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-layers"/></svg><span>How it works</span></a>
+                <a href="{% url 'transparency' %}" class="nav-link {% if request.resolver_match.url_name == 'transparency' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Impact</span></a>
+                <a href="{% url 'leaderboard' %}" class="nav-link {% if request.resolver_match.url_name == 'leaderboard' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-trophy"/></svg><span>Leaderboard</span></a>
+                <details class="nav-dropdown explore-menu">
+                    <summary class="nav-link"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-map"/></svg><span>Explore</span><svg class="icon icon-sm nav-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+                    <div class="nav-dropdown-panel">
+                        <a href="{% url 'food_map' %}"><svg class="icon"><use href="#i-map"/></svg><span>Food map<small>Find available donations</small></span></a>
+                        <a href="{% url 'heatmap' %}"><svg class="icon"><use href="#i-layers"/></svg><span>Community heatmap<small>See impact across Bangladesh</small></span></a>
+                    </div>
+                </details>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="nav-link nav-dashboard {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Dashboard</span></a>
+                    {% if request.user.role == 'donor' %}
+                        <a href="{% url 'donor_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'donor_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Requests</span></a>
+                    {% elif request.user.role == 'ngo' %}
+                        <a href="{% url 'ngo_my_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'ngo_my_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>My requests</span></a>
                     {% endif %}
-                    <div class="theme-switcher" id="themeSwitcher">
-                        <button
-                            type="button"
-                            class="theme-icon-btn"
-                            id="themeToggle"
-                            aria-expanded="false"
-                            aria-haspopup="true"
-                            aria-controls="themeDropdown"
-                            aria-label="Theme settings"
-                            title="Theme"
-                        >&#9680;</button>
-                        <div class="theme-dropdown" id="themeDropdown" role="menu" aria-label="Theme switcher">
-                            <button type="button" class="theme-option" data-theme-value="light" aria-pressed="false">&#9728; Light</button>
-                            <button type="button" class="theme-option" data-theme-value="dark" aria-pressed="false">&#9789; Dark</button>
-                            <button type="button" class="theme-option" data-theme-value="system" aria-pressed="false">&#9680; System</button>
-                        </div>
+                {% endif %}
+
+                <div class="mobile-theme-controls" role="group" aria-label="Color theme">
+                    <span class="mobile-nav-label">Appearance</span>
+                    <div class="mobile-theme-options">
+                        <button type="button" class="mobile-theme-option" data-theme-value="light" aria-pressed="false"><svg class="icon"><use href="#i-sun"/></svg>Light</button>
+                        <button type="button" class="mobile-theme-option" data-theme-value="dark" aria-pressed="false"><svg class="icon"><use href="#i-moon"/></svg>Dark</button>
+                        <button type="button" class="mobile-theme-option" data-theme-value="system" aria-pressed="false"><svg class="icon"><use href="#i-monitor"/></svg>System</button>
                     </div>
                 </div>
+                {% if not request.user.is_authenticated %}
+                    <div class="mobile-account-actions">
+                        <a href="{% url 'login' %}" class="btn btn-ghost"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Log in</a>
+                        <a href="{% url 'register' %}" class="btn btn-primary">Get Started <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
+                    </div>
+                {% endif %}
+            </nav>
 
-                <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Toggle navigation">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+            <div class="nav-actions">
+                {% if request.user.is_authenticated %}
+                    <details class="user-menu">
+                        <summary class="user-menu-toggle" aria-label="Open account menu">
+                            <span class="avatar avatar-sm">
+                                {% if request.user.profile_pic %}<img src="{{ request.user.profile_pic.url }}" alt="">{% else %}{{ request.user.full_name|default:request.user.email|slice:":1"|upper }}{% endif %}
+                            </span>
+                            <span class="user-menu-label">{{ request.user.full_name|truncatechars:18 }}</span>
+                            <svg class="icon icon-sm"><use href="#i-chevron"/></svg>
+                        </summary>
+                        <div class="user-panel">
+                            <div class="user-panel-head"><strong>{{ request.user.full_name }}</strong><span>{{ request.user.role|title }}</span></div>
+                            <a href="{% url 'profile' %}"><svg class="icon"><use href="#i-user"/></svg>Profile settings</a>
+                            <a href="{% url 'user_profile' request.user.pk %}"><svg class="icon"><use href="#i-heart"/></svg>My public profile</a>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit"><svg class="icon"><use href="#i-logout"/></svg>Log out</button>
+                            </form>
+                        </div>
+                    </details>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-ghost btn-sm nav-login">Log in</a>
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-sm nav-signup">Get Started <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
+                {% endif %}
+
+                <button class="icon-button mobile-nav-toggle" id="mobileNavToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Open navigation">
+                    <svg class="icon menu-open-icon"><use href="#i-menu"/></svg>
+                    <svg class="icon menu-close-icon"><use href="#i-x"/></svg>
                 </button>
+                <details class="theme-menu" id="themeMenu">
+                    <summary class="icon-button" id="themeToggle" aria-label="Choose color theme" title="Choose color theme">
+                        <svg class="icon theme-icon-light" aria-hidden="true"><use href="#i-sun"/></svg>
+                        <svg class="icon theme-icon-dark" aria-hidden="true"><use href="#i-moon"/></svg>
+                        <svg class="icon theme-icon-system" aria-hidden="true"><use href="#i-monitor"/></svg>
+                    </summary>
+                    <div class="theme-panel" role="group" aria-label="Color theme">
+                        <button type="button" data-theme-value="light"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg>Light</button>
+                        <button type="button" data-theme-value="dark"><svg class="icon" aria-hidden="true"><use href="#i-moon"/></svg>Dark</button>
+                        <button type="button" data-theme-value="system"><svg class="icon" aria-hidden="true"><use href="#i-monitor"/></svg>System</button>
+                    </div>
+                </details>
             </div>
         </div>
-    </nav>
-
-    <main class="main-content">
+    </header>
+    {% endif %}
+    <main id="main-content" class="main-content">
         {% if messages %}
-            <section class="flash-wrap container">
+            <div class="container flash-stack" aria-live="polite" aria-atomic="false">
                 {% for message in messages %}
-                    <article class="alert alert-{{ message.tags|default:'info' }}">
-                        <span class="alert-icon">
-                            {% if 'success' in message.tags %}&#9989;{% elif 'error' in message.tags %}&#10060;{% elif 'warning' in message.tags %}&#9888;&#65039;{% else %}&#8505;&#65039;{% endif %}
-                        </span>
-                        <span class="alert-text">{{ message }}</span>
-                        <button class="alert-close" type="button" aria-label="Close message">&times;</button>
-                    </article>
+                    <div class="alert alert-{{ message.tags|default:'info' }}" role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}">
+                        <svg class="icon alert-icon"><use href="{% if 'success' in message.tags %}#i-check{% elif 'error' in message.tags %}#i-alert{% elif 'warning' in message.tags %}#i-alert{% else %}#i-info{% endif %}"/></svg>
+                        <span>{{ message }}</span>
+                        <button class="alert-close" type="button" aria-label="Dismiss message"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+                    </div>
                 {% endfor %}
-            </section>
+            </div>
         {% endif %}
-
         {% block content %}{% endblock %}
     </main>
 
+    {% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}
     <footer class="site-footer">
-        <p>&copy; 2026 AhaarBonton</p>
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span><span class="brand-name">Ahaar<span>Bonton</span></span></a>
+                <p>Good food deserves a second chance. Together, we turn surplus into shared meals and stronger communities.</p>
+                <span class="footer-made"><svg class="icon icon-sm"><use href="#i-heart"/></svg> Built for a hunger-free Bangladesh</span>
+            </div>
+            <div><h3>Discover</h3><a href="{% url 'home' %}#how-it-works">How it works</a><a href="{% url 'food_map' %}">Food map</a><a href="{% url 'heatmap' %}">Community heatmap</a></div>
+            <div><h3>Community</h3><a href="{% url 'transparency' %}">Our impact</a><a href="{% url 'leaderboard' %}">Leaderboard</a><a href="{% url 'register' %}">Become a member</a></div>
+            <div><h3>Your account</h3>{% if request.user.is_authenticated %}<a href="{% url 'dashboard' %}">Dashboard</a><a href="{% url 'profile' %}">Profile settings</a>{% else %}<a href="{% url 'login' %}">Log in</a><a href="{% url 'register' %}">Create account</a>{% endif %}<a href="mailto:hello@ahaarbonton.com">Contact support</a></div>
+        </div>
+        <div class="container footer-bottom"><span>&copy; {% now "Y" %} AhaarBonton. Every meal matters.</span><span>Food safety · Trust · Transparency</span></div>
     </footer>
-
-    <script src="{% static 'js/main.js' %}"></script>
+    {% endif %}
+    <script src="{% static 'js/main.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
     <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register(
-                '{% static "js/service-worker.js" %}'
-            ).then(reg => {
-                console.log(
-                    'ServiceWorker registered:', reg.scope
-                );
-            }).catch(err => {
-                console.log(
-                    'ServiceWorker failed:', err
-                );
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('{% url 'service_worker' %}').catch(function () {});
             });
-        });
-    }
+        }
     </script>
 </body>
 </html>
