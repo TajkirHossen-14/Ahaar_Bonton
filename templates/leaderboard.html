@@ -1,157 +1,166 @@
 {% extends 'base.html' %}
-{% block page_title %}Leaderboard — AhaarBonton{% endblock %}
-{% block content %}
+{% block page_title %}Community leaderboard - AhaarBonton{% endblock %}
 
-<section class="container leaderboard-section">
-    <header class="section-head" style="text-align: center; margin-bottom: 28px;">
-        <h2 class="section-heading">🏆 Community Leaderboard</h2>
-        <p class="section-sub">Celebrating our most active and highly-rated community members</p>
+{% block content %}
+<section class="container leaderboard-section" data-tab-container>
+    <header class="leaderboard-header">
+        <div class="section-head">
+            <span class="eyebrow">Community recognition</span>
+            <h1>Good work deserves to be seen.</h1>
+            <p class="section-sub">Celebrate the donors and volunteers building a more reliable food-sharing network.</p>
+            <div class="leaderboard-note"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Based on verified platform activity</div>
+        </div>
     </header>
 
-    <!-- Tab bar -->
-    <div class="tab-bar" style="justify-content: center; margin-bottom: 24px; display: flex; gap: 8px;">
-        <button class="tab-btn active" data-target="#tab-activity" onclick="switchTab(this)">
-            📦 By Activity
-        </button>
-        <button class="tab-btn" data-target="#tab-rating" onclick="switchTab(this)">
-            ⭐ By Rating
-        </button>
+    <div class="tab-bar" role="tablist" aria-label="Leaderboard ranking type">
+        <button class="tab-btn active" id="activity-tab" type="button" role="tab" aria-selected="true" aria-controls="tab-activity" data-target="#tab-activity"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-box"/></svg>By activity</button>
+        <button class="tab-btn" id="rating-tab" type="button" role="tab" aria-selected="false" aria-controls="tab-rating" data-target="#tab-rating"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-star"/></svg>By rating</button>
+        <button class="tab-btn" id="trust-tab" type="button" role="tab" aria-selected="false" aria-controls="tab-trust" data-target="#tab-trust"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-shield"/></svg>By trust score</button>
     </div>
 
-    <!-- TAB 1: Activity -->
-    <div id="tab-activity" class="tab-content tab-panel">
+    <div id="tab-activity" class="tab-panel active" role="tabpanel" aria-labelledby="activity-tab">
         <div class="leaderboard-grid">
-            <!-- Donor Leaderboard -->
-            <div class="card leaderboard-card">
-                <h3 class="leaderboard-card-title">🍱 Top Donors</h3>
-                <p class="leaderboard-card-sub text-muted">Ranked by food posts delivered</p>
-
-                {% if activity_donors %}
-                    {% for donor in activity_donors %}
+            <article class="card leaderboard-card">
+                <header class="leaderboard-card-head">
+                    <div><span class="role-icon"><svg aria-hidden="true"><use href="#i-box"/></svg></span><svg class="icon" aria-hidden="true"><use href="#i-trophy"/></svg></div>
+                    <h2>Top donors</h2>
+                    <p class="leaderboard-card-sub">Ranked by food posts successfully delivered</p>
+                </header>
+                {% for donor in activity_donors %}
                     <div class="leaderboard-row">
-                        <span class="leaderboard-rank {% if forloop.counter <= 3 %}rank-{{ forloop.counter }}{% endif %}">
-                            {% if forloop.counter == 1 %}🥇
-                            {% elif forloop.counter == 2 %}🥈
-                            {% elif forloop.counter == 3 %}🥉
-                            {% else %}{{ forloop.counter }}
-                            {% endif %}
-                        </span>
-                        <div class="leaderboard-avatar">
-                            {{ donor.full_name|default:"?"|slice:":1"|upper }}
-                        </div>
+                        <span class="leaderboard-rank" aria-label="Rank {{ forloop.counter }}">{{ forloop.counter }}</span>
+                        <span class="leaderboard-avatar">{% if donor.profile_pic %}<img src="{% url 'profile_avatar' donor.pk %}" alt="" width="39" height="39" loading="lazy" decoding="async">{% else %}{{ donor.full_name|slice:":1"|upper }}{% endif %}</span>
                         <div class="leaderboard-info">
-                            <div class="leaderboard-name">{{ donor.full_name }}</div>
+                            <a class="leaderboard-name" href="{% url 'user_profile' donor.pk %}">{{ donor.full_name }}</a>
                             <div class="leaderboard-stat">{{ donor.delivered_count }} donation{{ donor.delivered_count|pluralize }} delivered</div>
                         </div>
-                        <a href="{% url 'user_profile' donor.pk %}" class="leaderboard-view-link">View →</a>
+                        <svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="leaderboard-empty">No data yet</p>
-                {% endif %}
-            </div>
+                {% empty %}
+                    <p class="leaderboard-empty">Completed donations will appear here.</p>
+                {% endfor %}
+            </article>
 
-            <!-- Volunteer Leaderboard -->
-            <div class="card leaderboard-card">
-                <h3 class="leaderboard-card-title">🚚 Top Volunteers</h3>
-                <p class="leaderboard-card-sub text-muted">Ranked by deliveries completed</p>
-
-                {% if activity_volunteers %}
-                    {% for volunteer in activity_volunteers %}
+            <article class="card leaderboard-card">
+                <header class="leaderboard-card-head">
+                    <div><span class="role-icon volunteer-icon"><svg aria-hidden="true"><use href="#i-truck"/></svg></span><svg class="icon" aria-hidden="true"><use href="#i-trophy"/></svg></div>
+                    <h2>Top volunteers</h2>
+                    <p class="leaderboard-card-sub">Ranked by confirmed community deliveries</p>
+                </header>
+                {% for volunteer in activity_volunteers %}
                     <div class="leaderboard-row">
-                        <span class="leaderboard-rank {% if forloop.counter <= 3 %}rank-{{ forloop.counter }}{% endif %}">
-                            {% if forloop.counter == 1 %}🥇
-                            {% elif forloop.counter == 2 %}🥈
-                            {% elif forloop.counter == 3 %}🥉
-                            {% else %}{{ forloop.counter }}
-                            {% endif %}
-                        </span>
-                        <div class="leaderboard-avatar volunteer-avatar">
-                            {{ volunteer.full_name|default:"?"|slice:":1"|upper }}
-                        </div>
+                        <span class="leaderboard-rank" aria-label="Rank {{ forloop.counter }}">{{ forloop.counter }}</span>
+                        <span class="leaderboard-avatar volunteer-avatar">{% if volunteer.profile_pic %}<img src="{% url 'profile_avatar' volunteer.pk %}" alt="" width="39" height="39" loading="lazy" decoding="async">{% else %}{{ volunteer.full_name|slice:":1"|upper }}{% endif %}</span>
                         <div class="leaderboard-info">
-                            <div class="leaderboard-name">{{ volunteer.full_name }}</div>
+                            <a class="leaderboard-name" href="{% url 'user_profile' volunteer.pk %}">{{ volunteer.full_name }}</a>
                             <div class="leaderboard-stat">{{ volunteer.delivery_count }} deliver{{ volunteer.delivery_count|pluralize:"y,ies" }} completed</div>
                         </div>
-                        <a href="{% url 'user_profile' volunteer.pk %}" class="leaderboard-view-link">View →</a>
+                        <svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="leaderboard-empty">No data yet</p>
-                {% endif %}
-            </div>
+                {% empty %}
+                    <p class="leaderboard-empty">Confirmed deliveries will appear here.</p>
+                {% endfor %}
+            </article>
         </div>
     </div>
 
-    <!-- TAB 2: Rating -->
-    <div id="tab-rating" class="tab-content tab-panel" style="display:none;">
+    <div id="tab-rating" class="tab-panel" role="tabpanel" aria-labelledby="rating-tab" hidden>
         <div class="leaderboard-grid">
-            <!-- Donor Rating Leaderboard -->
-            <div class="card leaderboard-card">
-                <h3 class="leaderboard-card-title">🍱 Top Rated Donors</h3>
-                <p class="leaderboard-card-sub text-muted">Ranked by average community rating</p>
-
-                {% if rating_donors %}
-                    {% for donor in rating_donors %}
+            <article class="card leaderboard-card">
+                <header class="leaderboard-card-head">
+                    <div><span class="role-icon"><svg aria-hidden="true"><use href="#i-box"/></svg></span><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg></div>
+                    <h2>Top rated donors</h2>
+                    <p class="leaderboard-card-sub">Average rating from completed NGO requests</p>
+                </header>
+                {% for donor in rating_donors %}
                     <div class="leaderboard-row">
-                        <span class="leaderboard-rank {% if forloop.counter <= 3 %}rank-{{ forloop.counter }}{% endif %}">
-                            {% if forloop.counter == 1 %}🥇
-                            {% elif forloop.counter == 2 %}🥈
-                            {% elif forloop.counter == 3 %}🥉
-                            {% else %}{{ forloop.counter }}
-                            {% endif %}
-                        </span>
-                        <div class="leaderboard-avatar">
-                            {{ donor.full_name|default:"?"|slice:":1"|upper }}
-                        </div>
+                        <span class="leaderboard-rank" aria-label="Rank {{ forloop.counter }}">{{ forloop.counter }}</span>
+                        <span class="leaderboard-avatar">{% if donor.profile_pic %}<img src="{% url 'profile_avatar' donor.pk %}" alt="" width="39" height="39" loading="lazy" decoding="async">{% else %}{{ donor.full_name|slice:":1"|upper }}{% endif %}</span>
                         <div class="leaderboard-info">
-                            <div class="leaderboard-name">{{ donor.full_name }}</div>
-                            <div class="leaderboard-stat">
-                                ⭐ {{ donor.avg_score|floatformat:1 }} / 5 ({{ donor.rating_count }} rating{{ donor.rating_count|pluralize }})
-                            </div>
+                            <a class="leaderboard-name" href="{% url 'user_profile' donor.pk %}">{{ donor.full_name }}</a>
+                            <div class="leaderboard-stat"><span class="rating-gold">★ {{ donor.avg_score|floatformat:1 }} / 5</span> · {{ donor.rating_count }} rating{{ donor.rating_count|pluralize }}</div>
                         </div>
-                        <a href="{% url 'user_profile' donor.pk %}" class="leaderboard-view-link">View →</a>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="leaderboard-empty">No ratings yet</p>
-                {% endif %}
-            </div>
+                {% empty %}
+                    <p class="leaderboard-empty">No donor ratings yet.</p>
+                {% endfor %}
+            </article>
 
-            <!-- Volunteer Rating Leaderboard -->
-            <div class="card leaderboard-card">
-                <h3 class="leaderboard-card-title">🚚 Top Rated Volunteers</h3>
-                <p class="leaderboard-card-sub text-muted">Ranked by average community rating</p>
-
-                {% if rating_volunteers %}
-                    {% for volunteer in rating_volunteers %}
+            <article class="card leaderboard-card">
+                <header class="leaderboard-card-head">
+                    <div><span class="role-icon volunteer-icon"><svg aria-hidden="true"><use href="#i-truck"/></svg></span><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg></div>
+                    <h2>Top rated volunteers</h2>
+                    <p class="leaderboard-card-sub">Average rating from delivery participants</p>
+                </header>
+                {% for volunteer in rating_volunteers %}
                     <div class="leaderboard-row">
-                        <span class="leaderboard-rank {% if forloop.counter <= 3 %}rank-{{ forloop.counter }}{% endif %}">
-                            {% if forloop.counter == 1 %}🥇
-                            {% elif forloop.counter == 2 %}🥈
-                            {% elif forloop.counter == 3 %}🥉
-                            {% else %}{{ forloop.counter }}
-                            {% endif %}
-                        </span>
-                        <div class="leaderboard-avatar volunteer-avatar">
-                            {{ volunteer.full_name|default:"?"|slice:":1"|upper }}
-                        </div>
+                        <span class="leaderboard-rank" aria-label="Rank {{ forloop.counter }}">{{ forloop.counter }}</span>
+                        <span class="leaderboard-avatar volunteer-avatar">{% if volunteer.profile_pic %}<img src="{% url 'profile_avatar' volunteer.pk %}" alt="" width="39" height="39" loading="lazy" decoding="async">{% else %}{{ volunteer.full_name|slice:":1"|upper }}{% endif %}</span>
                         <div class="leaderboard-info">
-                            <div class="leaderboard-name">{{ volunteer.full_name }}</div>
-                            <div class="leaderboard-stat">
-                                ⭐ {{ volunteer.avg_score|floatformat:1 }} / 5 ({{ volunteer.rating_count }} rating{{ volunteer.rating_count|pluralize }})
-                            </div>
+                            <a class="leaderboard-name" href="{% url 'user_profile' volunteer.pk %}">{{ volunteer.full_name }}</a>
+                            <div class="leaderboard-stat"><span class="rating-gold">★ {{ volunteer.avg_score|floatformat:1 }} / 5</span> · {{ volunteer.rating_count }} rating{{ volunteer.rating_count|pluralize }}</div>
                         </div>
-                        <a href="{% url 'user_profile' volunteer.pk %}" class="leaderboard-view-link">View →</a>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="leaderboard-empty">No ratings yet</p>
-                {% endif %}
-            </div>
+                {% empty %}
+                    <p class="leaderboard-empty">No volunteer ratings yet.</p>
+                {% endfor %}
+            </article>
         </div>
     </div>
+
+    <div id="tab-trust" class="tab-panel" role="tabpanel" aria-labelledby="trust-tab" hidden>
+        <div class="leaderboard-grid">
+            <article class="card leaderboard-card">
+                <header class="leaderboard-card-head">
+                    <div><span class="role-icon"><svg aria-hidden="true"><use href="#i-box"/></svg></span><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></div>
+                    <h2>Most trusted donors</h2>
+                    <p class="leaderboard-card-sub">Platform trust score out of 100</p>
+                </header>
+                {% for donor in trust_donors %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank" aria-label="Rank {{ forloop.counter }}">{{ forloop.counter }}</span>
+                        <span class="leaderboard-avatar">{% if donor.profile_pic %}<img src="{% url 'profile_avatar' donor.pk %}" alt="" width="39" height="39" loading="lazy" decoding="async">{% else %}{{ donor.full_name|slice:":1"|upper }}{% endif %}</span>
+                        <div class="leaderboard-info">
+                            <a class="leaderboard-name" href="{% url 'user_profile' donor.pk %}">{{ donor.full_name }}</a>
+                            <div class="leaderboard-stat">{{ donor.donor_profile.trust_score }} / 100</div>
+                            <div class="trust-meter" aria-hidden="true"><span style="width:{{ donor.donor_profile.trust_score }}%;"></span></div>
+                        </div>
+                        <svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>
+                    </div>
+                {% empty %}
+                    <p class="leaderboard-empty">No donor trust scores yet.</p>
+                {% endfor %}
+            </article>
+
+            <article class="card leaderboard-card">
+                <header class="leaderboard-card-head">
+                    <div><span class="role-icon volunteer-icon"><svg aria-hidden="true"><use href="#i-truck"/></svg></span><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></div>
+                    <h2>Most trusted volunteers</h2>
+                    <p class="leaderboard-card-sub">Platform trust score out of 100</p>
+                </header>
+                {% for volunteer in trust_volunteers %}
+                    <div class="leaderboard-row">
+                        <span class="leaderboard-rank" aria-label="Rank {{ forloop.counter }}">{{ forloop.counter }}</span>
+                        <span class="leaderboard-avatar volunteer-avatar">{% if volunteer.profile_pic %}<img src="{% url 'profile_avatar' volunteer.pk %}" alt="" width="39" height="39" loading="lazy" decoding="async">{% else %}{{ volunteer.full_name|slice:":1"|upper }}{% endif %}</span>
+                        <div class="leaderboard-info">
+                            <a class="leaderboard-name" href="{% url 'user_profile' volunteer.pk %}">{{ volunteer.full_name }}</a>
+                            <div class="leaderboard-stat">{{ volunteer.volunteer_profile.trust_score }} / 100</div>
+                            <div class="trust-meter" aria-hidden="true"><span style="width:{{ volunteer.volunteer_profile.trust_score }}%;"></span></div>
+                        </div>
+                        <svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>
+                    </div>
+                {% empty %}
+                    <p class="leaderboard-empty">No volunteer trust scores yet.</p>
+                {% endfor %}
+            </article>
+        </div>
+    </div>
+
+    <aside class="method-card" aria-labelledby="method-title">
+        <div class="method-intro"><h2 id="method-title">How rankings work</h2><p>Recognition should be understandable. Each view uses a clear, activity-based signal.</p></div>
+        <div class="method-item"><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg><h3>Activity</h3><p>Counts successfully delivered food posts and confirmed volunteer deliveries.</p></div>
+        <div class="method-item"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg><h3>Ratings</h3><p>Uses average scores submitted by verified participants after completed deliveries.</p></div>
+        <div class="method-item"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><h3>Trust score</h3><p>Uses the platform’s role-specific trust score, with completed outcomes increasing accountability.</p></div>
+    </aside>
 </section>
-
-
 {% endblock %}
