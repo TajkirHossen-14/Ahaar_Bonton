@@ -5,15 +5,19 @@
     const navToggle = document.getElementById('mobileNavToggle');
     const mainNav = document.getElementById('mainNav');
     const themeMenu = document.getElementById('themeMenu');
+const themeToggle = document.getElementById('themeToggle');
     const THEME_KEY = 'ahaar_theme_preference';
     const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    function closeNav() {
+    function closeNav(restoreFocus) {
         if (!mainNav || !navToggle) return;
+        const wasOpen = mainNav.classList.contains('open');
+        const shouldRestoreFocus = restoreFocus && wasOpen && mainNav.contains(document.activeElement);
         mainNav.classList.remove('open');
         navToggle.setAttribute('aria-expanded', 'false');
         navToggle.setAttribute('aria-label', 'Open navigation');
         document.body.classList.remove('menu-open');
+        if (shouldRestoreFocus) navToggle.focus();
     }
 
     function closeMenus(except) {
@@ -29,7 +33,11 @@
             navToggle.setAttribute('aria-expanded', String(open));
             navToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
             document.body.classList.toggle('menu-open', open);
-            if (open) closeMenus();
+            if (open) {
+                closeMenus();
+                const firstItem = mainNav.querySelector('a[href], summary');
+                if (firstItem) firstItem.focus();
+            }
         });
     }
 
@@ -38,16 +46,25 @@
         if (menu) {
             closeMenus(menu);
             const mobileExploreMenu = window.innerWidth <= 900 && menu.classList.contains('nav-dropdown');
-            if (!mobileExploreMenu) closeNav();
+            if (!mobileExploreMenu || event.target.closest('a[href]')) closeNav();
         } else if (!event.target.closest('.main-nav')) {
             closeMenus();
+            if (!event.target.closest('.nav-actions')) closeNav();
+        } else if (event.target.closest('a[href]')) {
+            closeNav(true);
         }
     });
 
     document.addEventListener('keydown', function (event) {
         if (event.key !== 'Escape') return;
+        const openMenu = document.querySelector('details[open]');
+        const menuHadFocus = openMenu && openMenu.contains(document.activeElement);
         closeMenus();
-        closeNav();
+        closeNav(true);
+        if (menuHadFocus && openMenu && !mainNav?.contains(openMenu)) {
+            const summary = openMenu.querySelector('summary');
+            if (summary) summary.focus();
+        }
     });
 
     window.addEventListener('resize', function () {
@@ -79,6 +96,11 @@
         });
         const themeMeta = document.querySelector('meta[name="theme-color"]');
         if (themeMeta) themeMeta.content = root.dataset.theme === 'dark' ? '#101a15' : '#176b45';
+        if (themeToggle) {
+            const label = `Choose color theme (current: ${safeMode})`;
+            themeToggle.setAttribute('aria-label', label);
+            themeToggle.title = label;
+        }
     }
 
     window.setThemeMode = function (mode) {
@@ -93,9 +115,14 @@
         });
     });
 
-    darkQuery.addEventListener('change', function () {
+    function handleSystemThemeChange() {
         if (storedTheme() === 'system') applyTheme('system');
-    });
+    }
+    if (typeof darkQuery.addEventListener === 'function') {
+        darkQuery.addEventListener('change', handleSystemThemeChange);
+    } else if (typeof darkQuery.addListener === 'function') {
+        darkQuery.addListener(handleSystemThemeChange);
+    }
     applyTheme(storedTheme());
 
     document.querySelectorAll('.alert-close').forEach(function (button) {
@@ -105,19 +132,191 @@
         });
     });
 
+    function fieldGroup(field) {
+        return field.closest('.form-group, fieldset, .rating-form');
+    }
+
+    function fieldLabel(field) {
+        if (field.labels && field.labels.length) return field.labels[0].textContent.trim();
+        if (field.getAttribute('aria-label')) return field.getAttribute('aria-label');
+        return (field.name || 'This field').replace(/_/g, ' ').replace(/^\w/, function (letter) {
+            return letter.toUpperCase();
+        });
+    }
+
+    function addDescription(field, id) {
+        if (!id) return;
+        const descriptions = (field.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+        if (!descriptions.includes(id)) field.setAttribute('aria-describedby', descriptions.concat(id).join(' '));
+    }
+
+    function setFieldInvalid(field, invalid) {
+        const group = fieldGroup(field);
+        if (!field) return;
+        field.setAttribute('aria-invalid', String(invalid));
+        if (field.type === 'radio' && field.name) {
+            Array.from(field.form.elements).filter(function (item) {
+                return item.name === field.name && item.type === 'radio';
+            }).forEach(function (item) { item.setAttribute('aria-invalid', String(invalid)); });
+        }
+        if (group) {
+            const hasInvalid = Array.from(group.querySelectorAll('[aria-invalid="true"]')).length > 0;
+            group.classList.toggle('is-invalid', hasInvalid);
+        }
+    }
+
+    function invalidFields(form) {
+        const fields = [];
+        const radioGroups = new Set();
+        Array.from(form.querySelectorAll('input, select, textarea')).forEach(function (field) {
+            if (!field.willValidate || field.validity.valid) return;
+            if (field.type === 'radio') {
+                if (radioGroups.has(field.name)) return;
+                radioGroups.add(field.name);
+            }
+            fields.push(field);
+        });
+        return fields;
+    }
+
+    function reportInvalidFields(form) {
+        const fields = invalidFields(form);
+        fields.forEach(function (field) { setFieldInvalid(field, true); });
+        if (!fields.length) return;
+
+        let summary = form.querySelector('[data-form-summary]');
+        if (!summary) {
+            summary = document.createElement('div');
+            summary.className = 'form-summary hidden';
+            summary.setAttribute('data-form-summary', '');
+            summary.setAttribute('role', 'alert');
+            summary.setAttribute('tabindex', '-1');
+            const token = form.querySelector('[name="csrfmiddlewaretoken"]');
+            form.insertBefore(summary, token ? token.nextSibling : form.firstChild);
+        }
+        summary.replaceChildren();
+        const title = document.createElement('strong');
+        title.textContent = 'Please check the highlighted fields.';
+        const list = document.createElement('ul');
+        fields.forEach(function (field) {
+            const item = document.createElement('li');
+            item.textContent = fieldLabel(field) + ': ' + field.validationMessage;
+            list.appendChild(item);
+        });
+        summary.append(title, list);
+        summary.classList.remove('hidden');
+        fields[0].focus();
+    }
+
+    function associateServerErrors(form) {
+        form.querySelectorAll('.errorlist').forEach(function (errors) {
+            let fields = [];
+            const group = errors.closest('.form-group, fieldset');
+            if (group) fields = Array.from(group.querySelectorAll('input, select, textarea'));
+            const match = errors.id.match(/^id_(.+)_error$/);
+            if (match) {
+                fields = Array.from(form.elements).filter(function (field) { return field.name === match[1]; });
+            }
+            if (!fields.length) return;
+            if (!errors.id) errors.id = 'form-errors-' + Math.random().toString(36).slice(2, 10);
+            fields.forEach(function (field) {
+                field.dataset.serverError = 'true';
+                field.dataset.serverErrorId = errors.id;
+                field.dataset.serverErrorValue = field.type === 'radio' ? String(field.checked) : field.value;
+                setFieldInvalid(field, true);
+                addDescription(field, errors.id);
+            });
+        });
+    }
+
+    function clearServerError(field) {
+        const relatedFields = field.type === 'radio' && field.name
+            ? Array.from(field.form.elements).filter(function (item) {
+                return item.name === field.name && item.type === 'radio';
+            })
+            : [field];
+
+        relatedFields.forEach(function (item) {
+            const errorId = item.dataset.serverErrorId;
+            const error = errorId ? document.getElementById(errorId) : null;
+            if (error) error.remove();
+            if (errorId) {
+                const descriptions = (item.getAttribute('aria-describedby') || '').split(/\s+/).filter(function (id) {
+                    return id && id !== errorId;
+                });
+                if (descriptions.length) item.setAttribute('aria-describedby', descriptions.join(' '));
+                else item.removeAttribute('aria-describedby');
+            }
+            delete item.dataset.serverError;
+            delete item.dataset.serverErrorId;
+            delete item.dataset.serverErrorValue;
+            setFieldInvalid(item, Boolean(item.validity && !item.validity.valid));
+        });
+
+        const summary = field.form.querySelector('[data-form-summary]');
+        if (summary && !field.form.querySelector('.errorlist') && !field.form.querySelector('[aria-invalid="true"]')) {
+            summary.classList.add('hidden');
+        }
+    }
+
     document.querySelectorAll('form').forEach(function (form) {
+        associateServerErrors(form);
+        let validationPending = false;
+        form.addEventListener('invalid', function (event) {
+            event.preventDefault();
+            setFieldInvalid(event.target, true);
+            if (validationPending) return;
+            validationPending = true;
+            window.setTimeout(function () {
+                validationPending = false;
+                reportInvalidFields(form);
+            }, 0);
+        }, true);
+
+        form.addEventListener('input', function (event) {
+            const field = event.target;
+            if (!field.validity) return;
+            if (field.dataset.serverError === 'true') {
+                const changed = field.type === 'radio'
+                    ? String(field.checked) !== field.dataset.serverErrorValue
+                    : field.value !== field.dataset.serverErrorValue;
+                if (!changed) return;
+                clearServerError(field);
+            }
+            if (field.validity.valid) setFieldInvalid(field, false);
+        });
+        form.addEventListener('change', function (event) {
+            const field = event.target;
+            if (!field.validity) return;
+            if (field.dataset.serverError === 'true') {
+                const changed = field.type === 'radio'
+                    ? String(field.checked) !== field.dataset.serverErrorValue
+                    : field.value !== field.dataset.serverErrorValue;
+                if (!changed) return;
+                clearServerError(field);
+            }
+            if (field.validity.valid) setFieldInvalid(field, false);
+        });
+
         form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                reportInvalidFields(form);
+                return;
+            }
             const submitter = event.submitter || form.querySelector('[data-confirm]');
             const confirmation = submitter ? submitter.dataset.confirm : '';
             if (confirmation && !window.confirm(confirmation)) {
                 event.preventDefault();
                 return;
             }
-            const button = form.querySelector('button[type="submit"], input[type="submit"]');
+            const button = submitter && submitter.matches('button[type="submit"], input[type="submit"]')
+                ? submitter
+                : form.querySelector('button[type="submit"], input[type="submit"]');
             if (!button || button.disabled || button.dataset.noLoading === 'true') return;
-            if (!form.checkValidity()) return;
             button.disabled = true;
             button.classList.add('loading');
+            form.setAttribute('aria-busy', 'true');
             if (button.tagName === 'BUTTON') {
                 button.dataset.originalText = button.innerHTML;
                 button.textContent = 'Please wait…';
@@ -125,6 +324,7 @@
             window.setTimeout(function () {
                 button.disabled = false;
                 button.classList.remove('loading');
+                form.removeAttribute('aria-busy');
                 if (button.tagName === 'BUTTON' && button.dataset.originalText) {
                     button.innerHTML = button.dataset.originalText;
                 }
@@ -156,7 +356,11 @@
                 return item.dataset.filter === filter;
             });
         }
-        document.querySelectorAll('.filter-btn').forEach(function (item) { item.classList.toggle('active', item === button); });
+        document.querySelectorAll('.filter-btn').forEach(function (item) {
+            const active = item === button;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-pressed', String(active));
+        });
         let visible = 0;
         document.querySelectorAll('.ngo-food-card').forEach(function (card) {
             const matches = filter === 'all' || card.dataset.category === filter || (filter === 'expiring' && card.dataset.expiring === 'yes');
@@ -170,6 +374,7 @@
     };
 
     document.querySelectorAll('.filter-btn[data-filter]').forEach(function (button) {
+        button.setAttribute('aria-pressed', String(button.classList.contains('active')));
         button.addEventListener('click', function () {
             window.filterPosts(button.dataset.filter, button);
         });
@@ -185,7 +390,10 @@
     });
     document.querySelectorAll('.tab-bar').forEach(function (tabBar) {
         const tabs = Array.from(tabBar.querySelectorAll('.tab-btn[data-target]'));
-        tabs.forEach(function (tab, index) { tab.tabIndex = index === 0 ? 0 : -1; });
+        const activeTab = tabs.find(function (tab) {
+            return tab.classList.contains('active') || tab.getAttribute('aria-selected') === 'true';
+        }) || tabs[0];
+        tabs.forEach(function (tab) { tab.tabIndex = tab === activeTab ? 0 : -1; });
         tabBar.addEventListener('keydown', function (event) {
             if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
             const current = tabs.indexOf(document.activeElement);
@@ -274,12 +482,45 @@
         input.addEventListener('change', function () {
             const preview = document.getElementById(input.dataset.preview);
             const placeholder = document.getElementById(input.dataset.placeholder);
-            if (!preview || !input.files || !input.files[0]) return;
+            const upload = input.closest('.file-upload');
+            if (!input.files || !input.files[0]) return;
+            if (upload) {
+                const name = upload.querySelector('strong');
+                const detail = upload.querySelector('small');
+                const size = input.files[0].size / 1024;
+                if (name) name.textContent = input.files[0].name;
+                if (detail) detail.textContent = size > 1024
+                    ? (size / 1024).toFixed(1) + ' MB · selected'
+                    : Math.max(1, Math.round(size)) + ' KB · selected';
+            }
+            if (!preview) return;
+            if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
+            if (!('originalSrc' in preview.dataset)) {
+                preview.dataset.originalSrc = preview.getAttribute('src') || '';
+            }
+            const originalSrc = preview.dataset.originalSrc;
             const url = URL.createObjectURL(input.files[0]);
+            preview.dataset.objectUrl = url;
             preview.src = url;
             preview.classList.remove('hidden');
             if (placeholder) placeholder.classList.add('hidden');
-            preview.onload = function () { URL.revokeObjectURL(url); };
+            preview.onload = function () {
+                URL.revokeObjectURL(url);
+                delete preview.dataset.objectUrl;
+            };
+            preview.onerror = function () {
+                URL.revokeObjectURL(url);
+                delete preview.dataset.objectUrl;
+                if (originalSrc) {
+                    preview.src = originalSrc;
+                } else {
+                    preview.removeAttribute('src');
+                    preview.classList.add('hidden');
+                    if (placeholder) placeholder.classList.remove('hidden');
+                }
+                const detail = upload ? upload.querySelector('small') : null;
+                if (detail) detail.textContent = 'Could not preview this image. Choose a valid image file.';
+            };
         });
     });
 
@@ -292,6 +533,14 @@
     }
     window.showLocationError = showLocationError;
 
+    function setLocationButtonState(button, label, disabled) {
+        if (!button) return;
+        const text = button.querySelector('[data-location-label]');
+        if (text) text.textContent = label;
+        button.disabled = disabled;
+        button.setAttribute('aria-busy', String(disabled));
+    }
+
     window.detectLocation = function () {
         const button = document.getElementById('detectLocationBtn');
         const status = document.getElementById('locationStatus');
@@ -299,7 +548,7 @@
             showLocationError('Location is not supported by this browser. Enter your address manually.');
             return;
         }
-        if (button) { button.disabled = true; button.textContent = 'Locating…'; }
+        setLocationButtonState(button, 'Locating…', true);
         if (status) { status.textContent = 'Requesting your location…'; status.className = 'form-hint'; }
         navigator.geolocation.getCurrentPosition(function (position) {
             const latitude = position.coords.latitude;
@@ -313,11 +562,11 @@
                 status.textContent = 'Location captured: ' + latitude.toFixed(5) + ', ' + longitude.toFixed(5) + '. Add a nearby landmark for volunteers.';
                 status.className = 'location-coords';
             }
-            if (button) { button.disabled = false; button.textContent = 'Use My Location'; }
+            setLocationButtonState(button, 'Use my location', false);
             window.dispatchEvent(new CustomEvent('ahaar:location', { detail: { latitude: latitude, longitude: longitude } }));
-            if (!locationInput.value) locationInput.focus();
+            if (locationInput && !locationInput.value) locationInput.focus();
         }, function () {
-            if (button) { button.disabled = false; button.textContent = 'Use My Location'; }
+            setLocationButtonState(button, 'Use my location', false);
             showLocationError('Could not access your location. Allow location permission or enter the address manually.');
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
     };
