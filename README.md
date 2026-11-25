@@ -309,10 +309,10 @@ python manage.py createsuperuser
 
 **6. Run the development server**
 ```bash
-python manage.py runserver
+python manage.py runserver 127.0.0.1:8765
 ```
 
-Now open your browser and visit **http://127.0.0.1:8000** 🎉
+Use this fixed port for local development and QA. Open your browser and visit **http://127.0.0.1:8765** 🎉
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
 
