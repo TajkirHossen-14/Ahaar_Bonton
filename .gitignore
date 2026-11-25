@@ -45,3 +45,7 @@ media/
 
 # OS
 Thumbs.db
+
+# Local QA and build artifacts
+.tmp/
+staticfiles/
