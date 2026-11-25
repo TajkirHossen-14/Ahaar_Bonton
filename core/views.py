@@ -1,11 +1,18 @@
 import calendar
 from datetime import timedelta
+from io import BytesIO
+from pathlib import Path
+
+from PIL import Image, ImageOps
+
+from django.conf import settings
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
+from django.http import FileResponse, Http404, HttpResponse
 from django.db.models import Avg, Case, Count, IntegerField, Q, When
 from django.db.models.functions import TruncMonth
 from django.shortcuts import get_object_or_404, redirect, render
@@ -86,6 +93,34 @@ def home_view(request):
     return render(request, "home.html", {"stats": stats})
 
 
+def profile_avatar(request, user_pk):
+    user = get_object_or_404(CustomUser.objects.only("profile_pic"), pk=user_pk)
+    if not user.profile_pic:
+        raise Http404("Profile image not found.")
+
+    cache_key = f"profile-avatar:{user.profile_pic.name}"
+    image_data = cache.get(cache_key)
+    if image_data is None:
+        try:
+            with user.profile_pic.open("rb") as source:
+                with Image.open(source) as original:
+                    with ImageOps.exif_transpose(original) as image:
+                        image.thumbnail((96, 96), Image.Resampling.LANCZOS)
+                        if image.mode not in {"RGB", "RGBA"}:
+                            image = image.convert("RGB")
+                        output = BytesIO()
+                        image.save(output, format="WEBP", quality=82, method=6)
+                        image_data = output.getvalue()
+        except (OSError, ValueError, Image.DecompressionBombError):
+            raise Http404("Profile image could not be processed.")
+        cache.set(cache_key, image_data, timeout=60 * 60 * 24)
+
+    response = HttpResponse(image_data, content_type="image/webp")
+    response["Cache-Control"] = "public, max-age=86400"
+    response["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
 def transparency_view(request):
     stats = FoodMatcher().get_stats()
     total_users = CustomUser.objects.count()
@@ -164,6 +199,9 @@ def transparency_view(request):
         "status_chart_values": status_chart_values,
         "monthly_chart_labels": monthly_chart_labels,
         "monthly_chart_values": monthly_chart_values,
+        "category_chart_data": list(zip(category_chart_labels, category_chart_values)),
+        "status_chart_data": list(zip(status_chart_labels, status_chart_values)),
+        "monthly_chart_data": list(zip(monthly_chart_labels, monthly_chart_values)),
     }
     return render(request, "transparency.html", context)
 
@@ -190,7 +228,11 @@ def register_view(request):
                 messages.success(request, "Your account is ready. Welcome to AhaarBonton.")
                 return redirect(user.get_dashboard_url())
     else:
-        form = CustomRegistrationForm()
+        initial = {}
+        requested_role = request.GET.get("role", "")
+        if requested_role in dict(CustomRegistrationForm.ROLE_CHOICES):
+            initial["role"] = requested_role
+        form = CustomRegistrationForm(initial=initial)
 
     return render(request, "auth/register.html", {"form": form})
 
@@ -210,7 +252,8 @@ def login_view(request):
             return redirect(_safe_next_url(request, user.get_dashboard_url()))
         messages.error(request, "Invalid email/phone or password.")
 
-    return render(request, "auth/login.html", {"form": form})
+    next_url = request.POST.get("next") or request.GET.get("next", "")
+    return render(request, "auth/login.html", {"form": form, "next": next_url})
 
 
 @require_POST
@@ -348,6 +391,9 @@ def donor_requests(request):
     all_requests = FoodRequest.objects.filter(food_post__donor=request.user).select_related(
         "ngo",
         "food_post",
+        "food_post__donor",
+        "delivery",
+        "delivery__volunteer",
     )
     pending_requests = all_requests.filter(status=FoodRequest.StatusChoices.PENDING)
     approved_requests = all_requests.filter(status=FoodRequest.StatusChoices.APPROVED)
@@ -436,7 +482,11 @@ def ngo_dashboard(request):
         return denied
 
     matcher = FoodMatcher()
-    posts = matcher.get_priority_posts().select_related("donor")
+    posts = (
+        matcher.get_priority_posts()
+        .select_related("donor")
+        .annotate(donor_avg_rating=Avg("donor__ratings_received__score"))
+    )
     expiring = matcher.get_expiring_soon(6)
     requested_post_ids = set(
         FoodRequest.objects.filter(ngo=request.user)
@@ -530,8 +580,11 @@ def ngo_my_requests(request):
     requests_qs = (
         FoodRequest.objects.filter(ngo=request.user)
         .select_related(
+            "ngo",
             "food_post",
             "food_post__donor",
+            "delivery",
+            "delivery__volunteer",
         )
         .annotate(
             status_priority=Case(
@@ -873,7 +926,7 @@ def admin_dashboard(request):
         status=FoodPost.StatusChoices.AVAILABLE,
         expiry_time__gt=timezone.now(),
         expiry_time__lte=timezone.now() + timedelta(hours=6),
-    ).order_by("expiry_time")
+    ).select_related("donor").order_by("expiry_time")
     recent_requests = FoodRequest.objects.select_related("ngo", "food_post").order_by(
         "-requested_at"
     )[:8]
@@ -893,9 +946,23 @@ def admin_dashboard(request):
         "confirmed": Delivery.objects.filter(is_confirmed=True).count(),
     }
 
+    admin_permissions = {
+        "reports": request.user.is_staff and request.user.has_perm("core.view_report"),
+        "food_posts": request.user.is_staff
+        and request.user.has_perm("core.view_foodpost"),
+        "deliveries": request.user.is_staff
+        and request.user.has_perm("core.view_delivery"),
+        "users": request.user.is_staff
+        and request.user.has_perm("core.view_customuser"),
+        "requests": request.user.is_staff
+        and request.user.has_perm("core.view_foodrequest"),
+    }
+
     context = {
         "stats": stats,
         "user_counts": user_counts,
+        "admin_permissions": admin_permissions,
+        "can_access_django_admin": any(admin_permissions.values()),
         "recent_posts": recent_posts,
         "expiring_posts": expiring_posts,
         "recent_requests": recent_requests,
@@ -1094,19 +1161,35 @@ def user_profile(request, user_pk):
             score=i).count()
 
     trust_score = None
+    activity_count = None
+    activity_label = ""
     if profile_user.role == CustomUser.RoleChoices.DONOR:
         trust_score = getattr(profile_user, "donor_profile", None)
+        activity_count = profile_user.food_posts.filter(
+            status=FoodPost.StatusChoices.DELIVERED
+        ).count()
+        activity_label = "Donations delivered"
     elif profile_user.role == CustomUser.RoleChoices.VOLUNTEER:
         trust_score = getattr(profile_user, "volunteer_profile", None)
+        activity_count = profile_user.deliveries.filter(is_confirmed=True).count()
+        activity_label = "Deliveries completed"
+    elif profile_user.role == CustomUser.RoleChoices.NGO:
+        activity_count = profile_user.food_requests.filter(
+            status=FoodRequest.StatusChoices.COMPLETED
+        ).count()
+        activity_label = "Requests completed"
 
     context = {
         'profile_user': profile_user,
         'ratings': ratings,
         'avg_rating': avg_rating,
+        'rating_percentage': round(float(avg_rating or 0) * 20, 2),
         'rating_count': rating_count,
         'rating_label': rating_label,
         'score_breakdown': score_breakdown,
         'trust_profile': trust_score,
+        'activity_count': activity_count,
+        'activity_label': activity_label,
     }
     return render(
         request, 'profiles/user_profile.html', context
@@ -1202,8 +1285,8 @@ def food_map_view(request):
                 "quantity": post.quantity,
                 "category": post.get_category_display(),
                 "location": post.location,
-                "lat": round(float(post.latitude), 6 if request.user.is_authenticated else 3),
-                "lng": round(float(post.longitude), 6 if request.user.is_authenticated else 3),
+                "lat": round(float(post.latitude), 3),
+                "lng": round(float(post.longitude), 3),
                 "expiry": post.expiry_time.isoformat(),
                 "donor": post.donor.full_name,
                 "image_url": post.image.url if post.image else None,
@@ -1285,4 +1368,17 @@ def heatmap_view(request):
 
 def offline_view(request):
     return render(request, 'offline.html')
+
+
+def service_worker_view(request):
+    script_path = Path(settings.BASE_DIR) / "static" / "js" / "service-worker.js"
+    return FileResponse(
+        script_path.open("rb"),
+        filename="service-worker.js",
+        content_type="application/javascript",
+        headers={
+            "Cache-Control": "no-cache",
+            "Service-Worker-Allowed": "/",
+        },
+    )
 
