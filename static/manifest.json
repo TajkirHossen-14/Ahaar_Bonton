@@ -1,7 +1,9 @@
 {
   "name": "AhaarBonton",
   "short_name": "AhaarBonton",
-  "description": "Surplus Food Redistribution Platform",
+  "description": "দাতা, এনজিও ও স্বেচ্ছাসেবকের মাধ্যমে অতিরিক্ত খাদ্য কমিউনিটিতে পৌঁছে দেওয়ার প্ল্যাটফর্ম।",
+  "lang": "bn",
+  "dir": "ltr",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f7f8f3",
