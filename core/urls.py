@@ -105,5 +105,6 @@ urlpatterns = [
     path("map/", views.food_map_view, name="food_map"),
     path("heatmap/", views.heatmap_view, name="heatmap"),
     path("offline/", views.offline_view, name="offline"),
+    path("service-worker.js", views.service_worker_view, name="service_worker"),
 ]
 
