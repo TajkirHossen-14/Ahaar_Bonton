@@ -170,7 +170,7 @@ class VolunteerProfile(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.full_name} — Score: {self.trust_score}"
+        return f"{self.user.full_name} – Score: {self.trust_score}"
 
     def update_trust_score(self, delta):
         self.trust_score = max(0, min(100, self.trust_score + delta))
@@ -291,6 +291,20 @@ class FoodPost(models.Model):
         if remaining.total_seconds() <= 0:
             return timedelta(seconds=0)
         return remaining
+
+    @property
+    def time_remaining_display(self):
+        total_minutes = max(0, int(self.time_remaining().total_seconds() // 60))
+        days, remaining_minutes = divmod(total_minutes, 24 * 60)
+        hours, minutes = divmod(remaining_minutes, 60)
+        parts = []
+        if days:
+            parts.append(f"{days}d")
+        if hours:
+            parts.append(f"{hours}h")
+        if minutes or not parts:
+            parts.append(f"{minutes}m")
+        return " ".join(parts)
 
     @property
     def expires_within_six_hours(self):
@@ -415,7 +429,7 @@ class Delivery(models.Model):
     is_confirmed = models.BooleanField(default=False)
     created_at   = models.DateTimeField(auto_now_add=True)
 
-    # OOP: Encapsulation — pickup logic inside class
+    # OOP: Encapsulation – pickup logic inside class
     def confirm_pickup(self, entered_otp):
         with transaction.atomic():
             delivery = (
@@ -444,7 +458,7 @@ class Delivery(models.Model):
             self.refresh_from_db()
             return "success"
 
-    # OOP: Encapsulation — delivery logic inside class
+    # OOP: Encapsulation – delivery logic inside class
     def confirm_delivery(self, entered_otp):
         with transaction.atomic():
             delivery = (
@@ -512,7 +526,7 @@ class Delivery(models.Model):
         return self.delivery_otp
 
     def __str__(self):
-        return f"Delivery — {self.food_request.food_post.title} ({self.get_status_display()})"
+        return f"Delivery – {self.food_request.food_post.title} ({self.get_status_display()})"
 
     class Meta:
         ordering = ['-created_at']
@@ -667,7 +681,7 @@ class Report(models.Model):
     admin_note = models.TextField(blank=True)
 
     def __str__(self):
-        return f"Report by {self.reporter.full_name} — {self.report_type}"
+        return f"Report by {self.reporter.full_name} – {self.report_type}"
 
     class Meta:
         ordering = ['-created_at']
