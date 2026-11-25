@@ -20,20 +20,13 @@
                         <a href="{% url 'food_map' %}" class="btn btn-ghost btn-lg"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>Explore food</a>
                     {% endif %}
                 </div>
-                <ul class="hero-assurances" aria-label="Platform benefits">
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Free to join</li>
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>OTP-verified handovers</li>
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Privacy-first locations</li>
-                </ul>
             </div>
 
             <div class="hero-art">
                 <img src="{% static 'img/Home Illustration 2.png' %}" alt="Community members sharing boxes of surplus food" class="hero-illustration" width="1024" height="683" fetchpriority="high">
-                <div class="hero-route" aria-label="Donor to NGO to volunteer, with successful deliveries tracked">
-                    <div class="route-person"><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg><span>Donor</span></div>
-                    <div class="route-person"><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg><span>NGO</span></div>
-                    <div class="route-person"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg><span>Volunteer</span></div>
-                    <div class="route-person route-deliveries"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span><strong>{{ stats.delivered }}</strong>Successful deliveries</span></div>
+                <div class="hero-note">
+                    <span class="hero-note-icon"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg></span>
+                    <span><strong>Community-powered</strong><small>Good food. Second chances.</small></span>
                 </div>
             </div>
         </div>
