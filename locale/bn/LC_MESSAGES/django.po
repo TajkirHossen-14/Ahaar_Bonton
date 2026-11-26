@@ -1,0 +1,4424 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AhaarBonton\n"
+"Report-Msgid-Bugs-To: EMAIL\n"
+"Language: bn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/profiles/user_profile.html:43
+msgid "%(average)s out of 5 stars"
+msgstr "৫-এর মধ্যে %(average)s তারা"
+
+#: templates/donor/requests.html:53
+msgid "%(category)s donation"
+msgstr "%(category)s অনুদান"
+
+#: core/models.py:303
+msgid "%(count)d day"
+msgid_plural "%(count)d days"
+msgstr[0] "%(count)d দিন"
+msgstr[1] "%(count)d দিন"
+
+#: core/models.py:305
+msgid "%(count)d hour"
+msgid_plural "%(count)d hours"
+msgstr[0] "%(count)d ঘণ্টা"
+msgstr[1] "%(count)d ঘণ্টা"
+
+#: core/models.py:307
+msgid "%(count)d minute"
+msgid_plural "%(count)d minutes"
+msgstr[0] "%(count)d মিনিট"
+msgstr[1] "%(count)d মিনিট"
+
+#: core/views.py:997
+msgid "%(count)d post marked as expired."
+msgid_plural "%(count)d posts marked as expired."
+msgstr[0] "%(count)dটি পোস্ট মেয়াদোত্তীর্ণ হিসেবে চিহ্নিত করা হয়েছে।"
+msgstr[1] "%(count)dটি পোস্ট মেয়াদোত্তীর্ণ হিসেবে চিহ্নিত করা হয়েছে।"
+
+#: templates/transparency.html:78
+msgid "%(counter)s completed"
+msgid_plural "%(counter)s completed"
+msgstr[0] "%(counter)sটি সম্পন্ন"
+msgstr[1] "%(counter)sটি সম্পন্ন"
+
+#: templates/leaderboard.html:56
+msgid "%(counter)s delivery completed"
+msgid_plural "%(counter)s deliveries completed"
+msgstr[0] "%(counter)sটি ডেলিভারি সম্পন্ন"
+msgstr[1] "%(counter)sটি ডেলিভারি সম্পন্ন"
+
+#: templates/leaderboard.html:35
+msgid "%(counter)s donation delivered"
+msgid_plural "%(counter)s donations delivered"
+msgstr[0] "%(counter)sটি অনুদান পৌঁছে দেওয়া হয়েছে"
+msgstr[1] "%(counter)sটি অনুদান পৌঁছে দেওয়া হয়েছে"
+
+#: templates/ngo/dashboard.html:45
+msgid "%(counter)s food post available"
+msgid_plural "%(counter)s food posts available"
+msgstr[0] "%(counter)sটি খাদ্য পোস্ট উপলব্ধ"
+msgstr[1] "%(counter)sটি খাদ্য পোস্ট উপলব্ধ"
+
+#: templates/transparency.html:33
+msgid ""
+"%(counter)s food post tracked in total. Time-expired posts are counted as "
+"expired even before the scheduled cleanup runs."
+msgid_plural ""
+"%(counter)s food posts tracked in total. Time-expired posts are counted as "
+"expired even before the scheduled cleanup runs."
+msgstr[0] ""
+"মোট %(counter)sটি খাদ্য পোস্ট ট্র্যাক করা হয়েছে। নির্ধারিত পরিষ্কারকরণ "
+"কাজটি চলার আগেই সময়োত্তীর্ণ পোস্টগুলোকে মেয়াদোত্তীর্ণ হিসেবে গণনা করা হয়।"
+msgstr[1] ""
+"মোট %(counter)sটি খাদ্য পোস্ট ট্র্যাক করা হয়েছে। নির্ধারিত পরিষ্কারকরণ "
+"কাজটি চলার আগেই সময়োত্তীর্ণ পোস্টগুলোকে মেয়াদোত্তীর্ণ হিসেবে গণনা করা হয়।"
+
+#: templates/admin_panel/dashboard.html:106
+msgid "%(counter)s member"
+msgid_plural "%(counter)s members"
+msgstr[0] "%(counter)s জন সদস্য"
+msgstr[1] "%(counter)s জন সদস্য"
+
+#: templates/donor/requests.html:31
+msgid "%(counter)s pending"
+msgid_plural "%(counter)s pending"
+msgstr[0] "%(counter)sটি অপেক্ষমাণ"
+msgstr[1] "%(counter)sটি অপেক্ষমাণ"
+
+#: templates/admin_panel/dashboard.html:55
+msgid "%(counter)s pending report"
+msgid_plural "%(counter)s pending reports"
+msgstr[0] "%(counter)sটি অপেক্ষমাণ রিপোর্ট"
+msgstr[1] "%(counter)sটি অপেক্ষমাণ রিপোর্ট"
+
+#: templates/donor/dashboard.html:70
+msgid "%(counter)s post shared with the community · %(expired)s expired."
+msgid_plural ""
+"%(counter)s posts shared with the community · %(expired)s expired."
+msgstr[0] ""
+"কমিউনিটির সঙ্গে %(counter)sটি পোস্ট ভাগ করা হয়েছে · %(expired)sটি "
+"মেয়াদোত্তীর্ণ।"
+msgstr[1] ""
+"কমিউনিটির সঙ্গে %(counter)sটি পোস্ট ভাগ করা হয়েছে · %(expired)sটি "
+"মেয়াদোত্তীর্ণ।"
+
+#: templates/donor/dashboard.html:70
+msgid "%(counter)s post shared with the community."
+msgid_plural "%(counter)s posts shared with the community."
+msgstr[0] "কমিউনিটির সঙ্গে %(counter)sটি পোস্ট ভাগ করা হয়েছে।"
+msgstr[1] "কমিউনিটির সঙ্গে %(counter)sটি পোস্ট ভাগ করা হয়েছে।"
+
+#: templates/leaderboard.html:81 templates/leaderboard.html:101
+msgid "%(counter)s rating"
+msgid_plural "%(counter)s ratings"
+msgstr[0] "%(counter)sটি রেটিং"
+msgstr[1] "%(counter)sটি রেটিং"
+
+#: templates/food_map.html:51 templates/donor/dashboard.html:96
+#: templates/donor/requests.html:58 templates/donor/requests.html:135
+#: templates/donor/requests.html:272 templates/ngo/dashboard.html:71
+#: templates/ngo/my_requests.html:25 templates/ngo/request_confirm.html:34
+#: templates/volunteer/dashboard.html:58
+#: templates/volunteer/dashboard.html:131
+msgid "%(counter)s serving"
+msgid_plural "%(counter)s servings"
+msgstr[0] "%(counter)sটি পরিবেশন"
+msgstr[1] "%(counter)sটি পরিবেশন"
+
+#: templates/donor/requests.html:214
+msgid "%(counter)s serving reached %(name)s."
+msgid_plural "%(counter)s servings reached %(name)s."
+msgstr[0] "%(name)s-এর কাছে %(counter)sটি পরিবেশন পৌঁছেছে।"
+msgstr[1] "%(name)s-এর কাছে %(counter)sটি পরিবেশন পৌঁছেছে।"
+
+#: templates/partials/rating_form.html:11
+msgid "%(counter)s star"
+msgid_plural "%(counter)s stars"
+msgstr[0] "%(counter)sটি তারা"
+msgstr[1] "%(counter)sটি তারা"
+
+#: templates/admin_panel/dashboard.html:96
+#: templates/profiles/user_profile.html:84
+msgid "%(counter)s total"
+msgid_plural "%(counter)s total"
+msgstr[0] "মোট %(counter)sটি"
+msgstr[1] "মোট %(counter)sটি"
+
+#: templates/profiles/user_profile.html:47
+msgid "%(counter)s verified rating"
+msgid_plural "%(counter)s verified ratings"
+msgstr[0] "%(counter)sটি যাচাইকৃত রেটিং"
+msgstr[1] "%(counter)sটি যাচাইকৃত রেটিং"
+
+#: templates/transparency.html:69
+msgid "%(label)s: %(counter)s completed delivery."
+msgid_plural "%(label)s: %(counter)s completed deliveries."
+msgstr[0] "%(label)s: %(counter)sটি ডেলিভারি সম্পন্ন হয়েছে।"
+msgstr[1] "%(label)s: %(counter)sটি ডেলিভারি সম্পন্ন হয়েছে।"
+
+#: templates/transparency.html:55 templates/transparency.html:62
+msgid "%(label)s: %(counter)s food post."
+msgid_plural "%(label)s: %(counter)s food posts."
+msgstr[0] "%(label)s: %(counter)sটি খাদ্য পোস্ট।"
+msgstr[1] "%(label)s: %(counter)sটি খাদ্য পোস্ট।"
+
+#: templates/profiles/user_profile.html:3
+msgid "%(name)s - Community profile"
+msgstr "%(name)s - কমিউনিটি প্রোফাইল"
+
+#: templates/ngo/my_requests.html:85
+msgid "%(name)s accepted this delivery. Keep the food ready for collection."
+msgstr ""
+"%(name)s এই ডেলিভারিটি গ্রহণ করেছেন। খাদ্যটি পিকআপের জন্য প্রস্তুত রাখুন।"
+
+#: core/views.py:562
+msgid "%(name)s requested your post '%(title)s'."
+msgstr "%(name)s আপনার '%(title)s' পোস্টের অনুরোধ করেছেন।"
+
+#: core/models.py:174
+msgid "%(name)s — Score: %(score)s"
+msgstr "%(name)s — স্কোর: %(score)s"
+
+#: templates/donor/dashboard.html:101 templates/ngo/my_requests.html:46
+msgid "%(remaining)s remaining"
+msgstr "%(remaining)s বাকি"
+
+#: templates/auth/profile.html:29
+msgid "%(role)s account · Member since %(joined)s"
+msgstr "%(role)s অ্যাকাউন্ট · %(joined)s থেকে সদস্য"
+
+#: templates/profiles/user_profile.html:16
+msgid "%(role)s profile"
+msgstr "%(role)s প্রোফাইল"
+
+#: templates/profiles/user_profile.html:95
+msgid "%(score)s out of 5 stars"
+msgstr "৫-এর মধ্যে %(score)s"
+
+#: core/models.py:277
+msgid "%(title)s (%(status)s)"
+msgstr "%(title)s (%(status)s)"
+
+#: templates/food_map.html:35
+msgid ""
+"<span id=\"mapResultCount\" aria-live=\"polite\">%(counter)s mapped "
+"donation</span>, ordered by expiry."
+msgid_plural ""
+"<span id=\"mapResultCount\" aria-live=\"polite\">%(counter)s mapped "
+"donations</span>, ordered by expiry."
+msgstr[0] ""
+"<span id=\"mapResultCount\" aria-live=\"polite\">%(counter)sটি মানচিত্রে "
+"দেখানো অনুদান</span>, মেয়াদ শেষ হওয়ার ক্রমে সাজানো।"
+msgstr[1] ""
+"<span id=\"mapResultCount\" aria-live=\"polite\">%(counter)sটি মানচিত্রে "
+"দেখানো অনুদান</span>, মেয়াদ শেষ হওয়ার ক্রমে সাজানো।"
+
+#: templates/donor/dashboard.html:25
+msgid "<strong>%(counter)s NGO request</strong> waiting for your response."
+msgid_plural ""
+"<strong>%(counter)s NGO requests</strong> waiting for your response."
+msgstr[0] ""
+"আপনার সাড়া দেওয়ার অপেক্ষায় <strong>%(counter)sটি এনজিও অনুরোধ</strong> "
+"আছে।"
+msgstr[1] ""
+"আপনার সাড়া দেওয়ার অপেক্ষায় <strong>%(counter)sটি এনজিও অনুরোধ</strong> "
+"আছে।"
+
+#: templates/admin_panel/dashboard.html:89
+msgid ""
+"<strong>%(counter)s donation</strong> will expire within six hours. Follow "
+"up before food goes to waste."
+msgid_plural ""
+"<strong>%(counter)s donations</strong> will expire within six hours. Follow "
+"up before food goes to waste."
+msgstr[0] ""
+"ছয় ঘণ্টার মধ্যে <strong>%(counter)sটি অনুদান</strong>-এর মেয়াদ শেষ হবে। "
+"খাদ্য নষ্ট হওয়ার আগে দায়িত্ব নিন।"
+msgstr[1] ""
+"ছয় ঘণ্টার মধ্যে <strong>%(counter)sটি অনুদান</strong>-এর মেয়াদ শেষ হবে। "
+"খাদ্য নষ্ট হওয়ার আগে দায়িত্ব নিন।"
+
+#: templates/ngo/dashboard.html:25
+msgid ""
+"<strong>%(counter)s donation</strong> will expire within six hours. "
+"Prioritize food your team can collect safely."
+msgid_plural ""
+"<strong>%(counter)s donations</strong> will expire within six hours. "
+"Prioritize food your team can collect safely."
+msgstr[0] ""
+"ছয় ঘণ্টার মধ্যে <strong>%(counter)sটি অনুদান</strong>-এর মেয়াদ শেষ হবে। "
+"আপনার দল নিরাপদে পিকআপ করতে পারে এমন খাদ্যকে অগ্রাধিকার দিন।"
+msgstr[1] ""
+"ছয় ঘণ্টার মধ্যে <strong>%(counter)sটি অনুদান</strong>-এর মেয়াদ শেষ হবে। "
+"আপনার দল নিরাপদে পিকআপ করতে পারে এমন খাদ্যকে অগ্রাধিকার দিন।"
+
+#: templates/reports/report_user.html:50
+msgid ""
+"A clear report protects community members and gives administrators the "
+"context they need."
+msgstr ""
+"স্পষ্ট একটি রিপোর্ট কমিউনিটির সদস্যদের সুরক্ষিত রাখে এবং অ্যাডমিনদের "
+"প্রয়োজনীয় প্রসঙ্গ দেয়।"
+
+#: templates/donor/add_food.html:147
+msgid "A clear, recent photo helps NGOs make confident requests."
+msgstr ""
+"স্পষ্ট, সাম্প্রতিক একটি ছবি এনজিওদের আত্মবিশ্বাসের সঙ্গে অনুরোধ করতে সাহায্য"
+" করে।"
+
+#: templates/home.html:164
+msgid "A few things to know before you share, request, or deliver food."
+msgstr "খাদ্য ভাগ করা, অনুরোধ বা ডেলিভারির আগে কিছু বিষয় জানা দরকার।"
+
+#: templates/auth/profile.html:92
+msgid "A few thoughtful details make every food handover easier and safer."
+msgstr "প্রতিটি খাদ্য হস্তান্তরকে সহজ ও নিরাপদ করতে কয়েকটি বিবেচনা সহায়ক।"
+
+#: templates/home.html:178
+msgid "A little surplus. A lot of possibility."
+msgstr "অল্প অতিরিক্ত। অনেক সম্ভাবনা।"
+
+#: templates/donor/add_food.html:96 templates/donor/edit_food.html:96
+msgid "A nearby landmark is essential; precise GPS coordinates are optional."
+msgstr "কাছের একটি পরিচিত স্থান আবশ্যক; সঠিক জিপিএস স্থানাঙ্ক ঐচ্ছিক।"
+
+#: templates/donor/add_food.html:170
+msgid "A post people can trust"
+msgstr "এমন একটি পোস্ট, যা মানুষকে বিশ্বাস করতে পারে"
+
+#: templates/heatmap.html:18
+msgid ""
+"A privacy-conscious view of food donation activity across the communities "
+"AhaarBonton serves."
+msgstr ""
+"AhaarBonton যে কমিউনিটিগুলোকে পরিবেশন করে, সেখানে খাদ্য দান কার্যকলাপের একটি"
+" গোপনীয়তামূলক দৃশ্য।"
+
+#: templates/auth/profile.html:91
+msgid "A profile people can trust"
+msgstr "এমন একটি প্রোফাইল, যা মানুষকে বিশ্বাস করতে পারে"
+
+#: templates/transparency.html:68
+msgid "A rolling 12-month view of confirmed community deliveries"
+msgstr "নিশ্চিত কমিউনিটি ডেলিভারির গত ১২ মাসের চলমান সংক্ষিপ্ত বিবরণ"
+
+#: templates/ngo/my_requests.html:85
+msgid ""
+"A volunteer has not accepted this delivery yet. Keep the food ready for "
+"collection."
+msgstr ""
+"এখনও কোনো স্বেচ্ছাসেবক এই ডেলিভারিটি গ্রহণ করেননি। খাদ্যটি পিকআপের জন্য "
+"প্রস্তুত রাখুন।"
+
+#: templates/auth/login.html:9
+msgid "About AhaarBonton"
+msgstr "AhaarBonton সম্পর্কে"
+
+#: templates/home.html:99
+msgid ""
+"Accept a delivery, confirm pickup, and verify the final handover with an "
+"OTP."
+msgstr ""
+"ডেলিভারি গ্রহণ করুন, পিকআপ নিশ্চিত করুন এবং একটি ওটিপি দিয়ে চূড়ান্ত "
+"হস্তান্তর যাচাই করুন।"
+
+#: templates/volunteer/dashboard.html:79
+msgid "Accept delivery"
+msgstr "ডেলিভারি গ্রহণ করুন"
+
+#: templates/volunteer/dashboard.html:78
+msgid "Accept this delivery? You will be responsible for both handovers."
+msgstr "এই ডেলিভারিটি গ্রহণ করবেন? আপনি উভয় হস্তান্তরের দায়িত্ব নেবেন।"
+
+#: templates/volunteer/dashboard.html:156
+msgid "Accepted"
+msgstr "গৃহীত"
+
+#: templates/403.html:3
+msgid "Access denied"
+msgstr "প্রবেশাধিকার নেই"
+
+#: core/views.py:680 core/views.py:746 core/views.py:819
+msgid "Access denied."
+msgstr "প্রবেশাধিকার নেই।"
+
+#: templates/home.html:61
+msgid "Accountable handovers"
+msgstr "জবাবদিহির হস্তান্তর"
+
+#: templates/volunteer/dashboard.html:14
+msgid "Active"
+msgstr "সক্রিয়"
+
+#: templates/leaderboard.html:161
+msgid "Activity"
+msgstr "কার্যকলাপ"
+
+#: templates/auth/register.html:87
+msgid "Add a face to your profile"
+msgstr "আপনার প্রোফাইলে একটি ছবি যোগ করুন"
+
+#: food/forms.py:73
+msgid "Add a short description of the food and its condition."
+msgstr "খাদ্য ও তার অবস্থার একটি সংক্ষিপ্ত বিবরণ যোগ করুন।"
+
+#: core/forms.py:33
+msgid "Add details that will help our team review this report."
+msgstr "এই রিপোর্ট পর্যালোচনায় আমাদের দলকে সাহায্য করার বিবরণ যোগ করুন।"
+
+#: templates/reports/report_post.html:34 templates/reports/report_user.html:36
+msgid "Additional details"
+msgstr "অতিরিক্ত তথ্য"
+
+#: core/models.py:56
+msgid "Admin"
+msgstr "অ্যাডমিন"
+
+#: templates/admin_panel/dashboard.html:3
+#: templates/admin_panel/dashboard.html:9
+msgid "Admin control center"
+msgstr "অ্যাডমিন নিয়ন্ত্রণ কেন্দ্র"
+
+#: templates/transparency.html:102
+msgid "Admin oversight"
+msgstr "অ্যাডমিন তত্ত্বাবধান"
+
+#: templates/admin_panel/dashboard.html:110
+msgid "Admins"
+msgstr "অ্যাডমিনরা"
+
+#: templates/home.html:13
+msgid ""
+"AhaarBonton connects surplus food with communities through donors, NGOs, and"
+" volunteers – quickly, safely, and transparently."
+msgstr ""
+"AhaarBonton দাতা, এনজিও ও স্বেচ্ছাসেবকের মাধ্যমে অতিরিক্ত খাদ্যকে কমিউনিটির "
+"কাছে পৌঁছে দেয় — দ্রুত, নিরাপদ ও স্বচ্ছভাবে।"
+
+#: templates/base.html:8
+msgid ""
+"AhaarBonton connects surplus food with communities through donors, NGOs, and"
+" volunteers."
+msgstr ""
+"AhaarBonton দাতা, এনজিও ও স্বেচ্ছাসেবকের মাধ্যমে অতিরিক্ত খাদ্যকে কমিউনিটির "
+"কাছে পৌঁছে দেয়।"
+
+#: templates/base.html:84 templates/auth/login.html:10
+#: templates/auth/register.html:10
+msgid "AhaarBonton home"
+msgstr "AhaarBonton হোম"
+
+#: templates/ngo/dashboard.html:32
+msgid "All food"
+msgstr "সব খাদ্য"
+
+#: templates/donor/dashboard.html:37
+msgid "All food posts you have shared"
+msgstr "আপনার ভাগ করা সব খাদ্য পোস্ট"
+
+#: templates/admin_panel/dashboard.html:32
+msgid "All registered community accounts"
+msgstr "নিবন্ধিত সব কমিউনিটি অ্যাকাউন্ট"
+
+#: templates/base.html:200
+msgid "All rights reserved."
+msgstr "সব অধিকার সংরক্ষিত।"
+
+#: templates/transparency.html:54
+msgid "All shared food posts by category"
+msgstr "বিভাগ অনুযায়ী সব ভাগ করা খাদ্য পোস্ট"
+
+#: templates/auth/register.html:99
+msgid "Already a member?"
+msgstr "ইতিমধ্যে সদস্য?"
+
+#: core/views.py:226
+msgid "An account with these details already exists."
+msgstr "এই তথ্য দিয়ে একটি অ্যাকাউন্ট ইতিমধ্যে আছে।"
+
+#: users/forms.py:68
+msgid "An account with this email already exists."
+msgstr "এই ইমেইল দিয়ে একটি অ্যাকাউন্ট ইতিমধ্যে আছে।"
+
+#: templates/base.html:112
+msgid "Appearance"
+msgstr "চেহারা"
+
+#: templates/donor/requests.html:85
+msgid "Approve"
+msgstr "অনুমোদন করুন"
+
+#: templates/donor/requests.html:84
+msgid "Approve this request and create a delivery task?"
+msgstr "এই অনুরোধ অনুমোদন করে একটি ডেলিভারি কাজ তৈরি করবেন?"
+
+#: core/models.py:322 templates/donor/requests.html:160
+#: templates/ngo/my_requests.html:64 templates/ngo/my_requests.html:77
+msgid "Approved"
+msgstr "অনুমোদিত"
+
+#: templates/donor/requests.html:112
+msgid "Approved and in progress"
+msgstr "অনুমোদিত ও চলমান"
+
+#: templates/donor/requests.html:187
+msgid ""
+"Approved requests will appear here with pickup details and delivery "
+"progress."
+msgstr ""
+"অনুমোদিত অনুরোধগুলো পিকআপের তথ্য ও ডেলিভারির অগ্রগতিসহ এখানে দেখা যাবে।"
+
+#: templates/donor/requests.html:79
+msgid "Approving opens a delivery task for volunteers."
+msgstr "অনুমোদন করলে স্বেচ্ছাসেবীদের জন্য একটি ডেলিভারি কাজ খুলে যায়।"
+
+#: food/forms.py:39 templates/donor/add_food.html:102
+#: templates/donor/edit_food.html:103
+msgid "Area, street, or landmark"
+msgstr "এলাকা, সড়ক বা পরিচিত স্থান"
+
+#: templates/volunteer/dashboard.html:166
+msgid ""
+"Ask the donor for their six-digit pickup OTP when you collect the food."
+msgstr "খাদ্য পিকআপের সময় দাতার কাছ থেকে ছয় অঙ্কের পিকআপ ওটিপি চান।"
+
+#: core/models.py:516
+msgid "Assign a volunteer before confirming pickup."
+msgstr "পিকআপ নিশ্চিত করার আগে একজন স্বেচ্ছাসেবক নিয়োগ করুন।"
+
+#: core/models.py:215 templates/heatmap.html:77
+#: templates/volunteer/dashboard.html:13
+msgid "Available"
+msgstr "উপলব্ধ"
+
+#: templates/volunteer/dashboard.html:22 templates/volunteer/dashboard.html:33
+msgid "Available deliveries"
+msgstr "উপলব্ধ ডেলিভারি"
+
+#: templates/transparency.html:22
+msgid "Available donations"
+msgstr "উপলব্ধ অনুদান"
+
+#: templates/admin_panel/dashboard.html:148
+msgid "Available donations that need attention within six hours."
+msgstr "ছয় ঘণ্টার মধ্যে মনোযোগ দেওয়া প্রয়োজন এমন উপলব্ধ অনুদান।"
+
+#: templates/food_map.html:34 templates/admin_panel/dashboard.html:35
+msgid "Available food"
+msgstr "উপলব্ধ খাদ্য"
+
+#: templates/food_map.html:33
+msgid "Available food posts"
+msgstr "উপলব্ধ খাদ্য পোস্ট"
+
+#: templates/admin_panel/dashboard.html:153
+msgid "Available food posts expiring within six hours"
+msgstr "ছয় ঘণ্টার মধ্যে মেয়াদ শেষ হওয়ার উপলব্ধ খাদ্য পোস্ট"
+
+#: templates/heatmap.html:37 templates/transparency.html:29
+#: templates/donor/dashboard.html:41 templates/ngo/dashboard.html:44
+msgid "Available now"
+msgstr "এখনই উপলব্ধ"
+
+#: templates/home.html:39
+msgid "Available right now"
+msgstr "এখনই উপলব্ধ"
+
+#: core/models.py:113 core/models.py:157 core/models.py:202
+msgid "Average"
+msgstr "মাঝারি"
+
+#: templates/leaderboard.html:73
+msgid "Average rating from completed NGO requests"
+msgstr "সম্পন্ন এনজিও অনুরোধের গড় রেটিং"
+
+#: templates/leaderboard.html:93
+msgid "Average rating from delivery participants"
+msgstr "ডেলিভারি অংশগ্রহণকারীদের গড় রেটিং"
+
+#: templates/admin_panel/dashboard.html:97
+msgid "Awaiting volunteer"
+msgstr "স্বেচ্ছাসেবকের অপেক্ষায়"
+
+#: templates/donor/requests.html:28
+msgid "Awaiting your response"
+msgstr "আপনার সাড়ার অপেক্ষায়"
+
+#: templates/auth/profile.html:13 templates/donor/add_food.html:16
+#: templates/donor/edit_food.html:16 templates/donor/requests.html:13
+msgid "Back to dashboard"
+msgstr "ড্যাশবোর্ডে ফিরুন"
+
+#: templates/404.html:4
+msgid "Back to home"
+msgstr "হোমে ফিরুন"
+
+#: templates/auth/password_reset.html:29
+#: templates/auth/password_reset_done.html:12
+msgid "Back to log in"
+msgstr "লগ ইন পেজে ফিরুন"
+
+#: templates/reports/report_user.html:13
+msgid "Back to profile"
+msgstr "প্রোফাইলে ফিরুন"
+
+#: core/models.py:212 templates/food_map.html:45
+#: templates/ngo/dashboard.html:37
+msgid "Bakery"
+msgstr "বেকারি"
+
+#: templates/home.html:11
+msgid "Bangladesh’s Surplus Food Redistribution Platform"
+msgstr "বাংলাদেশের অতিরিক্ত খাদ্য পুনর্বণন প্ল্যাটফর্ম"
+
+#: templates/transparency.html:56
+msgid "Bar chart showing food posts by category"
+msgstr "বিভাগ অনুযায়ী খাদ্য পোস্ট দেখানো বার চার্ট"
+
+#: templates/transparency.html:108
+msgid "Be part of the impact."
+msgstr "এই পরিবর্তনের অংশ হন।"
+
+#: templates/home.html:139
+msgid "Become a donor"
+msgstr "দাতা হন"
+
+#: templates/base.html:197
+msgid "Become a member"
+msgstr "সদস্য হন"
+
+#: templates/home.html:153
+msgid "Become a volunteer"
+msgstr "স্বেচ্ছাসেবক হন"
+
+#: templates/donor/add_food.html:127 templates/donor/edit_food.html:129
+#: templates/donor/requests.html:65 templates/ngo/request_confirm.html:41
+#: templates/volunteer/dashboard.html:63
+#: templates/volunteer/dashboard.html:137
+msgid "Best consumed before"
+msgstr "ভালোভাবে খাওয়ার সময়সীমা"
+
+#: templates/donor/requests.html:150 templates/ngo/my_requests.html:42
+msgid "Best consumed before %(expiry)s"
+msgstr "%(expiry)s-এর আগে ভালোভাবে খাওয়া উচিত"
+
+#: templates/donor/edit_food.html:182
+msgid "Best consumed before %(expiry)s."
+msgstr "%(expiry)s-এর আগে ভালোভাবে খাওয়া উচিত।"
+
+#: templates/ngo/my_requests.html:134
+msgid ""
+"Browse available food and send your first request. You can follow its "
+"progress here."
+msgstr ""
+"উপলব্ধ খাদ্য দেখুন এবং আপনার প্রথম অনুরোধ পাঠান। অগ্রগতিটি এখানে অনুসরণ করতে"
+" পারবেন।"
+
+#: templates/ngo/my_requests.html:123 templates/ngo/my_requests.html:135
+msgid "Browse donations"
+msgstr "অনুদান দেখুন"
+
+#: templates/ngo/request_confirm.html:13
+msgid "Browse food"
+msgstr "খাদ্য দেখুন"
+
+#: templates/home.html:145
+msgid "Browse nearby donations"
+msgstr "কাছের অনুদান দেখুন"
+
+#: templates/home.html:152
+msgid "Build community trust"
+msgstr "কমিউনিটির বিশ্বাস তৈরি করুন"
+
+#: templates/auth/profile.html:96
+msgid "Build trust through actions"
+msgstr "কাজের মাধ্যমে বিশ্বাস তৈরি করুন"
+
+#: templates/auth/login.html:33
+msgid "Build trust through completed actions"
+msgstr "সম্পন্ন কাজের মাধ্যমে বিশ্বাস তৈরি করুন"
+
+#: templates/base.html:194
+msgid "Built for a hunger-free Bangladesh"
+msgstr "খাদ্যহীনতা-মুক্ত বাংলাদেশের জন্য তৈরি"
+
+#: templates/home.html:49
+msgid "Built for the moments that matter."
+msgstr "যে মুহূর্তগুলো গুরুত্বপূর্ণ, তার জন্য তৈরি।"
+
+#: templates/transparency.html:97
+msgid "Built on trust"
+msgstr "বিশ্বাসের ওপর ভিত্তি করে তৈরি"
+
+#: templates/donor/dashboard.html:61
+msgid "Built through reliable donation follow-through"
+msgstr "নির্ভরযোগ্য দান অনুসরণের মাধ্যমে তৈরি"
+
+#: templates/leaderboard.html:16
+msgid "By activity"
+msgstr "কার্যকলাপ অনুযায়ী"
+
+#: templates/leaderboard.html:17
+msgid "By rating"
+msgstr "রেটিং অনুযায়ী"
+
+#: templates/leaderboard.html:18
+msgid "By trust score"
+msgstr "বিশ্বাস স্কোর অনুযায়ী"
+
+#: templates/auth/profile.html:82 templates/donor/add_food.html:156
+#: templates/donor/edit_food.html:158 templates/ngo/request_confirm.html:79
+#: templates/reports/report_post.html:41 templates/reports/report_user.html:43
+msgid "Cancel"
+msgstr "বাতিল করুন"
+
+#: templates/home.html:114
+msgid "Careful by design"
+msgstr "যত্নের সঙ্গে নকশা করা"
+
+#: food/forms.py:44 templates/transparency.html:58
+#: templates/admin_panel/dashboard.html:127
+#: templates/admin_panel/dashboard.html:133 templates/donor/add_food.html:78
+#: templates/donor/edit_food.html:78
+msgid "Category"
+msgstr "বিভাগ"
+
+#: templates/leaderboard.html:11
+msgid ""
+"Celebrate the donors and volunteers building a more reliable food-sharing "
+"network."
+msgstr ""
+"দাতা ও স্বেচ্ছাসেবকেরা আরও নির্ভরযোগ্য খাদ্য বিনিময় নেটওয়ার্ক গড়ে তুলছেন।"
+
+#: templates/transparency.html:57
+msgid "Chart unavailable. Use the category data table below."
+msgstr "চার্ট দেখা যাচ্ছে না। নিচের বিভাগের ডেটা টেবিল ব্যবহার করুন।"
+
+#: templates/transparency.html:71
+msgid "Chart unavailable. Use the monthly data table below."
+msgstr "চার্ট দেখা যাচ্ছে না। নিচের মাসভিত্তিক ডেটা টেবিল ব্যবহার করুন।"
+
+#: templates/transparency.html:64
+msgid "Chart unavailable. Use the status data table below."
+msgstr "চার্ট দেখা যাচ্ছে না। নিচের অবস্থার ডেটা টেবিল ব্যবহার করুন।"
+
+#: templates/transparency.html:75
+msgid ""
+"Charts require JavaScript. All chart values remain available in the data "
+"tables."
+msgstr "চার্ট দেখতে JavaScript প্রয়োজন। সব চার্টের মান ডেটা টেবিলে থাকবে।"
+
+#: templates/volunteer/dashboard.html:90
+msgid ""
+"Check back soon for a route that fits your schedule. New approved requests "
+"appear here first."
+msgstr ""
+"আপনার সময়সূচির সঙ্গে মানানসই একটি পথের জন্য পরে আবার দেখুন। নতুন অনুমোদিত "
+"অনুরোধ এখানে সবার আগে দেখা যাবে।"
+
+#: templates/donor/requests.html:29
+msgid "Check the NGO’s request and message before making a decision."
+msgstr "সিদ্ধান্ত নেওয়ার আগে এনজিওর অনুরোধ ও বার্তা দেখুন।"
+
+#: templates/auth/password_reset_done.html:3
+#: templates/auth/password_reset_done.html:9
+msgid "Check your email"
+msgstr "আপনার ইমেইল দেখুন"
+
+#: templates/auth/password_reset_done.html:11
+msgid ""
+"Check your spam folder too. The link is valid for one hour and can only be "
+"used once."
+msgstr ""
+"স্প্যাম ফোল্ডারও দেখুন। লিংকটি এক ঘণ্টা পর্যন্ত বৈধ এবং শুধু একবার ব্যবহার "
+"করা যাবে।"
+
+#: templates/donor/add_food.html:139
+msgid "Choose a food photo"
+msgstr "খাদ্যের একটি ছবি বেছে নিন"
+
+#: templates/auth/password_reset_confirm.html:3
+#: templates/auth/password_reset_confirm.html:10
+msgid "Choose a new password"
+msgstr "একটি নতুন পাসওয়ার্ড বেছে নিন"
+
+#: templates/auth/profile.html:71
+msgid "Choose a new profile photo"
+msgstr "একটি নতুন প্রোফাইল ছবি বেছে নিন"
+
+#: templates/auth/register.html:90
+msgid "Choose a profile photo"
+msgstr "একটি প্রোফাইল ছবি বেছে নিন"
+
+#: templates/donor/add_food.html:132
+msgid ""
+"Choose a realistic food-safety deadline, not just a collection deadline. "
+"Expired posts cannot be requested."
+msgstr ""
+"শুধু পিকআপের সময়সীমা নয়, বরং বাস্তবসম্মত খাদ্য নিরাপত্তার সময়সীমা দিন। "
+"মেয়াদোত্তীর্ণ পোস্টের অনুরোধ করা যায় না।"
+
+#: templates/donor/edit_food.html:141
+msgid "Choose a replacement photo"
+msgstr "একটি বিকল্প ছবি বেছে নিন"
+
+#: templates/volunteer/dashboard.html:219
+msgid ""
+"Choose an available delivery to get started. Your accepted routes will "
+"appear here."
+msgstr ""
+"শুরু করতে একটি উপলব্ধ ডেলিভারি বেছে নিন। আপনার গ্রহণ করা পথগুলো এখানে দেখা "
+"যাবে।"
+
+#: templates/base.html:158
+msgid "Choose color theme"
+msgstr "রঙের থিম বেছে নিন"
+
+#: templates/home.html:152
+msgid "Choose delivery tasks"
+msgstr "ডেলিভারি কাজ বেছে নিন"
+
+#: templates/ngo/dashboard.html:46
+msgid ""
+"Choose donations that fit your community’s needs and collection capacity."
+msgstr ""
+"আপনার কমিউনিটির প্রয়োজন ও সংগ্রহের সামর্থ্য অনুযায়ী অনুদান বেছে নিন।"
+
+#: templates/auth/register.html:28
+msgid "Choose how you’ll make a difference."
+msgstr "আপনি কীভাবে পরিবর্তন আনবেন তা বেছে নিন।"
+
+#: templates/donor/add_food.html:87 templates/donor/edit_food.html:87
+msgid "Choose the closest match."
+msgstr "সবচেয়ে কাছাকাছি কারণটি বেছে নিন।"
+
+#: templates/reports/report_post.html:19
+msgid ""
+"Choose the closest reason and include only information that helps the "
+"review."
+msgstr ""
+"সবচেয়ে কাছাকাছি কারণটি বেছে নিন এবং শুধু পর্যালোচনায় সহায়ক তথ্য দিন।"
+
+#: templates/reports/report_user.html:19
+msgid ""
+"Choose the closest reason and provide context that can support a fair "
+"review."
+msgstr ""
+"সবচেয়ে কাছাকাছি কারণটি বেছে নিন এবং ন্যায্য পর্যালোচনায় সহায়ক প্রসঙ্গ "
+"দিন।"
+
+#: core/models.py:216 templates/heatmap.html:78
+msgid "Claimed"
+msgstr "দাবি করা হয়েছে"
+
+#: templates/heatmap.html:44
+msgid "Claimed and moving through handover"
+msgstr "দাবি করা হয়েছে এবং হস্তান্তরের প্রক্রিয়ায় আছে"
+
+#: templates/transparency.html:30
+msgid "Claimed for delivery"
+msgstr "ডেলিভারির জন্য দাবি করা হয়েছে"
+
+#: core/views.py:379
+msgid "Claimed or delivered posts cannot be deleted."
+msgstr "দাবি করা বা পৌঁছে দেওয়া পোস্ট মুছে ফেলা যায় না।"
+
+#: core/views.py:354
+msgid "Claimed or delivered posts cannot be edited."
+msgstr "দাবি করা বা পৌঁছে দেওয়া পোস্ট সম্পাদনা করা যায় না।"
+
+#: templates/transparency.html:97
+msgid "Clear steps. Shared accountability."
+msgstr "স্পষ্ট ধাপ। ভাগ করা জবাবদিহি।"
+
+#: templates/donor/add_food.html:13
+msgid ""
+"Clear, accurate details help the right NGO and volunteer collect your "
+"donation safely."
+msgstr ""
+"সঠিক তথ্য সঠিক এনজিও ও স্বেচ্ছাসেবককে আপনার অনুদান নিরাপদে পিকআপ করতে "
+"সাহায্য করে।"
+
+#: templates/auth/password_reset_email.html:5
+msgid "Click the link below to set a new password:"
+msgstr "নতুন পাসওয়ার্ড নির্ধারণের জন্য নিচের লিংকে ক্লিক করুন:"
+
+#: templates/donor/requests.html:111
+msgid "Collection and handover"
+msgstr "সংগ্রহ ও হস্তান্তর"
+
+#: templates/donor/dashboard.html:117
+msgid "Collection is in progress. Follow the handover in your requests."
+msgstr "সংগ্রহ চলছে। আপনার অনুরোধে হস্তান্তরের অগ্রগতি অনুসরণ করুন।"
+
+#: templates/base.html:111 templates/base.html:163
+msgid "Color theme"
+msgstr "রঙের থিম"
+
+#: templates/base.html:197
+msgid "Community"
+msgstr "কমিউনিটি"
+
+#: templates/home.html:38
+msgid "Community food posts"
+msgstr "কমিউনিটির খাদ্য পোস্ট"
+
+#: templates/base.html:98 templates/base.html:196 templates/food_map.html:28
+#: templates/heatmap.html:3 templates/transparency.html:14
+#: templates/ngo/dashboard.html:49
+msgid "Community heatmap"
+msgstr "কমিউনিটি হিটম্যাপ"
+
+#: templates/heatmap.html:16 templates/donor/requests.html:196
+msgid "Community impact"
+msgstr "কমিউনিটির প্রভাব"
+
+#: templates/leaderboard.html:3
+msgid "Community leaderboard"
+msgstr "কমিউনিটি লিডারবোর্ড"
+
+#: templates/profiles/user_profile.html:18
+msgid "Community member since %(joined)s"
+msgstr "%(joined)s থেকে কমিউনিটি সদস্য"
+
+#: templates/transparency.html:23
+msgid "Community members"
+msgstr "কমিউনিটি সদস্য"
+
+#: templates/home.html:26
+msgid "Community members sharing boxes of surplus food"
+msgstr "অতিরিক্ত খাদ্যের বাক্স ভাগ করা কমিউনিটি সদস্য"
+
+#: templates/transparency.html:37
+msgid "Community network"
+msgstr "কমিউনিটি নেটওয়ার্ক"
+
+#: templates/home.html:123
+msgid "Community oversight"
+msgstr "কমিউনিটি তত্ত্বাবধান"
+
+#: templates/leaderboard.html:9
+msgid "Community recognition"
+msgstr "কমিউনিটির স্বীকৃতি"
+
+#: templates/profiles/user_profile.html:37
+msgid "Community reputation"
+msgstr "কমিউনিটির সুনাম"
+
+#: templates/reports/report_post.html:9 templates/reports/report_user.html:9
+msgid "Community safety"
+msgstr "কমিউনিটি নিরাপত্তা"
+
+#: templates/home.html:29
+msgid "Community-powered"
+msgstr "কমিউনিটির শক্তিতে চালিত"
+
+#: templates/auth/register.html:33
+msgid "Complete deliveries as a volunteer"
+msgstr "স্বেচ্ছাসেবক হিসেবে ডেলিভারি সম্পন্ন করুন"
+
+#: core/models.py:324 templates/donor/requests.html:210
+msgid "Completed"
+msgstr "সম্পন্ন"
+
+#: templates/heatmap.html:49
+msgid "Completed community food journeys"
+msgstr "সম্পন্ন কমিউনিটি খাদ্য যাত্রা"
+
+#: templates/transparency.html:21 templates/transparency.html:72
+#: templates/admin_panel/dashboard.html:40 templates/donor/requests.html:197
+msgid "Completed deliveries"
+msgstr "সম্পন্ন ডেলিভারি"
+
+#: templates/home.html:104
+msgid ""
+"Completed deliveries build trust, inform better decisions, and encourage "
+"more sharing."
+msgstr ""
+"সম্পন্ন ডেলিভারি বিশ্বাস তৈরি করে, সঠিক সিদ্ধান্তে সহায়তা করে এবং আরও খাদ্য"
+" ভাগ করাকে উৎসাহিত করে।"
+
+#: templates/leaderboard.html:40
+msgid "Completed donations will appear here."
+msgstr "সম্পন্ন অনুদান এখানে দেখা যাবে।"
+
+#: templates/transparency.html:91
+msgid "Completed food journeys will appear here as the community grows."
+msgstr "কমিউনিটি বড় হওয়ার সঙ্গে সঙ্গে সম্পন্ন খাদ্য যাত্রা এখানে দেখা যাবে।"
+
+#: templates/volunteer/dashboard.html:200
+msgid "Confirm delivery"
+msgstr "ডেলিভারি নিশ্চিত করুন"
+
+#: templates/auth/password_reset_confirm.html:29
+msgid "Confirm new password"
+msgstr "নতুন পাসওয়ার্ড নিশ্চিত করুন"
+
+#: templates/auth/register.html:82
+msgid "Confirm password"
+msgstr "পাসওয়ার্ড নিশ্চিত করুন"
+
+#: templates/volunteer/dashboard.html:177
+msgid "Confirm pickup"
+msgstr "পিকআপ নিশ্চিত করুন"
+
+#: templates/ngo/request_confirm.html:10
+msgid ""
+"Confirm the donation details and add a useful note for the donor before "
+"sending."
+msgstr ""
+"অনুদানের তথ্য নিশ্চিত করুন এবং পাঠানোর আগে দাতার জন্য একটি সহায়ক নোট যোগ "
+"করুন।"
+
+#: templates/donor/requests.html:198
+msgid ""
+"Confirm the volunteer’s handover with a rating once the donation is "
+"complete."
+msgstr "অনুদান সম্পন্ন হলে স্বেচ্ছাসেবকের হস্তান্তর সম্পর্কে রেটিং দিন।"
+
+#: templates/donor/requests.html:169
+msgid "Confirmed"
+msgstr "নিশ্চিত"
+
+#: templates/leaderboard.html:61
+msgid "Confirmed deliveries will appear here."
+msgstr "নিশ্চিত ডেলিভারি এখানে দেখা যাবে।"
+
+#: templates/transparency.html:21
+msgid "Confirmed donor-to-NGO food journeys"
+msgstr "দাতা থেকে এনজিওতে নিশ্চিত খাদ্য যাত্রা"
+
+#: templates/admin_panel/dashboard.html:42
+msgid "Confirmed handovers across the network"
+msgstr "নেটওয়ার্ক জুড়ে নিশ্চিত হস্তান্তর"
+
+#: templates/auth/profile.html:106
+msgid "Contact details"
+msgstr "যোগাযোগের তথ্য"
+
+#: templates/profiles/user_profile.html:73
+msgid "Contact information"
+msgstr "যোগাযোগের তথ্য"
+
+#: templates/base.html:198
+msgid "Contact support"
+msgstr "সহায়তার সঙ্গে যোগাযোগ করুন"
+
+#: core/models.py:209 templates/food_map.html:42
+#: templates/ngo/dashboard.html:34
+msgid "Cooked"
+msgstr "রান্না করা"
+
+#: templates/ngo/request_confirm.html:86
+msgid "Coordinate collection"
+msgstr "সংগ্রহ সমন্বয় করুন"
+
+#: templates/heatmap.html:86
+msgid ""
+"Coordinates are rounded before publication. This view shows community "
+"patterns, not exact pickup addresses."
+msgstr ""
+"প্রকাশের আগে স্থানাঙ্কগুলো গোল করা হয়। এই দৃশ্যে কমিউনিটির ধরণ দেখা যায়, "
+"সঠিক পিকআপের ঠিকানা নয়।"
+
+#: core/views.py:1112
+msgid "Could not find user to rate."
+msgstr "রেটিং দেওয়ার ব্যবহারকারীকে পাওয়া যায়নি।"
+
+#: templates/leaderboard.html:161
+msgid ""
+"Counts successfully delivered food posts and confirmed volunteer deliveries."
+msgstr ""
+"সফলভাবে পৌঁছে দেওয়া খাদ্য পোস্ট ও নিশ্চিত স্বেচ্ছাসেবক ডেলিভারি গণনা করে।"
+
+#: templates/base.html:198
+msgid "Create account"
+msgstr "অ্যাকাউন্ট তৈরি করুন"
+
+#: templates/transparency.html:109 templates/auth/login.html:75
+msgid "Create an account"
+msgstr "একটি অ্যাকাউন্ট তৈরি করুন"
+
+#: templates/home.html:138
+msgid "Create clear food posts"
+msgstr "স্পষ্ট খাদ্য পোস্ট তৈরি করুন"
+
+#: templates/auth/register.html:96
+msgid "Create my account"
+msgstr "আমার অ্যাকাউন্ট তৈরি করুন"
+
+#: templates/auth/register.html:77
+msgid "Create password"
+msgstr "পাসওয়ার্ড তৈরি করুন"
+
+#: templates/home.html:184
+msgid "Create your account"
+msgstr "আপনার অ্যাকাউন্ট তৈরি করুন"
+
+#: templates/auth/register.html:43
+msgid "Create your account and help good food reach more people."
+msgstr ""
+"অ্যাকাউন্ট তৈরি করুন এবং ভালো খাদ্য আরও মানুষের কাছে পৌঁছে সাহায্য করুন।"
+
+#: templates/donor/edit_food.html:164
+msgid "Current donation and guidance"
+msgstr "বর্তমান অনুদান ও নির্দেশনা"
+
+#: templates/transparency.html:61
+msgid "Current food lifecycle status"
+msgstr "খাদ্যের বর্তমান অবস্থা"
+
+#: templates/auth/profile.html:21
+msgid "Current profile photo"
+msgstr "বর্তমান প্রোফাইল ছবি"
+
+#: templates/base.html:115 templates/base.html:165
+msgid "Dark"
+msgstr "ডার্ক"
+
+#: templates/base.html:102 templates/base.html:198 templates/food_map.html:24
+msgid "Dashboard"
+msgstr "ড্যাশবোর্ড"
+
+#: templates/transparency.html:47
+msgid "Data insights"
+msgstr "ডেটা অন্তর্দৃষ্টি"
+
+#: templates/donor/dashboard.html:112
+msgid "Delete"
+msgstr "মুছে ফেলুন"
+
+#: templates/donor/dashboard.html:111
+msgid "Delete this food post permanently?"
+msgstr "এই খাদ্য পোস্টটি স্থায়ীভাবে মুছে ফেলবেন?"
+
+#: templates/auth/register.html:58
+msgid "Deliver food"
+msgstr "খাদ্য পৌঁছে দিন"
+
+#: templates/donor/requests.html:144 templates/volunteer/dashboard.html:56
+#: templates/volunteer/dashboard.html:129
+msgid "Deliver to"
+msgstr "যেখানে পৌঁছাতে হবে"
+
+#: core/models.py:217 core/models.py:397 templates/heatmap.html:47
+#: templates/heatmap.html:79 templates/transparency.html:31
+#: templates/admin_panel/dashboard.html:99 templates/donor/dashboard.html:49
+#: templates/donor/requests.html:126 templates/donor/requests.html:160
+#: templates/donor/requests.html:236 templates/ngo/my_requests.html:64
+#: templates/ngo/my_requests.html:90 templates/ngo/my_requests.html:93
+#: templates/volunteer/dashboard.html:113
+#: templates/volunteer/dashboard.html:148
+msgid "Delivered"
+msgstr "পৌঁছে দেওয়া হয়েছে"
+
+#: templates/ngo/my_requests.html:93
+msgid "Delivered %(delivered)s"
+msgstr "%(delivered)sটি পৌঁছে দেওয়া হয়েছে"
+
+#: templates/donor/requests.html:206
+msgid "Delivered to %(name)s"
+msgstr "%(name)s-এর কাছে পৌঁছে দেওয়া হয়েছে"
+
+#: core/views.py:1176
+msgid "Deliveries completed"
+msgstr "সম্পন্ন ডেলিভারি"
+
+#: templates/volunteer/dashboard.html:160
+msgid "Delivery"
+msgstr "ডেলিভারি"
+
+#: templates/volunteer/dashboard.html:194
+msgid "Delivery OTP"
+msgstr "ডেলিভারি ওটিপি"
+
+#: templates/ngo/my_requests.html:81
+msgid "Delivery OTP %(otp)s"
+msgstr "ডেলিভারি ওটিপি %(otp)s"
+
+#: core/views.py:730
+msgid "Delivery accepted! Pickup from: %(location)s"
+msgstr "ডেলিভারি গ্রহণ করা হয়েছে! পিকআপের স্থান: %(location)s"
+
+#: templates/donor/requests.html:167
+msgid "Delivery complete"
+msgstr "ডেলিভারি সম্পন্ন"
+
+#: templates/volunteer/dashboard.html:209
+msgid "Delivery complete."
+msgstr "ডেলিভারি সম্পন্ন হয়েছে।"
+
+#: core/views.py:852
+msgid "Delivery completed!"
+msgstr "ডেলিভারি সম্পন্ন হয়েছে!"
+
+#: templates/donor/requests.html:208 templates/ngo/my_requests.html:88
+msgid "Delivery confirmed"
+msgstr "ডেলিভারি নিশ্চিত"
+
+#: core/views.py:868
+msgid "Delivery fully confirmed! Food has reached the NGO."
+msgstr "ডেলিভারি সম্পূর্ণ নিশ্চিত! খাদ্য এনজিওর কাছে পৌঁছেছে।"
+
+#: templates/admin_panel/dashboard.html:96
+msgid "Delivery pipeline"
+msgstr "ডেলিভারির প্রক্রিয়া"
+
+#: templates/volunteer/dashboard.html:155
+msgid "Delivery progress"
+msgstr "ডেলিভারির অগ্রগতি"
+
+#: templates/volunteer/dashboard.html:20
+msgid "Delivery views"
+msgstr "ডেলিভারি দেখার সংখ্যা"
+
+#: core/models.py:530
+msgid "Delivery — %(title)s (%(status)s)"
+msgstr "ডেলিভারি — %(title)s (%(status)s)"
+
+#: templates/donor/add_food.html:173
+msgid "Describe ingredients, packaging, and storage needs."
+msgstr "উপাদান, প্যাকেজিং ও সংরক্ষণের প্রয়োজনীয়তা বিবৃত করুন।"
+
+#: templates/reports/report_user.html:52
+msgid "Describe specific behavior rather than making personal accusations."
+msgstr "ব্যক্তিগত অভিযোগ না করে নির্দিষ্ট আচরণ বিবৃত করুন।"
+
+#: templates/donor/add_food.html:38 templates/donor/edit_food.html:38
+msgid "Describe the food"
+msgstr "খাদ্য বিবৃত করুন"
+
+#: templates/reports/report_post.html:36
+msgid ""
+"Describe what you observed, when it happened, and why the content concerns "
+"you."
+msgstr ""
+"আপনি কী দেখেছেন, কখন ঘটেছে এবং বিষয়টি কেন আপনার উদ্বেগের বিষয় তা বিবৃত "
+"করুন।"
+
+#: food/forms.py:42 templates/donor/add_food.html:52
+#: templates/donor/edit_food.html:52
+msgid "Description"
+msgstr "বিবরণ"
+
+#: core/forms.py:24
+msgid "Details"
+msgstr "তথ্য"
+
+#: templates/base.html:196
+msgid "Discover"
+msgstr "আবিষ্কার করুন"
+
+#: templates/home.html:94
+msgid ""
+"Discover nearby donations and request what your community actually needs."
+msgstr ""
+"কাছের অনুদান দেখুন এবং আপনার কমিউনিটির প্রকৃত প্রয়োজন অনুযায়ী অনুরোধ করুন।"
+
+#: templates/base.html:180
+msgid "Dismiss message"
+msgstr "বার্তা বন্ধ করুন"
+
+#: core/models.py:640
+msgid "Dismissed"
+msgstr "বাতিল করা হয়েছে"
+
+#: templates/admin_panel/dashboard.html:82
+msgid ""
+"Django admin shortcuts require a staff account with model-management "
+"permissions. All monitoring tools remain available on this dashboard."
+msgstr ""
+"Django অ্যাডমিন শর্টকাট ব্যবহার করতে মডেল পরিচালনার অনুমতিসহ একটি স্টাফ "
+"অ্যাকাউন্ট প্রয়োজন। সব মনিটরিং টুল এই ড্যাশবোর্ডেই থাকবে।"
+
+#: templates/reports/report_post.html:51
+msgid ""
+"Do not include private phone numbers, addresses, or unrelated personal "
+"information."
+msgstr ""
+"ব্যক্তিগত ফোন নম্বর, ঠিকানা বা অপ্রাসঙ্গিক ব্যক্তিগত তথ্য যোগ করবেন না।"
+
+#: templates/reports/report_user.html:53
+msgid "Do not publish or attach sensitive personal information."
+msgstr "সংবেদনশীল ব্যক্তিগত তথ্য প্রকাশ বা সংযুক্ত করবেন না।"
+
+#: templates/home.html:170
+msgid "Does it cost anything to participate?"
+msgstr "অংশ নিতে কোনো খরচ লাগে?"
+
+#: templates/donor/requests.html:217
+msgid "Donation delivered"
+msgstr "অনুদান পৌঁছে দেওয়া হয়েছে"
+
+#: templates/donor/add_food.html:23 templates/donor/edit_food.html:23
+msgid "Donation details"
+msgstr "অনুদানের তথ্য"
+
+#: templates/donor/dashboard.html:30
+msgid "Donation overview"
+msgstr "অনুদানের সংক্ষিপ্ত বিবরণ"
+
+#: templates/donor/add_food.html:162
+msgid "Donation preview and guidance"
+msgstr "অনুদানের প্রিভিউ ও নির্দেশনা"
+
+#: templates/ngo/request_confirm.html:28
+msgid "Donation summary"
+msgstr "অনুদানের সারসংক্ষেপ"
+
+#: templates/home.html:56
+msgid ""
+"Donations closest to their safe expiry are surfaced first, helping the right"
+" NGO act before good food is lost."
+msgstr ""
+"নিরাপদ মেয়াদ শেষ হওয়ার কাছাকাছি অনুদানগুলো আগে দেখানো হয়, যাতে সঠিক এনজিও"
+" ভালো খাদ্য নষ্ট হওয়ার আগে ব্যবস্থা নিতে পারে।"
+
+#: core/views.py:1172
+msgid "Donations delivered"
+msgstr "পৌঁছে দেওয়া অনুদান"
+
+#: templates/heatmap.html:34
+msgid "Donations represented in community data"
+msgstr "কমিউনিটির ডেটায় প্রতিনিধিত্ব করা অনুদান"
+
+#: templates/donor/dashboard.html:53
+msgid "Donations that reached their community"
+msgstr "যে অনুদানগুলো কমিউনিটির কাছে পৌঁছেছে"
+
+#: templates/heatmap.html:60
+msgid ""
+"Donations with map coordinates will appear here as the community grows."
+msgstr ""
+"মানচিত্রের স্থানাঙ্কসহ অনুদান কমিউনিটি বড় হওয়ার সঙ্গে সঙ্গে এখানে দেখা "
+"যাবে।"
+
+#: core/models.py:53 users/forms.py:25
+#: templates/admin_panel/dashboard.html:127
+#: templates/admin_panel/dashboard.html:132
+#: templates/admin_panel/dashboard.html:154
+#: templates/admin_panel/dashboard.html:159 templates/auth/login.html:22
+#: templates/auth/register.html:22 templates/auth/register.html:56
+#: templates/ngo/my_requests.html:34 templates/ngo/request_confirm.html:45
+msgid "Donor"
+msgstr "দাতা"
+
+#: templates/donor/dashboard.html:3
+msgid "Donor dashboard"
+msgstr "দাতার ড্যাশবোর্ড"
+
+#: core/models.py:131
+msgid "Donor profile for %(email)s"
+msgstr "%(email)s-এর দাতা প্রোফাইল"
+
+#: core/models.py:574
+msgid "Donor rates Volunteer"
+msgstr "দাতা স্বেচ্ছাসেবককে রেটিং দেয়"
+
+#: templates/ngo/request_confirm.html:84
+msgid "Donor reviews"
+msgstr "দাতার রিভিউ"
+
+#: templates/donor/add_food.html:11 templates/donor/dashboard.html:8
+#: templates/donor/edit_food.html:11 templates/donor/requests.html:8
+msgid "Donor workspace"
+msgstr "দাতার ওয়ার্কস্পেস"
+
+#: templates/admin_panel/dashboard.html:107
+msgid "Donors"
+msgstr "দাতারা"
+
+#: templates/home.html:168
+msgid ""
+"Donors provide the food condition, packaging details, and a safe expiry "
+"deadline. Urgent posts are prioritized, while pickup and delivery are "
+"confirmed through one-time codes."
+msgstr ""
+"দাতারা খাদ্যের অবস্থা, প্যাকেজিং ও নিরাপদ মেয়াদ শেষ হওয়ার সময় জানান। "
+"জরুরি পোস্টকে অগ্রাধিকার দেওয়া হয়, আর পিকআপ ও ডেলিভারি একবারের কোড দিয়ে "
+"নিশ্চিত করা হয়।"
+
+#: templates/home.html:89
+msgid "Donors share food"
+msgstr "দাতারা খাদ্য ভাগ করেন"
+
+#: templates/home.html:167
+msgid ""
+"Donors, NGOs, and volunteers can create an account. Choose the role that "
+"matches how you want to participate; each workspace is tailored to that "
+"responsibility."
+msgstr ""
+"দাতা, এনজিও ও স্বেচ্ছাসেবক অ্যাকাউন্ট তৈরি করতে পারেন। আপনি যেভাবে অংশ নিতে "
+"চান তার সঙ্গে মানানসই ভূমিকা বেছে নিন; প্রতিটি ওয়ার্কস্পেস সেই দায়িত্ব "
+"অনুযায়ী সাজানো।"
+
+#: templates/transparency.html:101
+msgid ""
+"Donors, NGOs, and volunteers each have clear responsibilities and ratings."
+msgstr "দাতা, এনজিও ও স্বেচ্ছাসেবকের প্রতিটির স্পষ্ট দায়িত্ব ও রেটিং আছে।"
+
+#: templates/transparency.html:23
+msgid "Donors, NGOs, volunteers, and admins"
+msgstr "দাতা, এনজিও, স্বেচ্ছাসেবক ও অ্যাডমিন"
+
+#: templates/transparency.html:63
+msgid ""
+"Donut chart showing available, claimed, delivered, and expired food posts"
+msgstr ""
+"উপলব্ধ, দাবি করা, পৌঁছে দেওয়া ও মেয়াদোত্তীর্ণ খাদ্য পোস্ট দেখানো ডোনাট "
+"চার্ট"
+
+#: templates/donor/dashboard.html:107
+msgid "Edit"
+msgstr "সম্পাদনা করুন"
+
+#: templates/donor/edit_food.html:3
+msgid "Edit %(title)s"
+msgstr "%(title)s সম্পাদনা করুন"
+
+#: templates/donor/edit_food.html:12
+msgid "Edit food post"
+msgstr "খাদ্য পোস্ট সম্পাদনা করুন"
+
+#: templates/admin_panel/dashboard.html:180
+msgid "Eight most recent NGO food requests"
+msgstr "সাম্প্রতিক আটটি এনজিও খাদ্য অনুরোধ"
+
+#: users/forms.py:36 templates/auth/password_reset.html:19
+#: templates/auth/profile.html:63 templates/auth/register.html:68
+msgid "Email address"
+msgstr "ইমেইল ঠিকানা"
+
+#: core/models.py:26
+msgid "Email must be provided."
+msgstr "ইমেইল আবশ্যক।"
+
+#: users/forms.py:95 templates/auth/login.html:54
+msgid "Email or phone number"
+msgstr "ইমেইল বা ফোন নম্বর"
+
+#: templates/food_map.html:83
+msgid ""
+"Enable JavaScript to use the interactive map. The donation list remains "
+"available above."
+msgstr ""
+"ইন্টারঅ্যাকটিভ মানচিত্র ব্যবহার করতে JavaScript চালু করুন। উপরের অনুদানের "
+"তালিকা উপলব্ধ থাকবে।"
+
+#: templates/heatmap.html:91
+msgid ""
+"Enable JavaScript to view the interactive heatmap. The status summary "
+"remains available above."
+msgstr ""
+"ইন্টারঅ্যাকটিভ হিটম্যাপ দেখতে JavaScript চালু করুন। অবস্থার সারসংক্ষেপ উপরে "
+"উপলব্ধ থাকবে।"
+
+#: food/forms.py:67
+msgid "Enter a descriptive food title."
+msgstr "খাদ্যের একটি বর্ণনামূলক শিরোনাম লিখুন।"
+
+#: food/forms.py:79
+msgid "Enter a pickup location."
+msgstr "পিকআপের একটি স্থান লিখুন।"
+
+#: users/forms.py:18
+msgid ""
+"Enter a valid phone number using 7 to 15 digits, optionally starting with +."
+msgstr ""
+"সতর্কতার সঙ্গে ৭ থেকে ১৫টি সংখ্যা দিয়ে একটি বৈধ ফোন নম্বর লিখুন; চাইলে "
+"শুরুতে + থাকতে পারে।"
+
+#: templates/volunteer/dashboard.html:189
+msgid "Enter the NGO’s six-digit OTP when the food is handed over."
+msgstr "খাদ্য হস্তান্তরের সময় এনজিওর ছয় অঙ্কের ওটিপি লিখুন।"
+
+#: templates/volunteer/dashboard.html:179
+msgid "Enter the six digits exactly as the donor shared them."
+msgstr "দাতা যে ছয়টি সংখ্যা দিয়েছেন, সেগুলো হুবহু লিখুন।"
+
+#: templates/auth/password_reset.html:11
+msgid ""
+"Enter your account email and we’ll send a secure link to choose a new "
+"password."
+msgstr ""
+"আপনার অ্যাকাউন্টের ইমেইল লিখুন, আমরা নতুন পাসওয়ার্ড বেছে নেওয়ার একটি "
+"নিরাপদ লিংক পাঠাব।"
+
+#: users/forms.py:74 users/forms.py:132
+msgid "Enter your full name."
+msgstr "আপনার পুরো নাম লিখুন।"
+
+#: users/forms.py:106 templates/auth/login.html:65
+msgid "Enter your password"
+msgstr "আপনার পাসওয়ার্ড লিখুন"
+
+#: templates/donor/add_food.html:74 templates/donor/edit_food.html:74
+msgid "Estimate the number of people this donation can serve."
+msgstr "এই অনুদান কতজন মানুষের জন্য, আন্দাজ করুন।"
+
+#: templates/transparency.html:20
+msgid "Estimated servings from completed donations"
+msgstr "সম্পন্ন অনুদান থেকে আনুমানিক পরিবেশন"
+
+#: templates/home.html:3
+msgid "Every Meal Matters"
+msgstr "প্রতিটি খাবার গুরুত্বপূর্ণ"
+
+#: templates/home.html:12
+msgid "Every Meal<br><span>Matters.</span>"
+msgstr "প্রতিটি খাবার<br><span>গুরুত্বপূর্ণ।</span>"
+
+#: templates/auth/login.html:27
+msgid "Every meal matters"
+msgstr "প্রতিটি খাবার গুরুত্বপূর্ণ"
+
+#: templates/transparency.html:99
+msgid ""
+"Every post moves through visible, expiry-aware statuses from available to "
+"delivered."
+msgstr ""
+"প্রতিটি পোস্ট উপলব্ধ থেকে পৌঁছে দেওয়া পর্যন্ত মেয়াদ-সচেতন অবস্থায় "
+"দৃশ্যমানভাবে এগোয়।"
+
+#: templates/transparency.html:10
+msgid "Every shared meal makes an impact."
+msgstr "ভাগ করা প্রতিটি খাবার পরিবর্তন আনে।"
+
+#: templates/donor/dashboard.html:10
+msgid ""
+"Every shared meal starts with a clear, caring donor. Here’s what is "
+"happening with your donations."
+msgstr ""
+"ভাগ করা প্রতিটি খাবার একটি সৎ, যত্নশীল দাতার থেকে শুরু হয়। আপনার অনুদানের "
+"কী হচ্ছে দেখুন।"
+
+#: core/models.py:109 core/models.py:153 core/models.py:198
+msgid "Excellent"
+msgstr "চমৎকার"
+
+#: core/models.py:218 templates/heatmap.html:80 templates/transparency.html:32
+#: templates/donor/dashboard.html:101 templates/donor/requests.html:67
+msgid "Expired"
+msgstr "মেয়াদোত্তীর্ণ"
+
+#: core/management/commands/expire_food.py:13
+msgid "Expired %(count)d post."
+msgid_plural "Expired %(count)d posts."
+msgstr[0] "%(count)dটি পোস্ট মেয়াদোত্তীর্ণ।"
+msgstr[1] "%(count)dটি পোস্ট মেয়াদোত্তীর্ণ।"
+
+#: core/models.py:518
+msgid "Expired food cannot be picked up."
+msgstr "মেয়াদোত্তীর্ণ খাদ্য পিকআপ করা যায় না।"
+
+#: templates/admin_panel/dashboard.html:148 templates/ngo/dashboard.html:33
+msgid "Expiring soon"
+msgstr "শীঘ্রই মেয়াদ শেষ হবে"
+
+#: templates/admin_panel/dashboard.html:127
+#: templates/admin_panel/dashboard.html:135
+#: templates/admin_panel/dashboard.html:154
+#: templates/admin_panel/dashboard.html:161
+msgid "Expiry"
+msgstr "মেয়াদ শেষ হওয়ার সময়"
+
+#: templates/donor/edit_food.html:134
+msgid ""
+"Expiry must be in the future. If the food is no longer safe, do not extend "
+"this deadline."
+msgstr ""
+"মেয়াদ শেষ হওয়ার সময় ভবিষ্যতে হতে হবে। খাদ্য আর নিরাপদ না হলে এই সময়সীমা "
+"বাড়াবেন না।"
+
+#: food/forms.py:49
+msgid "Expiry time"
+msgstr "মেয়াদ শেষ হওয়ার সময়"
+
+#: food/forms.py:85
+msgid "Expiry time must be in the future."
+msgstr "মেয়াদ শেষ হওয়ার সময় ভবিষ্যতে হতে হবে।"
+
+#: templates/home.html:120
+msgid "Expiry-aware"
+msgstr "মেয়াদ-সচেতন"
+
+#: templates/base.html:95
+msgid "Explore"
+msgstr "ঘুরে দেখুন"
+
+#: templates/food_map.html:18
+msgid ""
+"Explore %(counter)s available donation and connect surplus food with the "
+"community."
+msgid_plural ""
+"Explore %(counter)s available donations and connect surplus food with the "
+"community."
+msgstr[0] ""
+"%(counter)sটি উপলব্ধ অনুদান দেখুন এবং অতিরিক্ত খাদ্যকে কমিউনিটির সঙ্গে যুক্ত"
+" করুন।"
+msgstr[1] ""
+"%(counter)sটি উপলব্ধ অনুদান দেখুন এবং অতিরিক্ত খাদ্যকে কমিউনিটির সঙ্গে যুক্ত"
+" করুন।"
+
+#: templates/home.html:179
+msgid ""
+"Explore available donations, follow your deliveries, or see how the "
+"community is progressing."
+msgstr ""
+"উপলব্ধ অনুদান দেখুন, আপনার ডেলিভারি অনুসরণ করুন বা কমিউনিটির অগ্রগতি দেখুন।"
+
+#: templates/home.html:17 templates/home.html:20
+msgid "Explore food"
+msgstr "খাদ্য দেখুন"
+
+#: templates/home.html:63
+msgid "Explore our trust model"
+msgstr "আমাদের বিশ্বাসের মডেল দেখুন"
+
+#: templates/heatmap.html:61 templates/home.html:182
+msgid "Explore the food map"
+msgstr "খাদ্যের মানচিত্র দেখুন"
+
+#: templates/home.html:135
+msgid "FOR DONORS"
+msgstr "দাতাদের জন্য"
+
+#: templates/home.html:142
+msgid "FOR NGOs"
+msgstr "এনজিওদের জন্য"
+
+#: templates/home.html:149
+msgid "FOR VOLUNTEERS"
+msgstr "স্বেচ্ছাসেবকদের জন্য"
+
+#: core/models.py:629
+msgid "Fake or misleading food info"
+msgstr "ভুয়া বা বিভ্রান্তিকর খাদ্য তথ্য"
+
+#: templates/profiles/user_profile.html:61
+msgid ""
+"Feedback from completed deliveries will build this profile’s reputation."
+msgstr "সম্পন্ন ডেলিভারির প্রতিক্রিয়া এই প্রোফাইলের সুনাম গড়ে তুলবে।"
+
+#: templates/ngo/my_requests.html:117
+msgid "Feedback recorded"
+msgstr "প্রতিক্রিয়া রেকর্ড করা হয়েছে"
+
+#: templates/donor/add_food.html:24
+msgid ""
+"Fields marked with an asterisk are required. You can review everything "
+"before publishing."
+msgstr ""
+"তারা চিহ্নিত ক্ষেত্রগুলো আবশ্যক। প্রকাশ করার আগে আপনি সবকিছু পর্যালোচনা করতে"
+" পারবেন।"
+
+#: templates/ngo/dashboard.html:31
+msgid "Filter available food posts"
+msgstr "উপলব্ধ খাদ্য পোস্ট ফিল্টার করুন"
+
+#: templates/base.html:97
+msgid "Find available donations"
+msgstr "উপলব্ধ অনুদান খুঁজুন"
+
+#: templates/heatmap.html:25
+msgid "Find available food"
+msgstr "উপলব্ধ খাদ্য খুঁজুন"
+
+#: templates/transparency.html:15 templates/ngo/my_requests.html:13
+msgid "Find food"
+msgstr "খাদ্য খুঁজুন"
+
+#: templates/home.html:143
+msgid "Find food for your community."
+msgstr "আপনার কমিউনিটির জন্য খাদ্য খুঁজুন।"
+
+#: templates/food_map.html:16
+msgid "Find food nearby"
+msgstr "কাছে খাদ্য খুঁজুন"
+
+#: templates/ngo/dashboard.html:9
+msgid "Find food. Nourish community."
+msgstr "খাদ্য খুঁজুন। কমিউনিটিকে পুষ্ট করুন।"
+
+#: templates/home.html:131 templates/auth/register.html:27
+msgid "Find your place"
+msgstr "আপনার স্থান খুঁজুন"
+
+#: templates/home.html:83
+msgid "Find your role"
+msgstr "আপনার ভূমিকা খুঁজুন"
+
+#: templates/reports/report_post.html:50
+msgid "Focus on the food post and observable details."
+msgstr "খাদ্য পোস্ট ও পর্যবেক্ষণযোগ্য তথ্যের ওপর মনোযোগ দিন।"
+
+#: templates/home.html:152
+msgid "Follow clear pickup steps"
+msgstr "স্পষ্ট পিকআপ ধাপ অনুসরণ করুন"
+
+#: templates/ngo/my_requests.html:10
+msgid ""
+"Follow each request from donor review to a confirmed community delivery."
+msgstr ""
+"দাতার পর্যালোচনা থেকে নিশ্চিত কমিউনিটি ডেলিভারি পর্যন্ত প্রতিটি অনুরোধ "
+"অনুসরণ করুন।"
+
+#: templates/auth/login.html:31
+msgid "Follow every request and delivery"
+msgstr "প্রতিটি অনুরোধ ও ডেলিভারি অনুসরণ করুন"
+
+#: templates/ngo/request_confirm.html:86
+msgid "Follow progress and share your delivery OTP only when food arrives."
+msgstr ""
+"অগ্রগতি অনুসরণ করুন এবং খাদ্য আসার আগেই আপনার ডেলিভারি ওটিপি শুধু তার সঙ্গে "
+"ভাগ করুন।"
+
+#: templates/home.html:145
+msgid "Follow request progress"
+msgstr "অনুরোধের অগ্রগতি অনুসরণ করুন"
+
+#: templates/admin_panel/dashboard.html:127
+#: templates/admin_panel/dashboard.html:131
+#: templates/admin_panel/dashboard.html:154
+#: templates/admin_panel/dashboard.html:158
+#: templates/admin_panel/dashboard.html:181
+#: templates/admin_panel/dashboard.html:185
+msgid "Food"
+msgstr "খাদ্য"
+
+#: core/views.py:458
+msgid "Food Request Approved"
+msgstr "খাদ্য অনুরোধ অনুমোদিত"
+
+#: core/views.py:469
+msgid "Food Request Rejected"
+msgstr "খাদ্য অনুরোধ প্রত্যাখ্যাত"
+
+#: templates/transparency.html:49
+msgid ""
+"Food categories, live post status, and completed delivery trends from the "
+"last 12 months."
+msgstr ""
+"খাদ্যের বিভাগ, পোস্টের সরাসরি অবস্থা ও গত ১২ মাসের সম্পন্ন ডেলিভারির "
+"প্রবণতা।"
+
+#: templates/transparency.html:54
+msgid "Food category breakdown"
+msgstr "খাদ্য বিভাগের বিভাজন"
+
+#: templates/food_map.html:41
+msgid "Food category legend"
+msgstr "খাদ্য বিভাগের লেজেন্ড"
+
+#: templates/heatmap.html:30
+msgid "Food donation status"
+msgstr "খাদ্য দানের অবস্থা"
+
+#: core/models.py:630
+msgid "Food is already expired"
+msgstr "খাদ্য ইতিমধ্যে মেয়াদোত্তীর্ণ"
+
+#: templates/donor/requests.html:171
+msgid "Food is in transit"
+msgstr "খাদ্য পথে আছে"
+
+#: core/views.py:772
+msgid "Food is on the way!"
+msgstr "খাদ্য পথে আছে!"
+
+#: templates/base.html:97 templates/base.html:196 templates/food_map.html:3
+#: templates/ngo/dashboard.html:17
+msgid "Food map"
+msgstr "খাদ্যের মানচিত্র"
+
+#: food/forms.py:45
+msgid "Food photo"
+msgstr "খাদ্যের ছবি"
+
+#: core/views.py:337
+msgid "Food post created."
+msgstr "খাদ্য পোস্ট তৈরি হয়েছে।"
+
+#: core/views.py:382
+msgid "Food post deleted."
+msgstr "খাদ্য পোস্ট মুছে ফেলা হয়েছে।"
+
+#: core/views.py:361
+msgid "Food post updated."
+msgstr "খাদ্য পোস্ট আপডেট হয়েছে।"
+
+#: templates/transparency.html:58 templates/transparency.html:65
+#: templates/donor/dashboard.html:69
+msgid "Food posts"
+msgstr "খাদ্য পোস্ট"
+
+#: templates/donor/edit_food.html:172
+msgid "Food preview"
+msgstr "খাদ্যের প্রিভিউ"
+
+#: core/views.py:568
+msgid "Food request submitted. You can track it in My Requests."
+msgstr ""
+"খাদ্য অনুরোধ পাঠানো হয়েছে। এটি 'আমার অনুরোধ' অংশে অনুসরণ করতে পারবেন।"
+
+#: templates/base.html:200
+msgid "Food safety"
+msgstr "খাদ্য নিরাপত্তা"
+
+#: templates/donor/add_food.html:123 templates/donor/edit_food.html:125
+msgid "Food safety and photo"
+msgstr "খাদ্য নিরাপত্তা ও ছবি"
+
+#: templates/home.html:116
+msgid ""
+"Food sharing only works when people trust the process. That is why safety "
+"and transparency are built into the platform – not added as an afterthought."
+msgstr ""
+"মানুষ যখন প্রক্রিয়াকে বিশ্বাস করে, তখনই খাদ্য ভাগ করা কার্যকর হয়। তাই "
+"নিরাপত্তা ও স্বচ্ছতা প্ল্যাটফর্মে শুরু থেকেই থাকা — পরে সংযোজন নয়।"
+
+#: food/forms.py:41 templates/donor/add_food.html:42
+#: templates/donor/edit_food.html:42
+msgid "Food title"
+msgstr "খাদ্যের শিরোনাম"
+
+#: templates/reports/report_post.html:53
+msgid ""
+"For an immediate emergency, contact local emergency services instead of "
+"waiting for a platform review."
+msgstr ""
+"তাৎক্ষণিক জরুরি প্রয়োজন হলে প্ল্যাটফর্ম পর্যালোচনার জন্য অপেক্ষা না করে "
+"স্থানীয় জরুরি সেবায় যোগাযোগ করুন।"
+
+#: templates/reports/report_user.html:55
+msgid "For immediate danger, contact local emergency services."
+msgstr "তাৎক্ষণিক বিপদে স্থানীয় জরুরি সেবায় যোগাযোগ করুন।"
+
+#: templates/auth/password_reset.html:28
+msgid ""
+"For your security, we use the same confirmation whether or not an account "
+"exists for this email."
+msgstr ""
+"আপনার নিরাপত্তার জন্য, এই ইমেইলে অ্যাকাউন্ট আছে বা নেই — উভয় ক্ষেত্রেই একই "
+"নিশ্চিতকরণ দেখানো হয়।"
+
+#: templates/auth/login.html:71
+msgid "Forgot password?"
+msgstr "পাসওয়ার্ড ভুলে গেছেন?"
+
+#: templates/home.html:79
+msgid ""
+"Four clear steps. One connected community. Each person knows what to do, "
+"what happens next, and how their contribution creates impact."
+msgstr ""
+"চারটি স্পষ্ট ধাপ। একটি যুক্ত কমিউনিটি। প্রত্যেকে জানে কী করতে হবে, এরপর কী "
+"হবে এবং তার অবদান কীভাবে প্রভাব ফেলে।"
+
+#: core/models.py:626
+msgid "Fraudulent User"
+msgstr "প্রতারণামূলক ব্যবহারকারী"
+
+#: core/models.py:631
+msgid "Fraudulent activity"
+msgstr "প্রতারণামূলক কার্যকলাপ"
+
+#: templates/home.html:78
+msgid "From surplus to shared meals."
+msgstr "অতিরিক্ত খাদ্য থেকে ভাগ করা খাবার।"
+
+#: users/forms.py:32 users/forms.py:118 templates/auth/profile.html:51
+#: templates/auth/register.html:67
+msgid "Full name"
+msgstr "পুরো নাম"
+
+#: templates/donor/edit_food.html:118
+msgid "GPS is optional. Add a nearby landmark for volunteers."
+msgstr "জিপিএস ঐচ্ছিক। স্বেচ্ছাসেবকদের জন্য কাছের একটি পরিচিত স্থান যোগ করুন।"
+
+#: templates/donor/add_food.html:116
+msgid "GPS is optional. Add a nearby landmark so volunteers can find you."
+msgstr ""
+"জিপিএস ঐচ্ছিক। স্বেচ্ছাসেবকদের যাতে আপনাকে খুঁজে পাতে, কাছের একটি পরিচিত "
+"স্থান যোগ করুন।"
+
+#: templates/base.html:122 templates/base.html:150 templates/home.html:19
+#: templates/auth/register.html:42
+msgid "Get Started"
+msgstr "শুরু করুন"
+
+#: templates/donor/add_food.html:174
+msgid "Give an accurate serving or package count."
+msgstr "পরিবেশন বা প্যাকেটের সঠিক সংখ্যা দিন।"
+
+#: templates/donor/add_food.html:65 templates/donor/edit_food.html:65
+msgid "Give collectors a realistic idea of the portion size."
+msgstr "সংগ্রহকারীদের অংশের আকার সম্পর্কে বাস্তবসম্মত ধারণা দিন।"
+
+#: templates/donor/requests.html:173
+msgid ""
+"Give this six-digit code only to the assigned volunteer when they arrive."
+msgstr ""
+"এই ছয় অঙ্কের কোড শুধু নিয়োগ করা স্বেচ্ছাসেবকের কাছে দিন, যখন সে পিকআপে "
+"আসবে।"
+
+#: templates/reports/report_post.html:13
+msgid "Go back"
+msgstr "ফিরে যান"
+
+#: templates/home.html:16
+msgid "Go to your dashboard"
+msgstr "আপনার ড্যাশবোর্ডে যান"
+
+#: templates/403.html:4 templates/home.html:81
+msgid "Go to your workspace"
+msgstr "আপনার ওয়ার্কস্পেসে যান"
+
+#: core/models.py:111 core/models.py:155 core/models.py:200
+msgid "Good"
+msgstr "ভালো"
+
+#: templates/base.html:193
+msgid ""
+"Good food deserves a second chance. Together, we turn surplus into shared "
+"meals and stronger communities."
+msgstr ""
+"ভালো খাদ্যের দ্বিতীয় সুযোগ পাওয়া উচিত। একসঙ্গে আমরা অতিরিক্ত খাদ্যকে ভাগ "
+"করা খাবারে ও শক্তিশালী কমিউনিটিতে রূপান্তর করি।"
+
+#: templates/auth/login.html:28
+msgid "Good food moves when people connect."
+msgstr "মানুষ যুক্ত হলে ভালো খাদ্য এগোয়।"
+
+#: templates/food_map.html:17
+msgid "Good food, mapped."
+msgstr "ভালো খাদ্য, মানচিত্রে দেখানো।"
+
+#: templates/home.html:29
+msgid "Good food. Second chances."
+msgstr "ভালো খাদ্য। দ্বিতীয় সুযোগ।"
+
+#: templates/home.html:115
+msgid "Good intentions.<br>Strong safeguards."
+msgstr "ভালো উদ্দেশ্য।<br>শক্তিশালী নিরাপত্তা ব্যবস্থা।"
+
+#: templates/home.html:162
+msgid "Good to know"
+msgstr "জেনে রাখা ভালো"
+
+#: templates/leaderboard.html:10
+msgid "Good work deserves to be seen."
+msgstr "ভালো কাজের স্বীকৃতি পাওয়া উচিত।"
+
+#: templates/heatmap.html:66
+msgid "Heatmap information"
+msgstr "হিটম্যাপের তথ্য"
+
+#: templates/heatmap.html:55
+msgid "Heatmap of food donation activity"
+msgstr "খাদ্য দান কার্যকলাপের হিটম্যাপ"
+
+#: core/views.py:854
+msgid ""
+"Hello %(donor_name)s,\n"
+"\n"
+"\"%(title)s\" has been successfully delivered to %(ngo_name)s.\n"
+"\n"
+"Your trust score has been increased by 5 points. Thank you!\n"
+"\n"
+"- AhaarBonton"
+msgstr ""
+"প্রিয় %(donor_name)s,\n"
+"\n"
+"\"%(title)s\" সফলভাবে %(ngo_name)s-এর কাছে পৌঁছে দেওয়া হয়েছে।\n"
+"\n"
+"আপনার বিশ্বাস স্কোর ৫ পয়েন্ট বেড়েছে। ধন্যবাদ!\n"
+"\n"
+"- AhaarBonton"
+
+#: core/views.py:713
+msgid ""
+"Hello %(donor_name)s,\n"
+"\n"
+"%(volunteer_name)s has accepted the delivery for \"%(title)s\".\n"
+"\n"
+"They will pick up the food from your location soon.\n"
+"\n"
+"Your Pickup OTP: %(otp)s\n"
+"Give this OTP to the volunteer when they arrive for pickup.\n"
+"\n"
+"- AhaarBonton"
+msgstr ""
+"প্রিয় %(donor_name)s,\n"
+"\n"
+"%(volunteer_name)s \"%(title)s\"-এর ডেলিভারি গ্রহণ করেছেন।\n"
+"\n"
+"সে শিগগিরই আপনার স্থান থেকে খাদ্য পিকআপ করবে।\n"
+"\n"
+"আপনার পিকআপ ওটিপি: %(otp)s\n"
+"পিকআপের জন্য স্বেচ্ছাসেবক এলে তাকে এই ওটিপি দিন।\n"
+"\n"
+"- AhaarBonton"
+
+#: core/views.py:774
+msgid ""
+"Hello %(ngo_name)s,\n"
+"\n"
+"%(volunteer_name)s has picked up \"%(title)s\" and is on the way to you.\n"
+"\n"
+"Your Delivery OTP: %(otp)s\n"
+"\n"
+"When the volunteer arrives, give them this OTP to confirm the delivery.\n"
+"\n"
+"- AhaarBonton"
+msgstr ""
+"প্রিয় %(ngo_name)s,\n"
+"\n"
+"%(volunteer_name)s \"%(title)s\" পিকআপ করে আপনার দিকে পথে আছে।\n"
+"\n"
+"আপনার ডেলিভারি ওটিপি: %(otp)s\n"
+"\n"
+"স্বেচ্ছাসেবক এলে ডেলিভারি নিশ্চিত করতে তাকে এই ওটিপি দিন।\n"
+"\n"
+"- AhaarBonton"
+
+#: templates/donor/add_food.html:39 templates/donor/edit_food.html:39
+msgid "Help people understand what they are collecting."
+msgstr "তারা কী সংগ্রহ করছে তা বুঝতে সাহায্য করুন।"
+
+#: templates/reports/report_user.html:11
+msgid ""
+"Help the moderation team understand a specific conduct or safety concern."
+msgstr ""
+"নিরাপত্তা বা আচরণ সংক্রান্ত নির্দিষ্ট উদ্বেগ মডারেশন দলকে বুঝতে সাহায্য "
+"করুন।"
+
+#: templates/auth/password_reset_email.html:1
+msgid "Hi %(name)s,"
+msgstr "প্রিয় %(name)s,"
+
+#: templates/heatmap.html:71
+msgid "High"
+msgstr "উচ্চ"
+
+#: templates/base.html:90
+msgid "Home"
+msgstr "হোম"
+
+#: templates/home.html:117
+msgid "How accountability works"
+msgstr "জবাবদিহি কীভাবে কাজ করে"
+
+#: templates/home.html:168
+msgid "How is food safety handled?"
+msgstr "খাদ্য নিরাপত্তা কীভাবে নিশ্চিত করা হয়?"
+
+#: templates/base.html:91 templates/base.html:196
+msgid "How it works"
+msgstr "কীভাবে কাজ করে"
+
+#: templates/leaderboard.html:160
+msgid "How rankings work"
+msgstr "র‍্যাঙ্কিং কীভাবে কাজ করে"
+
+#: templates/heatmap.html:68
+msgid "How to read the heatmap"
+msgstr "হিটম্যাপ কীভাবে পড়বেন"
+
+#: users/forms.py:50 templates/auth/register.html:54
+msgid "I want to join as"
+msgstr "আমি যোগ দিতে চাই"
+
+#: templates/auth/password_reset_done.html:10
+msgid ""
+"If an account exists for that address, a password reset link is on its way."
+msgstr "এই ঠিকানায় অ্যাকাউন্ট থাকলে, পাসওয়ার্ড রিসেটের লিংক পাঠানো হয়েছে।"
+
+#: templates/ngo/request_confirm.html:85
+msgid "If approved, an open delivery appears for volunteers."
+msgstr "অনুমোদিত হলে স্বেচ্ছাসেবীদের জন্য একটি খোলা ডেলিভারি তৈরি হবে।"
+
+#: templates/auth/password_reset_email.html:11
+msgid ""
+"If you did not request a password reset, you can safely ignore this email. "
+"Your account remains secure."
+msgstr ""
+"আপনি পাসওয়ার্ড রিসেটের অনুরোধ না করে থাকলেও এই ইমেইল উপেক্ষা করতে পারেন। "
+"আপনার অ্যাকাউন্ট নিরাপদ থাকবে।"
+
+#: templates/base.html:92
+msgid "Impact"
+msgstr "প্রভাব"
+
+#: templates/transparency.html:3
+msgid "Impact and transparency"
+msgstr "প্রভাব ও স্বচ্ছতা"
+
+#: templates/heatmap.html:22
+msgid "Impact dashboard"
+msgstr "প্রভাবের ড্যাশবোর্ড"
+
+#: templates/home.html:67
+msgid "Impact you can see"
+msgstr "আপনার দেখা যায় এমন প্রভাব"
+
+#: core/admin.py:40
+msgid "Important Dates"
+msgstr "গুরুত্বপূর্ণ তারিখ"
+
+#: templates/heatmap.html:42
+msgid "In delivery"
+msgstr "ডেলিভারিতে"
+
+#: templates/donor/requests.html:128 templates/ngo/my_requests.html:82
+#: templates/volunteer/dashboard.html:115
+msgid "In transit"
+msgstr "পথে আছে"
+
+#: core/models.py:625
+msgid "Inappropriate Food Post"
+msgstr "অপযথাযথ খাদ্য পোস্ট"
+
+#: core/models.py:633
+msgid "Inappropriate content"
+msgstr "অপযথাযথ বিষয়বস্তু"
+
+#: templates/donor/add_food.html:57 templates/donor/edit_food.html:57
+msgid ""
+"Include ingredients, storage conditions, and whether containers are "
+"included."
+msgstr "উপাদান, সংরক্ষণের অবস্থা ও পাত্র দেওয়া হয়েছে কি না উল্লেখ করুন।"
+
+#: templates/reports/report_user.html:38
+msgid ""
+"Include relevant dates, interactions, and the effect on the food-sharing "
+"process."
+msgstr ""
+"প্রাসঙ্গিক তারিখ, যোগাযোগ ও খাদ্য ভাগ করা প্রক্রিয়ায় এর প্রভাব উল্লেখ "
+"করুন।"
+
+#: templates/donor/requests.html:9
+msgid "Incoming requests"
+msgstr "আসন্ন অনুরোধ"
+
+#: core/views.py:883
+msgid "Incorrect Delivery OTP. Please get the correct OTP from the NGO."
+msgstr "ডেলিভারি ওটিপি ভুল। এনজিওর কাছ থেকে সঠিক ওটিপি নিন।"
+
+#: core/views.py:803
+msgid "Incorrect Pickup OTP. Please get the correct OTP from the donor."
+msgstr "পিকআপ ওটিপি ভুল। দাতার কাছ থেকে সঠিক ওটিপি নিন।"
+
+#: templates/admin_panel/dashboard.html:101
+msgid "Inspect deliveries"
+msgstr "ডেলিভারি পরীক্ষা করুন"
+
+#: templates/admin_panel/dashboard.html:66
+msgid "Inspect status, donors, and expiry"
+msgstr "অবস্থা, দাতা ও মেয়াদ দেখুন"
+
+#: templates/food_map.html:67
+msgid "Interactive map of available food donations"
+msgstr "উপলব্ধ খাদ্য অনুদানের ইন্টারঅ্যাকটিভ মানচিত্র"
+
+#: core/views.py:254
+msgid "Invalid email/phone or password."
+msgstr "ইমেইল/ফোন বা পাসওয়ার্ড ভুল।"
+
+#: core/views.py:432 core/views.py:991
+msgid "Invalid request method."
+msgstr "অবৈধ অনুরোধ পদ্ধতি।"
+
+#: core/views.py:1122
+msgid "Invalid score. Choose between 1-5."
+msgstr "স্কোর ভুল। ১-৫-এর মধ্যে বেছে নিন।"
+
+#: templates/home.html:169
+msgid "Is my exact location public?"
+msgstr "আমার সঠিক অবস্থান কি প্রকাশ্য?"
+
+#: templates/auth/profile.html:71 templates/auth/register.html:90
+msgid "JPG, PNG, or WebP · optional"
+msgstr "JPG, PNG বা WebP · ঐচ্ছিক"
+
+#: templates/auth/register.html:3
+msgid "Join AhaarBonton"
+msgstr "AhaarBonton-এ যোগ দিন"
+
+#: templates/home.html:179
+msgid ""
+"Join a community turning good food into shared meals – one clear, verified "
+"handover at a time."
+msgstr ""
+"ভালো খাদ্যকে ভাগ করা খাবারে রূপান্তরকারী কমিউনিটিতে যোগ দিন — প্রতিটি "
+"স্পষ্ট, যাচাইকৃত হস্তান্তরের মাধ্যমে।"
+
+#: templates/home.html:146
+msgid "Join as an NGO"
+msgstr "একটি এনজিও হিসেবে যোগ দিন"
+
+#: templates/profiles/user_profile.html:70
+msgid "Joined"
+msgstr "যোগ দিয়েছেন"
+
+#: templates/home.html:170
+msgid ""
+"Joining and using the core food-sharing workflow is free. AhaarBonton is "
+"designed to reduce food waste and strengthen community access, not to create"
+" a barrier to participation."
+msgstr ""
+"মূল খাদ্য ভাগ করা পদ্ধতিতে যোগ দিয়ে ব্যবহার করা বিনামূল্যে। AhaarBonton "
+"খাদ্য অপচয় কমানো ও কমিউনিটির খাদ্য প্রাপ্তি শক্তিশালী করার জন্য তৈরি, অংশ "
+"নেওয়ার বাধা তৈরি করার জন্য নয়।"
+
+#: templates/donor/edit_food.html:13
+msgid "Keep <strong>%(title)s</strong> accurate and ready to collect."
+msgstr ""
+"<strong>%(title)s</strong>-এর তথ্য সঠিক রাখুন এবং পিকআপের জন্য প্রস্তুত "
+"রাখুন।"
+
+#: templates/auth/profile.html:95
+msgid "Keep contact details private"
+msgstr "যোগাযোগের তথ্য গোপন রাখুন"
+
+#: templates/donor/edit_food.html:191
+msgid "Keep it accurate"
+msgstr "তথ্য সঠিক রাখুন"
+
+#: templates/ngo/request_confirm.html:70
+msgid ""
+"Keep it concise and practical. Do not include sensitive personal "
+"information."
+msgstr ""
+"সংক্ষিপ্ত ও ব্যবহারযোগ্য রাখুন। সংবেদনশীল ব্যক্তিগত তথ্য যোগ করবেন না।"
+
+#: templates/donor/edit_food.html:194
+msgid "Keep pickup instructions clear and current."
+msgstr "পিকআপের নির্দেশনা স্পষ্ট ও হালনাগাদ রাখুন।"
+
+#: templates/admin_panel/dashboard.html:10
+msgid "Keep the network healthy."
+msgstr "নেটওয়ার্ককে সুস্থ রাখুন।"
+
+#: templates/reports/report_user.html:49
+msgid "Keep the review constructive"
+msgstr "পর্যালোচনাকে গঠনমূলক রাখুন"
+
+#: templates/auth/profile.html:11
+msgid ""
+"Keep your details current so donors, NGOs, and volunteers can coordinate "
+"with confidence."
+msgstr ""
+"আপনার তথ্য হালনাগাদ রাখুন, যাতে দাতা, এনজিও ও স্বেচ্ছাসেবক আত্মবিশ্বাসের "
+"সঙ্গে সমন্বয় করতে পারেন।"
+
+#: templates/partials/language_switcher.html:4
+msgid "Language"
+msgstr "ভাষা"
+
+#: templates/admin_panel/dashboard.html:173
+msgid "Latest NGO requests and their status."
+msgstr "সাম্প্রতিক এনজিও অনুরোধ ও তাদের অবস্থা।"
+
+#: food/forms.py:47
+msgid "Latitude"
+msgstr "অক্ষাংশ"
+
+#: templates/base.html:93 templates/base.html:197
+msgid "Leaderboard"
+msgstr "লিডারবোর্ড"
+
+#: templates/leaderboard.html:15
+msgid "Leaderboard ranking type"
+msgstr "লিডারবোর্ড র‍্যাঙ্কিংয়ের ধরন"
+
+#: templates/base.html:114 templates/base.html:164
+msgid "Light"
+msgstr "লাইট"
+
+#: templates/transparency.html:70
+msgid "Line chart showing monthly completed deliveries"
+msgstr "মাসভিত্তিক সম্পন্ন ডেলিভারি দেখানো লাইন চার্ট"
+
+#: templates/home.html:36
+msgid "Live community impact"
+msgstr "কমিউনিটির সরাসরি প্রভাব"
+
+#: templates/transparency.html:11
+msgid ""
+"Live numbers, visible progress, and accountable food sharing across the "
+"AhaarBonton community."
+msgstr ""
+"সরাসরি সংখ্যা, দৃশ্যমান অগ্রগতি ও জবাবদিহির খাদ্য ভাগ করা — AhaarBonton "
+"কমিউনিটিতে।"
+
+#: templates/home.html:68
+msgid ""
+"Live statistics, public delivery records, and community rankings make "
+"progress visible – not just promised."
+msgstr ""
+"সরাসরি পরিসংখ্যান, প্রকাশ্য ডেলিভারির রেকর্ড ও কমিউনিটি র‍্যাঙ্কিং অগ্রগতি "
+"দৃশ্যমান করে — শুধু প্রতিশ্রুতি নয়।"
+
+#: templates/transparency.html:28 templates/transparency.html:99
+msgid "Live status"
+msgstr "সরাসরি অবস্থা"
+
+#: templates/admin_panel/dashboard.html:154
+#: templates/admin_panel/dashboard.html:160
+msgid "Location"
+msgstr "অবস্থান"
+
+#: templates/base.html:121 templates/base.html:149 templates/base.html:198
+#: templates/auth/login.html:3 templates/auth/login.html:73
+#: templates/auth/password_reset_complete.html:11
+#: templates/auth/register.html:99
+msgid "Log in"
+msgstr "লগ ইন"
+
+#: templates/403.html:4
+msgid "Log in to continue"
+msgstr "চালিয়ে যেতে লগ ইন করুন"
+
+#: templates/auth/login.html:43
+msgid "Log in to continue your community food-sharing journey."
+msgstr "আপনার কমিউনিটি খাদ্য ভাগ করার যাত্রা চালিয়ে যেতে লগ ইন করুন।"
+
+#: templates/food_map.html:26
+msgid "Log in to request"
+msgstr "অনুরোধ করতে লগ ইন করুন"
+
+#: templates/base.html:144
+msgid "Log out"
+msgstr "লগ আউট"
+
+#: food/forms.py:48
+msgid "Longitude"
+msgstr "দ্রাঘিমাংশ"
+
+#: templates/heatmap.html:71
+msgid "Low"
+msgstr "নিম্ন"
+
+#: templates/base.html:89
+msgid "Main navigation"
+msgstr "প্রধান নেভিগেশন"
+
+#: templates/home.html:150 templates/volunteer/dashboard.html:9
+msgid "Make the final connection."
+msgstr "শেষ সংযোগটি ঘটান।"
+
+#: templates/admin_panel/dashboard.html:66
+msgid "Manage food posts"
+msgstr "খাদ্য পোস্ট পরিচালনা করুন"
+
+#: templates/admin_panel/dashboard.html:112
+msgid "Manage users"
+msgstr "ব্যবহারকারী পরিচালনা করুন"
+
+#: templates/home.html:169
+msgid ""
+"Map pins are rounded for privacy, but the pickup address or landmark you "
+"enter appears on food listings. Share only the detail needed for "
+"coordination, and request participants can use the workflow to arrange the "
+"handover."
+msgstr ""
+"গোপনীয়তার জন্য মানচিত্রের পিনগুলো গোল করা হয়, তবে আপনি যে পিকআপের ঠিকানা "
+"বা পরিচিত স্থান লিখবেন তা খাদ্যের তালিকায় দেখা যাবে। সমন্বয়ের জন্য শুধু "
+"প্রয়োজনীয় তথ্য দিন; অনুরোধকারীরা ওয়ার্কফ্লো ব্যবহার করে হস্তান্তরের "
+"ব্যবস্থা নিতে পারবেন।"
+
+#: templates/heatmap.html:32
+msgid "Mapped posts"
+msgstr "মানচিত্রে দেখানো পোস্ট"
+
+#: core/management/commands/expire_food.py:8
+msgid "Mark expired food posts and decrease donor trust scores"
+msgstr "মেয়াদোত্তীর্ণ খাদ্য পোস্ট চিহ্নিত করুন ও দাতাদের বিশ্বাস স্কোর কমান"
+
+#: templates/home.html:40 templates/transparency.html:20
+msgid "Meals delivered"
+msgstr "পৌঁছে দেওয়া খাবার"
+
+#: templates/transparency.html:41
+msgid "Meals shared"
+msgstr "ভাগ করা খাবার"
+
+#: templates/heatmap.html:71
+msgid "Medium"
+msgstr "মাঝারি"
+
+#: templates/transparency.html:42
+msgid "Meet the community leaders"
+msgstr "কমিউনিটির নেতৃবৃন্দদের সঙ্গে পরিচিত হন"
+
+#: templates/auth/profile.html:105 templates/reports/report_user.html:24
+msgid "Member since"
+msgstr "সদস্য হয়েছেন"
+
+#: templates/donor/requests.html:73
+msgid "Message from %(name)s"
+msgstr "%(name)s-এর বার্তা"
+
+#: templates/ngo/request_confirm.html:66
+msgid "Message to the donor"
+msgstr "দাতার জন্য বার্তা"
+
+#: templates/transparency.html:72
+msgid "Month"
+msgstr "মাস"
+
+#: templates/transparency.html:68
+msgid "Monthly completed deliveries"
+msgstr "মাসভিত্তিক সম্পন্ন ডেলিভারি"
+
+#: templates/leaderboard.html:116
+msgid "Most trusted donors"
+msgstr "সবচেয়ে বিশ্বাসযোগ্য দাতা"
+
+#: templates/leaderboard.html:138
+msgid "Most trusted volunteers"
+msgstr "সবচেয়ে বিশ্বাসযোগ্য স্বেচ্ছাসেবক"
+
+#: templates/volunteer/dashboard.html:25 templates/volunteer/dashboard.html:99
+msgid "My deliveries"
+msgstr "আমার ডেলিভারি"
+
+#: templates/ngo/my_requests.html:3 templates/ngo/my_requests.html:9
+msgid "My food requests"
+msgstr "আমার খাদ্য অনুরোধ"
+
+#: templates/base.html:141
+msgid "My public profile"
+msgstr "আমার প্রকাশ্য প্রোফাইল"
+
+#: templates/base.html:106 templates/food_map.html:22
+#: templates/ngo/dashboard.html:14
+msgid "My requests"
+msgstr "আমার অনুরোধ"
+
+#: core/models.py:54 users/forms.py:26
+#: templates/admin_panel/dashboard.html:181
+#: templates/admin_panel/dashboard.html:186 templates/auth/login.html:23
+#: templates/auth/register.html:23 templates/auth/register.html:57
+msgid "NGO"
+msgstr "এনজিও"
+
+#: templates/ngo/dashboard.html:3
+msgid "NGO dashboard"
+msgstr "এনজিও ড্যাশবোর্ড"
+
+#: templates/transparency.html:38
+msgid "NGO partners"
+msgstr "এনজিও পার্টনার"
+
+#: core/models.py:573
+msgid "NGO rates Donor"
+msgstr "এনজিও দাতাকে রেটিং দেয়"
+
+#: core/models.py:575
+msgid "NGO rates Volunteer"
+msgstr "এনজিও স্বেচ্ছাসেবককে রেটিং দেয়"
+
+#: templates/donor/requests.html:3
+msgid "NGO requests"
+msgstr "এনজিও অনুরোধ"
+
+#: templates/ngo/dashboard.html:8 templates/ngo/my_requests.html:8
+msgid "NGO workspace"
+msgstr "এনজিও ওয়ার্কস্পেস"
+
+#: templates/admin_panel/dashboard.html:108
+msgid "NGOs"
+msgstr "এনজিও"
+
+#: templates/home.html:94
+msgid "NGOs request support"
+msgstr "এনজিওরা সহায়তা অনুরোধ করে"
+
+#: core/models.py:158 core/models.py:203
+msgid "Needs Improvement"
+msgstr "উন্নতির প্রয়োজন"
+
+#: templates/donor/requests.html:27
+msgid "Needs your attention"
+msgstr "আপনার মনোযোগ প্রয়োজন"
+
+#: templates/donor/edit_food.html:195
+msgid "Never extend expiry beyond the food’s safe consumption window."
+msgstr "খাদ্যের নিরাপদভাবে খাওয়ার সময়সীমার বাইরে মেয়াদ বাড়াবেন না।"
+
+#: core/views.py:561
+msgid "New Food Request Received"
+msgstr "নতুন খাদ্য অনুরোধ এসেছে"
+
+#: templates/donor/requests.html:102
+msgid ""
+"New NGO requests will appear here. Keep your available posts accurate so the"
+" right organizations can find them."
+msgstr ""
+"নতুন এনজিও অনুরোধ এখানে দেখা যাবে। সঠিক সংস্থা যাতে আপনার উপলব্ধ পোস্টগুলো "
+"খুঁজে পায়, তাই তথ্য হালনাগাদ রাখুন।"
+
+#: templates/ngo/dashboard.html:116
+msgid ""
+"New donations appear here as soon as donors share them. You can also check "
+"the map for nearby pickup points."
+msgstr ""
+"দাতারা খাদ্য ভাগ করলেই নতুন অনুদান এখানে দেখা যাবে। কাছের পিকআপের স্থানের "
+"জন্য মানচিত্রও দেখতে পারেন।"
+
+#: templates/ngo/dashboard.html:83
+msgid "New donor"
+msgstr "নতুন দাতা"
+
+#: templates/food_map.html:56
+msgid "New locations will appear here as donors share food."
+msgstr "দাতারা খাদ্য ভাগ করলে নতুন অবস্থান এখানে দেখা যাবে।"
+
+#: templates/auth/password_reset_confirm.html:20
+msgid "New password"
+msgstr "নতুন পাসওয়ার্ড"
+
+#: templates/donor/dashboard.html:73
+msgid "New post"
+msgstr "নতুন পোস্ট"
+
+#: templates/auth/login.html:75
+msgid "New to AhaarBonton?"
+msgstr "AhaarBonton-এ নতুন?"
+
+#: templates/donor/requests.html:186
+msgid "No active deliveries"
+msgstr "কোনো সক্রিয় ডেলিভারি নেই"
+
+#: templates/volunteer/dashboard.html:218
+msgid "No deliveries accepted yet"
+msgstr "এখনও কোনো ডেলিভারি গ্রহণ করা হয়নি"
+
+#: templates/leaderboard.html:85
+msgid "No donor ratings yet."
+msgstr "এখনও কোনো দাতা রেটিং নেই।"
+
+#: templates/leaderboard.html:131
+msgid "No donor trust scores yet."
+msgstr "এখনও কোনো দাতা বিশ্বাস স্কোর নেই।"
+
+#: templates/ngo/dashboard.html:115
+msgid "No food available right now"
+msgstr "এখন কোনো খাদ্য উপলব্ধ নেই"
+
+#: templates/donor/edit_food.html:167
+msgid "No food photo is attached."
+msgstr "খাদ্যের কোনো ছবি সংযুক্ত করা হয়নি।"
+
+#: templates/admin_panel/dashboard.html:138
+msgid "No food posts yet."
+msgstr "এখনও কোনো খাদ্য পোস্ট নেই।"
+
+#: templates/heatmap.html:59
+msgid "No location data yet"
+msgstr "এখনও কোনো অবস্থানের ডেটা নেই"
+
+#: templates/food_map.html:72
+msgid ""
+"No mapped donations are available right now. New locations will appear as "
+"soon as donors share food."
+msgstr ""
+"এখন কোনো মানচিত্রে দেখানো অনুদান উপলব্ধ নেই। দাতারা খাদ্য ভাগ করলেই নতুন "
+"অবস্থান দেখা যাবে।"
+
+#: templates/food_map.html:56
+msgid "No mapped donations yet"
+msgstr "এখনও কোনো মানচিত্রে দেখানো অনুদান নেই"
+
+#: templates/food_map.html:61 templates/ngo/dashboard.html:108
+msgid "No matching donations"
+msgstr "মিলে যাওয়া কোনো অনুদান নেই"
+
+#: templates/volunteer/dashboard.html:89
+msgid "No open deliveries"
+msgstr "কোনো খোলা ডেলিভারি নেই"
+
+#: templates/admin_panel/dashboard.html:218
+msgid "No pending reports. Great work."
+msgstr "কোনো অপেক্ষমাণ রিপোর্ট নেই। দারুণ কাজ।"
+
+#: core/management/commands/expire_food.py:16
+msgid "No posts to expire."
+msgstr "মেয়াদ শেষ করার মতো কোনো পোস্ট নেই।"
+
+#: core/models.py:107 templates/profiles/user_profile.html:60
+msgid "No ratings yet"
+msgstr "এখনও কোনো রেটিং নেই"
+
+#: templates/donor/requests.html:286
+msgid "No rejected requests"
+msgstr "কোনো প্রত্যাখ্যাত অনুরোধ নেই"
+
+#: templates/ngo/my_requests.html:133
+msgid "No requests yet"
+msgstr "এখনও কোনো অনুরোধ নেই"
+
+#: templates/admin_panel/dashboard.html:191
+msgid "No requests yet."
+msgstr "এখনও কোনো অনুরোধ নেই।"
+
+#: templates/profiles/user_profile.html:109
+msgid "No reviews yet"
+msgstr "এখনও কোনো রিভিউ নেই"
+
+#: templates/leaderboard.html:105
+msgid "No volunteer ratings yet."
+msgstr "এখনও কোনো স্বেচ্ছাসেবক রেটিং নেই।"
+
+#: templates/leaderboard.html:153
+msgid "No volunteer trust scores yet."
+msgstr "এখনও কোনো স্বেচ্ছাসেবক বিশ্বাস স্কোর নেই।"
+
+#: templates/transparency.html:100
+msgid "OTP confirmation"
+msgstr "ওটিপি নিশ্চিতকরণ"
+
+#: templates/donor/requests.html:245
+msgid ""
+"Once a requested donation is delivered, you can follow its outcome and rate "
+"the volunteer."
+msgstr ""
+"অনুরোধ করা অনুদান পৌঁছে দেওয়া হলে আপনি ফলাফল অনুসরণ করে স্বেচ্ছাসেবককে "
+"রেটিং দিতে পারবেন।"
+
+#: templates/auth/register.html:29
+msgid ""
+"One account gives you the tools to participate clearly, safely, and with a "
+"real view of your impact."
+msgstr ""
+"একটি অ্যাকাউন্ট আপনাকে স্পষ্টভাবে, নিরাপদে ও নিজের প্রভাবের বাস্তব দৃশ্যসহ "
+"অংশ নেওয়ার সুযোগ দেয়।"
+
+#: templates/auth/register.html:35
+msgid "One community. Many ways to help."
+msgstr "একটি কমিউনিটি। সহায়তার অনেক উপায়।"
+
+#: templates/home.html:131
+msgid "One platform. Three ways to help."
+msgstr "একটি প্ল্যাটফর্ম। সহায়তার তিনটি উপায়।"
+
+#: templates/ngo/request_confirm.html:8
+msgid "One step closer"
+msgstr "এক ধাপ আরও কাছে"
+
+#: templates/home.html:121
+msgid ""
+"One-time codes confirm pickup and delivery with the people actually "
+"involved."
+msgstr ""
+"একবারের কোড দিয়ে প্রকৃত অংশগ্রহণকারীদের মধ্যে পিকআপ ও ডেলিভারি নিশ্চিত করা "
+"হয়।"
+
+#: core/models.py:361
+msgid "Only pending requests can be approved."
+msgstr "শুধু অপেক্ষমাণ অনুরোধ অনুমোদন করা যায়।"
+
+#: core/models.py:387
+msgid "Only pending requests can be rejected."
+msgstr "শুধু অপেক্ষমাণ অনুরোধ প্রত্যাখ্যাত করা যায়।"
+
+#: templates/profiles/user_profile.html:82
+msgid ""
+"Only people who participated in a completed delivery can leave a rating."
+msgstr "শুধু সম্পন্ন ডেলিভারিতে অংশগ্রহণকারীরা রেটিং দিতে পারেন।"
+
+#: templates/ngo/request_confirm.html:74
+msgid ""
+"Only share delivery codes in person at handover. AhaarBonton will never ask "
+"you to send an OTP in a message."
+msgstr ""
+"ডেলিভারির কোড হস্তান্তরের সময় সরাসরি ভাগ করুন। AhaarBonton কখনও বার্তায় "
+"ওটিপি পাঠাতে বলে না।"
+
+#: templates/volunteer/dashboard.html:46
+msgid "Open"
+msgstr "খোলা"
+
+#: templates/base.html:131
+msgid "Open account menu"
+msgstr "অ্যাকাউন্ট মেনু খুলুন"
+
+#: templates/auth/profile.html:108
+msgid "Open my public profile"
+msgstr "আমার প্রকাশ্য প্রোফাইল খুলুন"
+
+#: templates/base.html:153
+msgid "Open navigation"
+msgstr "নেভিগেশন খুলুন"
+
+#: templates/ngo/request_confirm.html:52
+msgid "Open pickup location"
+msgstr "পিকআপের স্থান খুলুন"
+
+#: templates/admin_panel/dashboard.html:71
+msgid "Open recent donations below"
+msgstr "নিচের সাম্প্রতিক অনুদান খুলুন"
+
+#: templates/volunteer/dashboard.html:32
+msgid "Open routes"
+msgstr "পথগুলো খুলুন"
+
+#: templates/admin_panel/dashboard.html:60
+msgid "Open the report queue below"
+msgstr "নিচের রিপোর্ট তালিকা খুলুন"
+
+#: templates/admin_panel/dashboard.html:76
+msgid "Open the transparency dashboard"
+msgstr "স্বচ্ছতার ড্যাশবোর্ড খুলুন"
+
+#: templates/donor/add_food.html:140
+msgid "Optional · JPG, PNG, or WEBP"
+msgstr "ঐচ্ছিক · JPG, PNG বা WEBP"
+
+#: templates/donor/edit_food.html:142
+msgid "Optional · leave empty to keep the current photo"
+msgstr "ঐচ্ছিক · বর্তমান ছবি রাখতে খালি রাখুন"
+
+#: core/models.py:634
+msgid "Other"
+msgstr "অন্যান্য"
+
+#: templates/auth/profile.html:94
+msgid "Other participants should know who they are coordinating with."
+msgstr "অন্যান্য অংশগ্রহণকারীদের জানা উচিত তারা কার সঙ্গে সমন্বয় করছে।"
+
+#: templates/base.html:197
+msgid "Our impact"
+msgstr "আমাদের প্রভাব"
+
+#: core/models.py:211 templates/food_map.html:44
+#: templates/ngo/dashboard.html:36
+msgid "Packaged"
+msgstr "প্যাকেজ করা"
+
+#: templates/404.html:3
+msgid "Page not found"
+msgstr "পৃষ্ঠাটি পাওয়া যায়নি"
+
+#: users/forms.py:104 templates/auth/login.html:62
+msgid "Password"
+msgstr "পাসওয়ার্ড"
+
+#: templates/auth/password_reset_subject.txt:1
+msgid "Password Reset Request"
+msgstr "পাসওয়ার্ড রিসেটের অনুরোধ"
+
+#: core/models.py:28
+msgid "Password must be provided."
+msgstr "পাসওয়ার্ড আবশ্যক।"
+
+#: templates/auth/password_reset_complete.html:3
+#: templates/auth/password_reset_complete.html:9
+msgid "Password updated"
+msgstr "পাসওয়ার্ড আপডেট হয়েছে"
+
+#: core/models.py:321 core/models.py:395 templates/donor/requests.html:48
+#: templates/ngo/my_requests.html:72
+msgid "Pending"
+msgstr "অপেক্ষমাণ"
+
+#: core/models.py:637
+msgid "Pending Review"
+msgstr "পর্যালোচনার অপেক্ষায়"
+
+#: templates/admin_panel/dashboard.html:47
+#: templates/admin_panel/dashboard.html:200
+#: templates/admin_panel/dashboard.html:207
+msgid "Pending community safety reports"
+msgstr "কমিউনিটি নিরাপত্তার অপেক্ষমাণ রিপোর্ট"
+
+#: core/admin.py:29
+msgid "Permissions"
+msgstr "অনুমতি"
+
+#: core/admin.py:27
+msgid "Personal Info"
+msgstr "ব্যক্তিগত তথ্য"
+
+#: templates/auth/profile.html:44
+msgid "Personal details"
+msgstr "ব্যক্তিগত তথ্য"
+
+#: users/forms.py:43 users/forms.py:119 templates/auth/profile.html:56
+#: templates/auth/register.html:70
+msgid "Phone number"
+msgstr "ফোন নম্বর"
+
+#: templates/home.html:151
+msgid ""
+"Pick up nearby donations and help good food reach the people who need it."
+msgstr ""
+"কাছের অনুদান পিকআপ করুন এবং ভালো খাদ্য যাদের প্রয়োজন তাদের কাছে পৌঁছে "
+"সাহায্য করুন।"
+
+#: core/models.py:396
+msgid "Picked Up"
+msgstr "পিকআপ করা হয়েছে"
+
+#: templates/admin_panel/dashboard.html:98
+#: templates/volunteer/dashboard.html:142
+msgid "Picked up"
+msgstr "পিকআপ করা হয়েছে"
+
+#: templates/donor/requests.html:138 templates/donor/requests.html:160
+#: templates/ngo/my_requests.html:64 templates/ngo/request_confirm.html:37
+#: templates/volunteer/dashboard.html:158
+msgid "Pickup"
+msgstr "পিকআপ"
+
+#: templates/volunteer/dashboard.html:171
+msgid "Pickup OTP"
+msgstr "পিকআপ ওটিপি"
+
+#: templates/donor/requests.html:174
+msgid "Pickup OTP %(otp)s"
+msgstr "পিকআপ ওটিপি %(otp)s"
+
+#: templates/donor/add_food.html:99 templates/donor/edit_food.html:99
+msgid "Pickup address or landmark"
+msgstr "পিকআপের ঠিকানা বা পরিচিত স্থান"
+
+#: templates/transparency.html:100
+msgid ""
+"Pickup and delivery are verified with one-time codes to prevent false "
+"completions."
+msgstr ""
+"ভুল সম্পন্ন হওয়া আটকাতে পিকআপ ও ডেলিভারি একবারের কোড দিয়ে যাচাই করা হয়।"
+
+#: templates/donor/requests.html:61
+msgid "Pickup area"
+msgstr "পিকআপের এলাকা"
+
+#: templates/donor/requests.html:177
+msgid "Pickup confirmed"
+msgstr "পিকআপ নিশ্চিত"
+
+#: core/views.py:789
+msgid "Pickup confirmed! The NGO has been notified that food is on the way."
+msgstr "পিকআপ নিশ্চিত হয়েছে! খাদ্য পথে আছে বলে এনজিওকে জানানো হয়েছে।"
+
+#: templates/volunteer/dashboard.html:185
+msgid "Pickup confirmed. Collect the delivery OTP from the NGO."
+msgstr "পিকআপ নিশ্চিত। এনজিওর কাছ থেকে ডেলিভারি ওটিপি নিন।"
+
+#: templates/volunteer/dashboard.html:50
+#: templates/volunteer/dashboard.html:123
+msgid "Pickup from"
+msgstr "পিকআপের স্থান"
+
+#: core/models.py:514
+msgid "Pickup has already been confirmed."
+msgstr "পিকআপ ইতিমধ্যে নিশ্চিত হয়েছে।"
+
+#: templates/ngo/my_requests.html:80
+msgid ""
+"Pickup is confirmed. Share this delivery OTP only when the volunteer arrives"
+" with your food."
+msgstr ""
+"পিকআপ নিশ্চিত হয়েছে। স্বেচ্ছাসেবক খাদ্য নিয়ে এলে এই ডেলিভারি ওটিপি ভাগ "
+"করুন।"
+
+#: food/forms.py:46 templates/donor/add_food.html:95
+#: templates/donor/edit_food.html:95
+msgid "Pickup location"
+msgstr "পিকআপের স্থান"
+
+#: templates/ngo/my_requests.html:86 templates/volunteer/dashboard.html:117
+msgid "Pickup pending"
+msgstr "পিকআপ অপেক্ষমাণ"
+
+#: templates/donor/requests.html:171
+msgid "Pickup verification"
+msgstr "পিকআপ যাচাই"
+
+#: core/views.py:792
+msgid "Pickup was already confirmed."
+msgstr "পিকআপ ইতিমধ্যে নিশ্চিত হয়েছিল।"
+
+#: templates/donor/requests.html:176
+msgid ""
+"Pickup was confirmed at %(picked_up)s. The volunteer will complete the "
+"handover with the NGO."
+msgstr ""
+"%(picked_up)s-এ পিকআপ নিশ্চিত হয়েছে। স্বেচ্ছাসেবক এনজিওর সঙ্গে হস্তান্তর "
+"সম্পন্ন করবে।"
+
+#: templates/donor/requests.html:176
+msgid ""
+"Pickup was confirmed. The volunteer will complete the handover with the NGO."
+msgstr ""
+"পিকআপ নিশ্চিত হয়েছে। স্বেচ্ছাসেবক এনজিওর সঙ্গে হস্তান্তর সম্পন্ন করবে।"
+
+#: templates/admin_panel/dashboard.html:28
+msgid "Platform overview"
+msgstr "প্ল্যাটফর্মের সংক্ষিপ্ত বিবরণ"
+
+#: templates/leaderboard.html:117 templates/leaderboard.html:139
+msgid "Platform trust score out of 100"
+msgstr "১০০-এর মধ্যে প্ল্যাটফর্ম বিশ্বাস স্কোর"
+
+#: core/views.py:756 core/views.py:829
+msgid "Please enter the 6-digit OTP."
+msgstr "৬ অঙ্কের ওটিপি লিখুন।"
+
+#: templates/donor/edit_food.html:31
+msgid "Please review your changes."
+msgstr "আপনার পরিবর্তনগুলো পর্যালোচনা করুন।"
+
+#: templates/donor/add_food.html:31
+msgid "Please review your donation details."
+msgstr "আপনার অনুদানের তথ্য পর্যালোচনা করুন।"
+
+#: core/models.py:115
+msgid "Poor"
+msgstr "দুর্বল"
+
+#: templates/donor/edit_food.html:177
+msgid "Post status"
+msgstr "পোস্টের অবস্থা"
+
+#: templates/transparency.html:61
+msgid "Post status distribution"
+msgstr "পোস্টের অবস্থার বিভাজন"
+
+#: templates/home.html:89
+msgid ""
+"Post the quantity, pickup details, food condition, and a safe expiry "
+"deadline."
+msgstr ""
+"পরিমাণ, পিকআপের তথ্য, খাদ্যের অবস্থা ও নিরাপদ মেয়াদ শেষ হওয়ার সময় দিন।"
+
+#: templates/transparency.html:22
+msgid "Posts ready for NGOs to request"
+msgstr "এনজিওদের অনুরোধের জন্য প্রস্তুত পোস্ট"
+
+#: templates/home.html:145
+msgid "Prioritize urgent food"
+msgstr "জরুরি খাদ্যকে অগ্রাধিকার দিন"
+
+#: templates/admin_panel/dashboard.html:149
+msgid "Priority"
+msgstr "অগ্রাধিকার"
+
+#: templates/heatmap.html:85
+msgid "Privacy first"
+msgstr "গোপনীয়তা প্রথমে"
+
+#: templates/home.html:122
+msgid "Privacy-conscious"
+msgstr "গোপনীয়তা-সচেতন"
+
+#: templates/auth/profile.html:106 templates/profiles/user_profile.html:73
+msgid "Private"
+msgstr "ব্যক্তিগত"
+
+#: templates/profiles/user_profile.html:67
+msgid "Profile details"
+msgstr "প্রোফাইলের তথ্য"
+
+#: templates/auth/profile.html:89
+msgid "Profile guidance"
+msgstr "প্রোফাইল নির্দেশনা"
+
+#: core/views.py:116
+msgid "Profile image could not be processed."
+msgstr "প্রোফাইল ছবি প্রক্রিয়া করা যায়নি।"
+
+#: core/views.py:100
+msgid "Profile image not found."
+msgstr "প্রোফাইল ছবি পাওয়া যায়নি।"
+
+#: users/forms.py:51 users/forms.py:120
+msgid "Profile photo"
+msgstr "প্রোফাইল ছবি"
+
+#: templates/base.html:140 templates/base.html:198
+#: templates/auth/profile.html:3 templates/auth/profile.html:10
+msgid "Profile settings"
+msgstr "প্রোফাইল সেটিংস"
+
+#: core/views.py:278
+msgid "Profile updated successfully."
+msgstr "প্রোফাইল সফলভাবে আপডেট হয়েছে।"
+
+#: templates/transparency.html:48
+msgid "Progress you can measure."
+msgstr "আপনার পরিমাপযোগ্য অগ্রগতি।"
+
+#: food/forms.py:94
+msgid "Provide both latitude and longitude, or leave both blank."
+msgstr "অক্ষাংশ ও দ্রাঘিমাংশ উভয়ই দিন, অথবা উভয়ই খালি রাখুন।"
+
+#: templates/food_map.html:81
+msgid ""
+"Public map pins are rounded for privacy. Pickup addresses and landmarks are "
+"shown as donors choose to share them, so include only the detail your "
+"community needs."
+msgstr ""
+"গোপনীয়তার জন্য প্রকাশ্য মানচিত্রের পিনগুলো গোল করা হয়। দাতারা যতটা তথ্য "
+"শেয়ার করেন তা অনুযায়ী পিকআপের ঠিকানা ও পরিচিত স্থান দেখা যায়, তাই "
+"কমিউনিটির প্রয়োজনীয় তথ্যই দিন।"
+
+#: templates/home.html:122
+msgid ""
+"Public map pins are rounded, and donors are guided to share only the pickup "
+"detail their community needs."
+msgstr ""
+"প্রকাশ্য মানচিত্রের পিনগুলো গোল করা হয় এবং দাতাদের শুধু কমিউনিটির "
+"প্রয়োজনীয় পিকআপের তথ্য শেয়ার করার নির্দেশনা দেওয়া হয়।"
+
+#: templates/donor/add_food.html:154
+msgid "Publish food post"
+msgstr "খাদ্য পোস্ট প্রকাশ করুন"
+
+#: food/forms.py:43 templates/donor/requests.html:57
+#: templates/ngo/request_confirm.html:33
+msgid "Quantity"
+msgstr "পরিমাণ"
+
+#: templates/donor/add_food.html:64 templates/donor/edit_food.html:64
+msgid "Quantity and category"
+msgstr "পরিমাণ ও বিভাগ"
+
+#: templates/home.html:163
+msgid "Questions, answered clearly."
+msgstr "প্রশ্নের স্পষ্ট উত্তর।"
+
+#: templates/leaderboard.html:31 templates/leaderboard.html:52
+#: templates/leaderboard.html:77 templates/leaderboard.html:97
+#: templates/leaderboard.html:121 templates/leaderboard.html:143
+msgid "Rank %(rank)s"
+msgstr "র‍্যাঙ্ক %(rank)s"
+
+#: templates/leaderboard.html:48
+msgid "Ranked by confirmed community deliveries"
+msgstr "নিশ্চিত কমিউনিটি ডেলিভারি অনুযায়ী র‍্যাঙ্কিং"
+
+#: templates/leaderboard.html:27
+msgid "Ranked by food posts successfully delivered"
+msgstr "সফলভাবে পৌঁছে দেওয়া খাদ্য পোস্ট অনুযায়ী র‍্যাঙ্কিং"
+
+#: templates/donor/requests.html:224
+msgid "Rate %(name)s"
+msgstr "%(name)s-কে রেটিং দিন"
+
+#: templates/ngo/my_requests.html:98
+msgid "Rate donor %(name)s"
+msgstr "দাতা %(name)s-কে রেটিং দিন"
+
+#: templates/ngo/my_requests.html:108
+msgid "Rate volunteer %(name)s"
+msgstr "স্বেচ্ছাসেবক %(name)s-কে রেটিং দিন"
+
+#: templates/ngo/dashboard.html:81
+msgid "Rated %(rating)s out of 5"
+msgstr "৫-এর মধ্যে %(rating)s রেটিং"
+
+#: templates/partials/rating_form.html:16
+msgid "Rating comment"
+msgstr "রেটিং মন্তব্য"
+
+#: templates/leaderboard.html:162
+msgid "Ratings"
+msgstr "রেটিং"
+
+#: core/models.py:210 templates/food_map.html:43
+#: templates/ngo/dashboard.html:35
+msgid "Raw"
+msgstr "কাঁচা"
+
+#: templates/heatmap.html:39 templates/donor/dashboard.html:45
+msgid "Ready for NGOs to request"
+msgstr "এনজিওদের অনুরোধের জন্য প্রস্তুত"
+
+#: core/forms.py:23 templates/admin_panel/dashboard.html:208
+#: templates/admin_panel/dashboard.html:213
+#: templates/reports/report_post.html:29 templates/reports/report_user.html:31
+msgid "Reason"
+msgstr "কারণ"
+
+#: templates/transparency.html:78
+msgid "Recent deliveries"
+msgstr "সাম্প্রতিক ডেলিভারি"
+
+#: templates/admin_panel/dashboard.html:119
+msgid "Recent food posts"
+msgstr "সাম্প্রতিক খাদ্য পোস্ট"
+
+#: templates/admin_panel/dashboard.html:173
+msgid "Recent requests"
+msgstr "সাম্প্রতিক অনুরোধ"
+
+#: templates/leaderboard.html:160
+msgid ""
+"Recognition should be understandable. Each view uses a clear, activity-based"
+" signal."
+msgstr ""
+"স্বীকৃতি অর্থবোধক হওয়া উচিত। প্রতিটি দৃশ্যে স্পষ্ট, কার্যকলাপভিত্তিক সংকেত "
+"ব্যবহৃত হয়।"
+
+#: templates/donor/requests.html:254
+msgid "Record"
+msgstr "রেকর্ড"
+
+#: templates/donor/requests.html:92
+msgid "Reject"
+msgstr "প্রত্যাখ্যান করুন"
+
+#: templates/donor/requests.html:91
+msgid "Reject this request?"
+msgstr "এই অনুরোধটি প্রত্যাখ্যান করবেন?"
+
+#: core/models.py:323 templates/donor/requests.html:268
+msgid "Rejected"
+msgstr "প্রত্যাখ্যাত"
+
+#: templates/donor/requests.html:256
+msgid "Rejected requests remain visible for context."
+msgstr "প্রসঙ্গ বোঝার জন্য প্রত্যাখ্যাত অনুরোধগুলো দৃশ্যমান থাকবে।"
+
+#: templates/auth/password_reset.html:29
+msgid "Remembered it?"
+msgstr "মনে আছে?"
+
+#: templates/auth/profile.html:76
+msgid "Remove my current photo"
+msgstr "আমার বর্তমান ছবি সরান"
+
+#: users/forms.py:112
+msgid "Remove profile photo"
+msgstr "প্রোফাইল ছবি সরান"
+
+#: templates/ngo/dashboard.html:98
+msgid "Report"
+msgstr "রিপোর্ট করুন"
+
+#: templates/ngo/dashboard.html:97
+msgid "Report %(title)s"
+msgstr "%(title)s রিপোর্ট করুন"
+
+#: core/models.py:685
+msgid "Report by %(name)s — %(type)s"
+msgstr "%(name)s-এর রিপোর্ট — %(type)s"
+
+#: templates/reports/report_post.html:3
+msgid "Report food post"
+msgstr "খাদ্য পোস্ট রিপোর্ট করুন"
+
+#: core/views.py:1033 core/views.py:1064
+msgid "Report submitted. Our team will review it."
+msgstr "রিপোর্ট পাঠানো হয়েছে। আমাদের দল পর্যালোচনা করবে।"
+
+#: templates/reports/report_post.html:10
+msgid "Report this food post"
+msgstr "এই খাদ্য পোস্টটি রিপোর্ট করুন"
+
+#: templates/reports/report_user.html:10
+msgid "Report this user"
+msgstr "এই ব্যবহারকারীকে রিপোর্ট করুন"
+
+#: templates/profiles/user_profile.html:28
+#: templates/reports/report_user.html:3
+msgid "Report user"
+msgstr "ব্যবহারকারী রিপোর্ট করুন"
+
+#: templates/admin_panel/dashboard.html:208
+#: templates/admin_panel/dashboard.html:214
+msgid "Reporter"
+msgstr "রিপোর্টকারী"
+
+#: templates/home.html:123
+msgid ""
+"Reporting, ratings, and admin review help keep the network accountable."
+msgstr "রিপোর্টিং, রেটিং ও অ্যাডমিন পর্যালোচনা নেটওয়ার্ককে জবাবদিহি রাখে।"
+
+#: templates/reports/report_user.html:54
+msgid "Reports are handled confidentially by the moderation team."
+msgstr "মডারেশন দল রিপোর্টগুলো গোপনীয়ভাবে পর্যালোচনা করে।"
+
+#: templates/reports/report_post.html:48
+msgid ""
+"Reports are reviewed by platform administrators. Accurate information helps "
+"keep the community safe and fair."
+msgstr ""
+"প্ল্যাটফর্ম অ্যাডমিনরা রিপোর্ট পর্যালোচনা করেন। সঠিক তথ্য কমিউনিটিকে নিরাপদ "
+"ও ন্যায্য রাখতে সহায়তা করে।"
+
+#: templates/admin_panel/dashboard.html:45
+#: templates/admin_panel/dashboard.html:200
+msgid "Reports to review"
+msgstr "পর্যালোচনার জন্য রিপোর্ট"
+
+#: templates/transparency.html:102
+msgid ""
+"Reports, expiring donations, and delivery activity are monitored centrally."
+msgstr ""
+"রিপোর্ট, মেয়াদ শেষ হওয়ার অনুদান ও ডেলিভারি কার্যকলাপ কেন্দ্রীয়ভাবে মনিটর "
+"করা হয়।"
+
+#: templates/ngo/request_confirm.html:3
+msgid "Request %(title)s"
+msgstr "%(title)s অনুরোধ করুন"
+
+#: templates/auth/password_reset_confirm.html:43
+msgid "Request a new link"
+msgstr "নতুন লিংক চান"
+
+#: core/views.py:465
+msgid "Request approved. A delivery is now open for volunteers."
+msgstr "অনুরোধ অনুমোদিত। স্বেচ্ছাসেবীদের জন্য এখন একটি ডেলিভারি খোলা।"
+
+#: templates/donor/requests.html:278
+msgid "Request closed"
+msgstr "অনুরোধ বন্ধ"
+
+#: templates/auth/register.html:57 templates/ngo/dashboard.html:94
+msgid "Request food"
+msgstr "খাদ্য অনুরোধ করুন"
+
+#: templates/donor/requests.html:255
+msgid "Request history"
+msgstr "অনুরোধের ইতিহাস"
+
+#: templates/ngo/my_requests.html:121
+msgid "Request not approved"
+msgstr "অনুরোধ অনুমোদিত হয়নি"
+
+#: core/views.py:473
+msgid "Request rejected."
+msgstr "অনুরোধ প্রত্যাখ্যাত।"
+
+#: templates/ngo/dashboard.html:90
+msgid "Request sent"
+msgstr "অনুরোধ পাঠানো হয়েছে"
+
+#: templates/auth/register.html:32
+msgid "Request support as an NGO"
+msgstr "একটি এনজিও হিসেবে সহায়তা অনুরোধ করুন"
+
+#: templates/home.html:144
+msgid ""
+"Request the donations your organization needs and coordinate delivery in one"
+" place."
+msgstr ""
+"আপনার সংস্থার প্রয়োজনীয় অনুদান অনুরোধ করুন এবং একই জায়গায় ডেলিভারি "
+"সমন্বয় করুন।"
+
+#: templates/admin_panel/dashboard.html:181
+#: templates/admin_panel/dashboard.html:188 templates/ngo/my_requests.html:64
+msgid "Requested"
+msgstr "অনুরোধ করা হয়েছে"
+
+#: templates/donor/requests.html:45 templates/donor/requests.html:123
+#: templates/donor/requests.html:266 templates/ngo/my_requests.html:23
+msgid "Requested %(requested)s"
+msgstr "%(requested)sটি অনুরোধ করা হয়েছে"
+
+#: templates/base.html:104 templates/donor/dashboard.html:14
+msgid "Requests"
+msgstr "অনুরোধ"
+
+#: core/views.py:1181
+msgid "Requests completed"
+msgstr "সম্পন্ন অনুরোধ"
+
+#: templates/ngo/dashboard.html:110
+msgid "Reset filters"
+msgstr "ফিল্টার রিসেট করুন"
+
+#: templates/auth/password_reset.html:3 templates/auth/password_reset.html:10
+msgid "Reset your password"
+msgstr "আপনার পাসওয়ার্ড রিসেট করুন"
+
+#: core/models.py:639
+msgid "Resolved"
+msgstr "সমাধান করা হয়েছে"
+
+#: templates/reports/report_post.html:47
+msgid "Responsible reporting"
+msgstr "দায়িত্বশীল রিপোর্টিং"
+
+#: templates/home.html:138
+msgid "Review NGO requests"
+msgstr "এনজিও অনুরোধ পর্যালোচনা করুন"
+
+#: templates/donor/requests.html:10
+msgid ""
+"Review NGO requests, coordinate safe pickups, and follow every donation "
+"through delivery."
+msgstr ""
+"এনজিও অনুরোধ পর্যালোচনা করুন, নিরাপদ পিকআপ সমন্বয় করুন এবং প্রতিটি অনুদান "
+"ডেলিভারি পর্যন্ত অনুসরণ করুন।"
+
+#: templates/ngo/dashboard.html:26
+msgid "Review donations"
+msgstr "অনুদান পর্যালোচনা করুন"
+
+#: templates/admin_panel/dashboard.html:71
+msgid "Review food posts"
+msgstr "খাদ্য পোস্ট পর্যালোচনা করুন"
+
+#: templates/admin_panel/dashboard.html:90
+msgid "Review priority posts"
+msgstr "অগ্রাধিকারপ্রাপ্ত পোস্ট পর্যালোচনা করুন"
+
+#: templates/admin_panel/dashboard.html:55
+#: templates/admin_panel/dashboard.html:60
+msgid "Review reports"
+msgstr "রিপোর্ট পর্যালোচনা করুন"
+
+#: templates/donor/dashboard.html:26
+msgid "Review requests"
+msgstr "অনুরোধ পর্যালোচনা করুন"
+
+#: templates/ngo/request_confirm.html:9
+msgid "Review your request"
+msgstr "আপনার অনুরোধ পর্যালোচনা করুন"
+
+#: core/models.py:638
+msgid "Reviewed"
+msgstr "পর্যালোচনা হয়েছে"
+
+#: templates/profiles/user_profile.html:81
+msgid "Reviews from the community"
+msgstr "কমিউনিটির প্রতিক্রিয়া"
+
+#: templates/auth/profile.html:104 templates/profiles/user_profile.html:69
+msgid "Role"
+msgstr "ভূমিকা"
+
+#: templates/transparency.html:101
+msgid "Role accountability"
+msgstr "ভূমিকার জবাবদিহি"
+
+#: templates/admin_panel/dashboard.html:22
+msgid "Run expiry check"
+msgstr "মেয়াদ পরীক্ষা চালান"
+
+#: templates/admin_panel/dashboard.html:21
+msgid "Run the expiry check now? Eligible food posts will be marked expired."
+msgstr ""
+"এখন মেয়াদ পরীক্ষা চালাবেন? উপযুক্ত খাদ্য পোস্টগুলো মেয়াদোত্তীর্ণ হিসেবে "
+"চিহ্নিত করা হবে।"
+
+#: templates/auth/profile.html:81 templates/donor/edit_food.html:156
+msgid "Save changes"
+msgstr "পরিবর্তন সংরক্ষণ করুন"
+
+#: core/admin.py:70 core/admin.py:80
+msgid "Score Label"
+msgstr "স্কোর লেবেল"
+
+#: templates/food_map.html:36
+msgid "Search by food, category, donor, or location"
+msgstr "খাদ্য, বিভাগ, দাতা বা অবস্থান দিয়ে খুঁজুন"
+
+#: templates/food_map.html:39
+msgid "Search donations…"
+msgstr "অনুদান খুঁজুন…"
+
+#: templates/auth/register.html:74
+msgid "Secure your account"
+msgstr "আপনার অ্যাকাউন্ট সুরক্ষিত করুন"
+
+#: templates/food_map.html:73
+msgid "See community impact"
+msgstr "কমিউনিটির প্রভাব দেখুন"
+
+#: templates/home.html:57
+msgid "See how food is prioritized"
+msgstr "খাদ্য কীভাবে অগ্রাধিকার পায় দেখুন"
+
+#: templates/base.html:98
+msgid "See impact across Bangladesh"
+msgstr "বাংলাদেশ জুড়ে প্রভাব দেখুন"
+
+#: templates/auth/profile.html:102
+msgid "See what the community sees."
+msgstr "কমিউনিটি যা দেখে তা দেখুন।"
+
+#: templates/heatmap.html:17
+msgid "See where sharing happens."
+msgstr "খাদ্য ভাগ করা কোথায় হচ্ছে দেখুন।"
+
+#: templates/donor/add_food.html:82 templates/donor/edit_food.html:82
+msgid "Select a category"
+msgstr "একটি বিভাগ বেছে নিন"
+
+#: templates/donor/edit_food.html:149
+msgid "Select a new image only if it better represents the current donation."
+msgstr ""
+"শুধু নতুন ছবি বেছে নিন, যদি সেটি বর্তমান অনুদানকে আরও ভালোভাবে উপস্থাপন করে।"
+
+#: templates/donor/add_food.html:167
+msgid "Selected food preview"
+msgstr "বেছে নেওয়া খাদ্যের প্রিভিউ"
+
+#: templates/donor/add_food.html:113 templates/donor/edit_food.html:115
+msgid "Selected location preview"
+msgstr "বেছে নেওয়া অবস্থানের প্রিভিউ"
+
+#: templates/auth/profile.html:25
+msgid "Selected profile photo preview"
+msgstr "বেছে নেওয়া প্রোফাইল ছবির প্রিভিউ"
+
+#: templates/ngo/request_confirm.html:60
+msgid "Send a request"
+msgstr "একটি অনুরোধ পাঠান"
+
+#: templates/ngo/request_confirm.html:77
+msgid "Send request"
+msgstr "অনুরোধ পাঠান"
+
+#: templates/auth/password_reset.html:26
+msgid "Send reset link"
+msgstr "রিসেট লিংক পাঠান"
+
+#: templates/home.html:62
+msgid ""
+"Separate pickup and delivery codes keep every transition verified, "
+"traceable, and clear for everyone involved."
+msgstr ""
+"পিকআপ ও ডেলিভারির আলাদা কোড প্রতিটি ধাপকে যাচাইকৃত, স্পষ্ট ও সংশোধনযোগ্য "
+"রাখে।"
+
+#: templates/donor/add_food.html:69 templates/donor/edit_food.html:69
+msgid "Servings or packages"
+msgstr "পরিবেশন বা প্যাকেট"
+
+#: templates/donor/add_food.html:124 templates/donor/edit_food.html:126
+msgid "Set a safe deadline and show the actual donation."
+msgstr "নিরাপদ সময়সীমা দিন এবং প্রকৃত অনুদান দেখান।"
+
+#: templates/donor/add_food.html:175
+msgid "Set an expiry time you can confidently stand behind."
+msgstr "আপনি নিশ্চিতভাবে বলতে পারেন এমন মেয়াদ শেষ হওয়ার সময় দিন।"
+
+#: templates/donor/dashboard.html:132
+msgid ""
+"Share accurate food details and help a nearby community reduce waste. It "
+"takes only a few minutes."
+msgstr ""
+"সঠিক খাদ্যের তথ্য দিন এবং কাছের কমিউনিটির অপচয় কমানে সাহায্য করুন। কয়েক "
+"মিনিটই লাগে।"
+
+#: templates/reports/report_post.html:11
+msgid ""
+"Share clear, specific details so the moderation team can review this "
+"donation."
+msgstr ""
+"মডারেশন দল যাতে এই অনুদান পর্যালোচনা করতে পারে, স্পষ্ট ও নির্দিষ্ট তথ্য দিন।"
+
+#: templates/donor/add_food.html:110 templates/donor/edit_food.html:110
+msgid ""
+"Share enough detail for a volunteer to find the pickup point without "
+"exposing unnecessary personal information."
+msgstr ""
+"অতিরিক্ত ব্যক্তিগত তথ্য না দিয়ে স্বেচ্ছাসেবক যাতে পিকআপের স্থান খুঁজে পায়,"
+" যথেষ্ট তথ্য দিন।"
+
+#: templates/donor/dashboard.html:17
+msgid "Share food"
+msgstr "খাদ্য ভাগ করুন"
+
+#: templates/transparency.html:108
+msgid ""
+"Share food, request support, or deliver a meal. Every role moves the "
+"community forward."
+msgstr ""
+"খাদ্য ভাগ করুন, সহায়তা অনুরোধ করুন বা একটি খাবার পৌঁছে দিন। প্রতিটি ভূমিকা "
+"কমিউনিটিকে এগিয়ে নেয়।"
+
+#: templates/home.html:137
+msgid "Share safe, usable food from your home, business, or community event."
+msgstr ""
+"আপনার বাড়ি, ব্যবসা বা কমিউনিটির অনুষ্ঠান থেকে নিরাপদ, ব্যবহারযোগ্য খাদ্য "
+"ভাগ করুন।"
+
+#: templates/auth/register.html:56 templates/donor/add_food.html:3
+#: templates/donor/add_food.html:12 templates/donor/dashboard.html:134
+msgid "Share surplus food"
+msgstr "অতিরিক্ত খাদ্য ভাগ করুন"
+
+#: templates/auth/register.html:31
+msgid "Share surplus food as a donor"
+msgstr "দাতা হিসেবে অতিরিক্ত খাদ্য ভাগ করুন"
+
+#: templates/donor/requests.html:113
+msgid ""
+"Share the pickup OTP only with the volunteer assigned to this delivery."
+msgstr ""
+"পিকআপ ওটিপি শুধু এই ডেলিভারির জন্য নিয়োগ করা স্বেচ্ছাসেবকের সঙ্গে ভাগ করুন।"
+
+#: templates/partials/rating_form.html:16
+msgid "Share your experience (optional)"
+msgstr "আপনার অভিজ্ঞতা জানান (ঐচ্ছিক)"
+
+#: templates/ngo/request_confirm.html:68
+msgid ""
+"Share your preferred pickup timing, collection capacity, or anything the "
+"donor should know."
+msgstr ""
+"আপনার পছন্দের পিকআপের সময়, সংগ্রহের সামর্থ্য বা দাতার জানা দরকার এমন কিছু "
+"লিখুন।"
+
+#: templates/reports/report_post.html:22
+msgid "Shared by %(name)s · %(category)s"
+msgstr "%(name)s ভাগ করেছেন · %(category)s"
+
+#: templates/auth/login.html:66 templates/auth/password_reset_confirm.html:23
+#: templates/auth/password_reset_confirm.html:32
+#: templates/auth/register.html:78 templates/auth/register.html:82
+msgid "Show password"
+msgstr "পাসওয়ার্ড দেখান"
+
+#: templates/home.html:77
+msgid "Simple by design"
+msgstr "সরল নকশা"
+
+#: templates/base.html:36
+msgid "Skip to content"
+msgstr "মূল বিষয়বস্তুতে যান"
+
+#: templates/donor/add_food.html:180
+msgid "Small surplus. Big difference."
+msgstr "অল্প অতিরিক্ত। বড় পরিবর্তন।"
+
+#: templates/donor/add_food.html:32
+msgid "Some fields need your attention before this post can be published."
+msgstr "পোস্টটি প্রকাশের আগে কিছু ক্ষেত্রের দিকে মনোযোগ দিন।"
+
+#: templates/donor/edit_food.html:32
+msgid "Some fields need your attention before this post can be updated."
+msgstr "পোস্টটি আপডেটের আগে কিছু ক্ষেত্রের দিকে মনোযোগ দিন।"
+
+#: templates/volunteer/dashboard.html:34
+msgid ""
+"Sorted by expiry. Accept only what you can collect and deliver in time."
+msgstr ""
+"মেয়াদ শেষ হওয়ার ক্রমে সাজানো। সময়মতো সংগ্রহ ও পৌঁছে দিতে পারবেন এমনটাই "
+"গ্রহণ করুন।"
+
+#: core/models.py:632
+msgid "Spam or repeated posts"
+msgstr "স্প্যাম বা পুনরাবৃত্ত পোস্ট"
+
+#: templates/transparency.html:65 templates/admin_panel/dashboard.html:127
+#: templates/admin_panel/dashboard.html:134
+#: templates/admin_panel/dashboard.html:181
+#: templates/admin_panel/dashboard.html:187
+#: templates/admin_panel/dashboard.html:208
+#: templates/admin_panel/dashboard.html:215
+msgid "Status"
+msgstr "অবস্থা"
+
+#: templates/heatmap.html:75
+msgid "Status snapshot"
+msgstr "অবস্থার চিত্র"
+
+#: templates/volunteer/dashboard.html:165
+msgid "Step 1: Confirm pickup"
+msgstr "ধাপ ১: পিকআপ নিশ্চিত করুন"
+
+#: templates/volunteer/dashboard.html:188
+msgid "Step 2: Confirm delivery"
+msgstr "ধাপ ২: ডেলিভারি নিশ্চিত করুন"
+
+#: templates/partials/rating_form.html:17
+msgid "Submit rating"
+msgstr "রেটিং পাঠান"
+
+#: templates/reports/report_post.html:40 templates/reports/report_user.html:42
+msgid "Submit report"
+msgstr "রিপোর্ট পাঠান"
+
+#: templates/reports/report_post.html:52
+msgid ""
+"Submitting knowingly inaccurate reports may affect your account standing."
+msgstr ""
+"জেনে-বুঝে ভুল রিপোর্ট পাঠানো আপনার অ্যাকাউন্টের অবস্থাকে প্রভাবিত করতে পারে।"
+
+#: templates/home.html:41
+msgid "Successful deliveries"
+msgstr "সফল ডেলিভারি"
+
+#: core/models.py:43
+msgid "Superuser must have is_staff=True."
+msgstr "সুপারইউজারের is_staff=True হতে হবে।"
+
+#: core/models.py:45
+msgid "Superuser must have is_superuser=True."
+msgstr "সুপারইউজারের is_superuser=True হতে হবে।"
+
+#: templates/base.html:116 templates/base.html:166
+msgid "System"
+msgstr "সিস্টেম"
+
+#: templates/admin_panel/dashboard.html:208
+#: templates/admin_panel/dashboard.html:212
+msgid "Target"
+msgstr "লক্ষ্য"
+
+#: templates/reports/report_user.html:18
+msgid "Tell us what happened"
+msgstr "কী হয়েছে তা বলুন"
+
+#: templates/admin_panel/dashboard.html:126
+msgid "Ten most recently created food posts"
+msgstr "সর্বশেষ তৈরি হওয়া দশটি খাদ্য পোস্ট"
+
+#: templates/volunteer/dashboard.html:209
+msgid "Thank you for helping this meal reach its community safely."
+msgstr ""
+"এই খাবারটি তার কমিউনিটির কাছে নিরাপদে পৌঁছে দিতে সাহায্য করার জন্য ধন্যবাদ।"
+
+#: templates/donor/dashboard.html:120
+msgid "Thank you for helping this meal reach its community."
+msgstr "এই খাবারটি তার কমিউনিটির কাছে পৌঁছে দিতে সাহায্য করার জন্য ধন্যবাদ।"
+
+#: templates/donor/requests.html:234
+msgid "Thank you for sharing"
+msgstr "ভাগ করার জন্য ধন্যবাদ"
+
+#: core/views.py:1140
+msgid "Thank you. Your rating has been submitted."
+msgstr "ধন্যবাদ। আপনার রেটিং পাঠানো হয়েছে।"
+
+#: templates/auth/password_reset_email.html:13
+msgid "The AhaarBonton Team"
+msgstr "AhaarBonton দল"
+
+#: templates/volunteer/dashboard.html:202
+msgid "The NGO should provide this code only when you arrive with the food."
+msgstr "আপনি খাদ্য নিয়ে এলে এনজিওকে এই কোড দেওয়া উচিত।"
+
+#: templates/home.html:104
+msgid "The community sees the impact"
+msgstr "কমিউনিটি প্রভাবটি দেখতে পারে"
+
+#: templates/donor/edit_food.html:186
+msgid "The current photo stays unless you select a replacement."
+msgstr "বিকল্প ছবি না বেছে নিলে বর্তমান ছবিই থাকবে।"
+
+#: templates/ngo/my_requests.html:71
+msgid ""
+"The donor has your request and note. You will see the status change here as "
+"soon as they respond."
+msgstr ""
+"দাতা আপনার অনুরোধ ও নোট পেয়েছেন। তারা সাড়া দেওয়ার সঙ্গে সঙ্গে এখানে "
+"অবস্থার পরিবর্তন দেখবেন।"
+
+#: templates/ngo/my_requests.html:71
+msgid ""
+"The donor has your request. You will see the status change here as soon as "
+"they respond."
+msgstr ""
+"দাতা আপনার অনুরোধ পেয়েছেন। তারা সাড়া দেওয়ার সঙ্গে সঙ্গে এখানে অবস্থার "
+"পরিবর্তন দেখবেন।"
+
+#: templates/ngo/request_confirm.html:61
+msgid ""
+"The donor will review your request before a volunteer is assigned. Sending a"
+" request does not reserve the food."
+msgstr ""
+"স্বেচ্ছাসেবক নিয়োগের আগে দাতা আপনার অনুরোধ পর্যালোচনা করবেন। অনুরোধ পাঠালে "
+"খাদ্যটি সংরক্ষিত থাকে না।"
+
+#: templates/transparency.html:91
+msgid "The first delivery is waiting"
+msgstr "প্রথম ডেলিভারির অপেক্ষায়"
+
+#: templates/transparency.html:28
+msgid "The food journey"
+msgstr "খাদ্যের যাত্রা"
+
+#: templates/donor/add_food.html:114
+msgid ""
+"The interactive map is unavailable. You can still publish with a clear "
+"address or landmark."
+msgstr ""
+"ইন্টারঅ্যাকটিভ মানচিত্র পাওয়া যাচ্ছে না। স্পষ্ট ঠিকানা বা পরিচিত স্থান "
+"দিয়েও প্রকাশ করতে পারবেন।"
+
+#: templates/donor/edit_food.html:116
+msgid ""
+"The interactive map is unavailable. You can still save with a clear address "
+"or landmark."
+msgstr ""
+"ইন্টারঅ্যাকটিভ মানচিত্র পাওয়া যাচ্ছে না। স্পষ্ট ঠিকানা বা পরিচিত স্থান "
+"দিয়েও সংরক্ষণ করতে পারবেন।"
+
+#: templates/transparency.html:78
+msgid "The latest completed food journeys in the community."
+msgstr "কমিউনিটিতে সম্পন্ন সাম্প্রতিক খাদ্য যাত্রা।"
+
+#: templates/admin_panel/dashboard.html:119
+msgid "The latest donations shared across the platform."
+msgstr "প্ল্যাটফর্ম জুড়ে সাম্প্রতিক ভাগ করা অনুদান।"
+
+#: templates/404.html:4
+msgid ""
+"The link may be outdated, or the page may no longer exist. Let’s get you "
+"back to the community."
+msgstr ""
+"লিংকটি পুরোনো হতে পারে, অথবা পৃষ্ঠাটি আর থাকতে পারে। কমিউনিটিতে ফিরে যাওয়া "
+"যাক।"
+
+#: templates/food_map.html:71
+msgid "The map is ready for its first donation."
+msgstr "মানচিত্রটি প্রথম অনুদানের জন্য প্রস্তুত।"
+
+#: templates/auth/password_reset_confirm.html:42
+msgid ""
+"The reset link is invalid or has already been used. Request a new link to "
+"continue."
+msgstr "রিসেট লিংকটি অবৈধ বা ইতিমধ্যে ব্যবহৃত। চালিয়ে যেতে নতুন লিংক চান।"
+
+#: templates/ngo/my_requests.html:89
+msgid ""
+"The volunteer confirmed the handover. This request will move to completed."
+msgstr ""
+"স্বেচ্ছাসেবক হস্তান্তর নিশ্চিত করেছেন। এই অনুরোধটি সম্পন্ন অবস্থায় যাবে।"
+
+#: templates/403.html:4
+msgid "This area needs a different role."
+msgstr "এই এলাকার জন্য ভিন্ন ভূমিকা প্রয়োজন।"
+
+#: templates/donor/requests.html:235
+msgid "This completed donation is part of your community impact."
+msgstr "সম্পন্ন এই অনুদানটি আপনার কমিউনিটির প্রভাবের অংশ।"
+
+#: core/views.py:798 core/views.py:878
+msgid "This delivery is no longer active."
+msgstr "এই ডেলিভারিটি আর সক্রিয় নেই।"
+
+#: core/views.py:704
+msgid "This delivery is no longer available or was already accepted."
+msgstr "এই ডেলিভারিটি আর উপলব্ধ নেই বা অন্য কেউ গ্রহণ করেছে।"
+
+#: core/views.py:700
+msgid "This delivery is no longer available."
+msgstr "এই ডেলিভারিটি আর উপলব্ধ নেই।"
+
+#: core/views.py:796 core/views.py:876
+msgid "This delivery is not assigned to you."
+msgstr "এই ডেলিভারিটি আপনার নিয়োগে দেওয়া হয়নি।"
+
+#: core/views.py:872
+msgid "This delivery was already completed."
+msgstr "এই ডেলিভারিটি ইতিমধ্যে সম্পন্ন হয়েছে।"
+
+#: templates/ngo/my_requests.html:122
+msgid ""
+"This donation is no longer reserved for your organization. Browse other "
+"available food that fits your needs."
+msgstr ""
+"আপনার সংস্থার জন্য এই অনুদানটি আর সংরক্ষিত নেই। আপনার প্রয়োজন অনুযায়ী অন্য"
+" উপলব্ধ খাদ্য দেখুন।"
+
+#: templates/donor/requests.html:168
+msgid "This donation reached %(name)s on %(delivered)s."
+msgstr "%(delivered)s-এ এই অনুদানটি %(name)s-এর কাছে পৌঁছেছে।"
+
+#: templates/donor/requests.html:168
+msgid "This donation reached %(name)s."
+msgstr "এই অনুদানটি %(name)s-এর কাছে পৌঁছেছে।"
+
+#: templates/ngo/my_requests.html:94
+msgid ""
+"This donation reached your organization. Your feedback helps maintain a "
+"trusted network."
+msgstr ""
+"এই অনুদানটি আপনার সংস্থার কাছে পৌঁছেছে। আপনার প্রতিক্রিয়া বিশ্বাসযোগ্য "
+"নেটওয়ার্ক বজায় রাখতে সহায়তা করে।"
+
+#: core/views.py:874
+msgid "This food post has expired and cannot be delivered."
+msgstr "এই খাদ্য পোস্টের মেয়াদ শেষ হয়েছে এবং এটি পৌঁছে দেওয়া যায় না।"
+
+#: core/views.py:794
+msgid "This food post has expired and cannot be picked up."
+msgstr "এই খাদ্য পোস্টের মেয়াদ শেষ হয়েছে এবং এটি পিকআপ করা যায় না।"
+
+#: core/views.py:517
+msgid "This food post is already expired."
+msgstr "এই খাদ্য পোস্ট ইতিমধ্যে মেয়াদোত্তীর্ণ।"
+
+#: core/models.py:363 core/views.py:538
+msgid "This food post is no longer available."
+msgstr "এই খাদ্য পোস্টটি আর উপলব্ধ নেই।"
+
+#: core/views.py:521
+msgid "This food post is not available for requests."
+msgstr "এই খাদ্য পোস্টটি অনুরোধের জন্য উপলব্ধ নয়।"
+
+#: templates/auth/password_reset_confirm.html:41
+msgid "This link has expired"
+msgstr "এই লিংকের মেয়াদ শেষ হয়েছে"
+
+#: templates/auth/password_reset_email.html:9
+msgid "This link will expire in one hour."
+msgstr "এই লিংক এক ঘণ্টায় মেয়াদ শেষ হবে।"
+
+#: templates/404.html:4
+msgid "This page has moved on."
+msgstr "এই পৃষ্ঠার অস্তিত্ব শেষ হয়েছে।"
+
+#: templates/donor/edit_food.html:182
+msgid "This post has expired and cannot be requested."
+msgstr "এই পোস্টের মেয়াদ শেষ হয়েছে এবং এটি অনুরোধ করা যায় না।"
+
+#: core/views.py:555
+msgid "This request already exists."
+msgstr "এই অনুরোধটি ইতিমধ্যে আছে।"
+
+#: templates/donor/requests.html:279
+msgid "This request was not approved. No delivery task was created."
+msgstr "এই অনুরোধ অনুমোদিত হয়নি। কোনো ডেলিভারি কাজ তৈরি হয়নি।"
+
+#: templates/auth/register.html:87
+msgid "This step is optional and can be changed later."
+msgstr "এই ধাপটি ঐচ্ছিক এবং পরে পরিবর্তন করা যাবে।"
+
+#: templates/volunteer/dashboard.html:67
+msgid "Time remaining"
+msgstr "বাকি সময়"
+
+#: templates/home.html:120
+msgid ""
+"Time-sensitive donations stay prioritized and visible until they are safely "
+"resolved."
+msgstr ""
+"সময়সংবেদনশীল অনুদান নিরাপদে সমাধান হওয়া পর্যন্ত অগ্রাধিকার ও দৃশ্যমানতা "
+"পায়।"
+
+#: core/views.py:761 core/views.py:834
+msgid "Too many incorrect attempts. Try again in 5 minutes."
+msgstr "অনেকবার ভুল হয়েছে। ৫ মিনিট পর আবার চেষ্টা করুন।"
+
+#: templates/leaderboard.html:26
+msgid "Top donors"
+msgstr "সেরা দাতা"
+
+#: templates/leaderboard.html:72
+msgid "Top rated donors"
+msgstr "সর্বোচ্চ রেটিংপ্রাপ্ত দাতা"
+
+#: templates/leaderboard.html:92
+msgid "Top rated volunteers"
+msgstr "সর্বোচ্চ রেটিংপ্রাপ্ত স্বেচ্ছাসেবক"
+
+#: templates/leaderboard.html:47
+msgid "Top volunteers"
+msgstr "সেরা স্বেচ্ছাসেবক"
+
+#: templates/transparency.html:40
+msgid "Total food posts"
+msgstr "মোট খাদ্য পোস্ট"
+
+#: templates/donor/dashboard.html:33
+msgid "Total posts"
+msgstr "মোট পোস্ট"
+
+#: templates/admin_panel/dashboard.html:30
+msgid "Total users"
+msgstr "মোট ব্যবহারকারী"
+
+#: templates/home.html:138
+msgid "Track every handover"
+msgstr "প্রতিটি হস্তান্তর ট্র্যাক করুন"
+
+#: templates/base.html:200
+msgid "Transparency"
+msgstr "স্বচ্ছতা"
+
+#: templates/transparency.html:9
+msgid "Transparency dashboard"
+msgstr "স্বচ্ছতার ড্যাশবোর্ড"
+
+#: templates/base.html:200
+msgid "Trust"
+msgstr "বিশ্বাস"
+
+#: templates/leaderboard.html:163 templates/donor/dashboard.html:57
+#: templates/profiles/user_profile.html:24
+#: templates/profiles/user_profile.html:72
+#: templates/volunteer/dashboard.html:15
+msgid "Trust score"
+msgstr "বিশ্বাস স্কোর"
+
+#: templates/food_map.html:62
+msgid "Try a different food name, category, donor, or location."
+msgstr "অন্য খাদ্যের নাম, বিভাগ, দাতা বা অবস্থান দিয়ে চেষ্টা করুন।"
+
+#: templates/offline.html:34
+msgid "Try again"
+msgstr "আবার চেষ্টা করুন"
+
+#: templates/ngo/dashboard.html:109
+msgid "Try another category or check back soon for newly shared food."
+msgstr "অন্য বিভাগ দেখুন বা নতুন খাদ্য ভাগ হওয়ার জন্য পরে আবার দেখুন।"
+
+#: templates/home.html:136
+msgid "Turn surplus into support."
+msgstr "অতিরিক্ত খাদ্যকে সহায়তায় রূপান্তর করুন।"
+
+#: templates/admin_panel/dashboard.html:37
+msgid "Unexpired posts ready for requests"
+msgstr "অনুরোধের জন্য প্রস্তুত মেয়াদোত্তীর্ণ নয় এমন পোস্ট"
+
+#: core/views.py:449
+msgid "Unknown action."
+msgstr "অজানা কাজ।"
+
+#: templates/donor/edit_food.html:24
+msgid ""
+"Update anything that has changed. NGOs see the latest details when they "
+"request this food."
+msgstr ""
+"যা পরিবর্তন হয়েছে তা আপডেট করুন। এনজিওরা খাদ্য অনুরোধের সময় সাম্প্রতিক "
+"তথ্যই দেখবে।"
+
+#: templates/auth/password_reset_confirm.html:36
+msgid "Update password"
+msgstr "পাসওয়ার্ড আপডেট করুন"
+
+#: templates/donor/edit_food.html:193
+msgid "Update the quantity if any food has already been collected."
+msgstr "কিছু খাদ্য ইতিমধ্যে সংগ্রহ হয়ে গেলে পরিমাণ আপডেট করুন।"
+
+#: templates/home.html:55
+msgid "Urgency-aware matching"
+msgstr "জরুরিতা-সচেতন মেলানো"
+
+#: templates/ngo/dashboard.html:60
+msgid "Urgent"
+msgstr "জরুরি"
+
+#: templates/auth/profile.html:58
+msgid "Use 7–15 digits, optionally beginning with +."
+msgstr "৭–১৫টি সংখ্যা ব্যবহার করুন; চাইলে শুরুতে + থাকতে পারে।"
+
+#: templates/donor/add_food.html:172
+msgid "Use a clear, recent photo of the actual food."
+msgstr "প্রকৃত খাদ্যের একটি স্পষ্ট, সাম্প্রতিক ছবি ব্যবহার করুন।"
+
+#: templates/donor/add_food.html:48 templates/donor/edit_food.html:48
+msgid "Use a short, specific title that stands out."
+msgstr "সংক্ষিপ্ত, নির্দিষ্ট শিরোনাম দিন যা নিজে থেকে চোখে পড়ে।"
+
+#: templates/auth/register.html:74
+msgid "Use a strong password that you do not use elsewhere."
+msgstr "একটি শক্তিশালী পাসওয়ার্ড ব্যবহার করুন যা অন্য কোথাও ব্যবহার করেন না।"
+
+#: templates/auth/password_reset_confirm.html:11
+msgid "Use a strong password that you don’t use elsewhere."
+msgstr "একটি শক্তিশালী পাসওয়ার্ড ব্যবহার করুন যা অন্য কোথাও ব্যবহৃত হয় না।"
+
+#: templates/auth/register.html:79
+msgid ""
+"Use at least 8 characters. A mix of letters, numbers, and symbols is "
+"recommended."
+msgstr ""
+"কমপক্ষে ৮টি অক্ষর ব্যবহার করুন। অক্ষর, সংখ্যা ও প্রতীক মিশ্রানো সুপারিশ করা "
+"হয়।"
+
+#: templates/donor/add_food.html:107 templates/donor/edit_food.html:107
+msgid "Use my location"
+msgstr "আমার অবস্থান ব্যবহার করুন"
+
+#: templates/volunteer/dashboard.html:100
+msgid ""
+"Use the OTP at each handover. Never share a code before the person "
+"collecting is present."
+msgstr ""
+"প্রতিটি হস্তান্তরে ওটিপি ব্যবহার করুন। সংগ্রহকারী আসার আগে কখনও কোড ভাগ "
+"করবেন না।"
+
+#: templates/auth/profile.html:94
+msgid "Use your real name"
+msgstr "আপনার প্রকৃত নাম ব্যবহার করুন"
+
+#: templates/auth/register.html:65
+msgid "Used for account access and reliable coordination."
+msgstr "অ্যাকাউন্টে প্রবেশ ও নির্ভরযোগ্য সমন্বয়ের জন্য ব্যবহৃত হয়।"
+
+#: templates/admin_panel/dashboard.html:106
+msgid "User breakdown"
+msgstr "ব্যবহারকারীর বিভাজন"
+
+#: templates/leaderboard.html:162
+msgid ""
+"Uses average scores submitted by verified participants after completed "
+"deliveries."
+msgstr ""
+"সম্পন্ন ডেলিভারির পরে যাচাইকৃত অংশগ্রহণকারীদের দেওয়া গড় স্কোর ব্যবহার করে।"
+
+#: templates/leaderboard.html:163
+msgid ""
+"Uses the platform’s role-specific trust score, with completed outcomes "
+"increasing accountability."
+msgstr ""
+"ভূমিকা-নির্দিষ্ট প্ল্যাটফর্ম বিশ্বাস স্কোর ব্যবহার করে; সম্পন্ন ফলাফল "
+"জবাবদিহি বাড়ায়।"
+
+#: templates/auth/profile.html:96
+msgid "Verified deliveries and participant ratings shape your reputation."
+msgstr "যাচাইকৃত ডেলিভারি ও অংশগ্রহণকারীদের রেটিং আপনার সুনাম গড়ে তোলে।"
+
+#: templates/auth/login.html:35
+msgid "Verified handovers. Private by design."
+msgstr "যাচাইকৃত হস্তান্তর। নকশা থেকেই গোপনীয়তা।"
+
+#: templates/profiles/user_profile.html:110
+msgid ""
+"Verified participant feedback will appear here after completed deliveries."
+msgstr ""
+"সম্পন্ন ডেলিভারির পরে যাচাইকৃত অংশগ্রহণকারীদের প্রতিক্রিয়া এখানে দেখা যাবে।"
+
+#: templates/home.html:121
+msgid "Verified transitions"
+msgstr "যাচাইকৃত ধাপ"
+
+#: templates/auth/login.html:32
+msgid "Verify handovers with one-time codes"
+msgstr "একবারের কোড দিয়ে হস্তান্তর যাচাই করুন"
+
+#: templates/admin_panel/dashboard.html:121
+#: templates/admin_panel/dashboard.html:175
+#: templates/admin_panel/dashboard.html:202
+msgid "View all"
+msgstr "সব দেখুন"
+
+#: templates/transparency.html:58
+msgid "View category data"
+msgstr "বিভাগের ডেটা দেখুন"
+
+#: templates/donor/dashboard.html:118
+msgid "View delivery"
+msgstr "ডেলিভারি দেখুন"
+
+#: templates/transparency.html:72
+msgid "View monthly data"
+msgstr "মাসভিত্তিক ডেটা দেখুন"
+
+#: templates/donor/dashboard.html:121
+msgid "View outcome"
+msgstr "ফলাফল দেখুন"
+
+#: templates/admin_panel/dashboard.html:76
+msgid "View public impact"
+msgstr "প্রকাশ্য প্রভাব দেখুন"
+
+#: templates/auth/profile.html:31
+msgid "View public profile"
+msgstr "প্রকাশ্য প্রোফাইল দেখুন"
+
+#: templates/transparency.html:65
+msgid "View status data"
+msgstr "অবস্থার ডেটা দেখুন"
+
+#: templates/ngo/dashboard.html:117
+msgid "View the food map"
+msgstr "খাদ্যের মানচিত্র দেখুন"
+
+#: templates/home.html:69
+msgid "View the impact dashboard"
+msgstr "প্রভাবের ড্যাশবোর্ড দেখুন"
+
+#: core/models.py:55 users/forms.py:27 templates/auth/login.html:24
+#: templates/auth/register.html:24 templates/auth/register.html:58
+msgid "Volunteer"
+msgstr "স্বেচ্ছাসেবক"
+
+#: templates/ngo/request_confirm.html:85
+msgid "Volunteer accepts"
+msgstr "স্বেচ্ছাসেবক গ্রহণ করেন"
+
+#: core/views.py:711
+msgid "Volunteer assigned for your delivery"
+msgstr "আপনার ডেলিভারির জন্য স্বেচ্ছাসেবক নিয়োগ হয়েছে"
+
+#: templates/volunteer/dashboard.html:3
+msgid "Volunteer dashboard"
+msgstr "স্বেচ্ছাসেবক ড্যাশবোর্ড"
+
+#: templates/ngo/my_requests.html:79
+msgid "Volunteer is on the way"
+msgstr "স্বেচ্ছাসেবক পথে আছে"
+
+#: templates/transparency.html:39
+msgid "Volunteer members"
+msgstr "স্বেচ্ছাসেবক সদস্য"
+
+#: templates/volunteer/dashboard.html:12
+msgid "Volunteer overview"
+msgstr "স্বেচ্ছাসেবকের সংক্ষিপ্ত বিবরণ"
+
+#: templates/volunteer/dashboard.html:8
+msgid "Volunteer workspace"
+msgstr "স্বেচ্ছাসেবক ওয়ার্কস্পেস"
+
+#: templates/donor/requests.html:152 templates/ngo/my_requests.html:48
+msgid "Volunteer: %(name)s"
+msgstr "স্বেচ্ছাসেবক: %(name)s"
+
+#: templates/admin_panel/dashboard.html:109
+msgid "Volunteers"
+msgstr "স্বেচ্ছাসেবক"
+
+#: templates/home.html:99
+msgid "Volunteers complete the route"
+msgstr "স্বেচ্ছাসেবকেরা পথটি সম্পন্ন করেন"
+
+#: templates/donor/requests.html:164 templates/ngo/my_requests.html:75
+msgid "Waiting for a volunteer"
+msgstr "স্বেচ্ছাসেবকের অপেক্ষায়"
+
+#: templates/ngo/my_requests.html:70
+msgid "Waiting for donor review"
+msgstr "দাতার পর্যালোচনার অপেক্ষায়"
+
+#: templates/donor/requests.html:130
+msgid "Waiting for pickup"
+msgstr "পিকআপের অপেক্ষায়"
+
+#: templates/ngo/my_requests.html:84
+msgid "Waiting for volunteer pickup"
+msgstr "স্বেচ্ছাসেবক পিকআপের অপেক্ষায়"
+
+#: templates/heatmap.html:69
+msgid ""
+"Warmer areas show more donation activity. Completed deliveries carry the "
+"strongest signal."
+msgstr ""
+"গরম এলাকায় খাদ্য দান কার্যকলাপ বেশি দেখা যায়। সম্পন্ন ডেলিভারির সংকেত "
+"সবচেয়ে শক্তিশালী।"
+
+#: templates/auth/register.html:9
+msgid "Ways to participate"
+msgstr "অংশ নেওয়ার উপায়"
+
+#: templates/offline.html:32
+msgid ""
+"We couldn’t connect to AhaarBonton. Check your internet connection, then try"
+" again. Your account and requests will be here when you reconnect."
+msgstr ""
+"AhaarBonton-এ সংযোগ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা "
+"করুন। পুনরায় সংযোগ হলে আপনার অ্যাকাউন্ট ও অনুরোধ এখানে থাকবে।"
+
+#: templates/auth/login.html:42
+msgid "Welcome back"
+msgstr "আবার স্বাগতম"
+
+#: templates/donor/dashboard.html:9
+msgid "Welcome back, %(name)s"
+msgstr "আবার স্বাগতম, %(name)s"
+
+#: core/views.py:252
+msgid "Welcome back. You are now signed in."
+msgstr "আবার স্বাগতম। আপনি এখন লগ ইন করেছেন।"
+
+#: templates/ngo/dashboard.html:10
+msgid ""
+"Welcome, %(name)s. Browse donations closest to expiry first and request what"
+" your community can use."
+msgstr ""
+"স্বাগতম, %(name)s। মেয়াদ শেষ হওয়ার কাছের অনুদানগুলো আগে দেখুন এবং আপনার "
+"কমিউনিটির ব্যবহারযোগ্য খাদ্য অনুরোধ করুন।"
+
+#: templates/volunteer/dashboard.html:10
+msgid ""
+"Welcome, %(name)s. Choose a route that fits your schedule and confirm every "
+"handover safely."
+msgstr ""
+"স্বাগতম, %(name)s। আপনার সময়সূচির সঙ্গে মানানসই পথ বেছে নিন এবং প্রতিটি "
+"হস্তান্তর নিরাপদে নিশ্চিত করুন।"
+
+#: templates/admin_panel/dashboard.html:11
+msgid ""
+"Welcome, %(name)s. Monitor donations, deliveries, and community safety from "
+"one place."
+msgstr ""
+"স্বাগতম, %(name)s। একই জায়গা থেকে অনুদান, ডেলিভারি ও কমিউনিটি নিরাপত্তা "
+"মনিটর করুন।"
+
+#: templates/donor/add_food.html:54 templates/donor/edit_food.html:54
+msgid "What food is available? Mention freshness, ingredients, and packaging."
+msgstr "কী খাদ্য উপলব্ধ? সতেজতা, উপাদান ও প্যাকেজিং উল্লেখ করুন।"
+
+#: templates/ngo/request_confirm.html:83
+msgid "What happens next"
+msgstr "এরপর কী হবে"
+
+#: templates/reports/report_post.html:18
+msgid "What would you like to report?"
+msgstr "আপনি কী রিপোর্ট করতে চান?"
+
+#: templates/home.html:167
+msgid "Who can join AhaarBonton?"
+msgstr "কে AhaarBonton-এ যোগ দিতে পারবেন?"
+
+#: templates/home.html:48
+msgid "Why AhaarBonton"
+msgstr "কেন AhaarBonton"
+
+#: core/views.py:529
+msgid "You already have an active request for this food post."
+msgstr "এই খাদ্য পোস্টের জন্য আপনার ইতিমধ্যে একটি সক্রিয় অনুরোধ আছে।"
+
+#: core/views.py:1099
+msgid "You are not allowed to submit this rating."
+msgstr "আপনি এই রেটিংটি পাঠানোর অনুমতি পাননি।"
+
+#: templates/offline.html:9
+msgid "You are offline"
+msgstr "আপনি অফলাইনে আছেন"
+
+#: templates/ngo/request_confirm.html:89
+msgid ""
+"You can track every request from <a href=\"%(requests_url)s\" class=\"text-"
+"success\">My requests</a>."
+msgstr ""
+"<a href=\"%(requests_url)s\" class=\"text-success\">আমার অনুরোধ</a> থেকে "
+"প্রতিটি অনুরোধ ট্র্যাক করতে পারবেন।"
+
+#: core/views.py:1047
+msgid "You cannot report your own account."
+msgstr "আপনি নিজের অ্যাকাউন্ট রিপোর্ট করতে পারবেন না।"
+
+#: core/views.py:1016
+msgid "You cannot report your own food post."
+msgstr "আপনি নিজের খাদ্য পোস্ট রিপোর্ট করতে পারবেন না।"
+
+#: core/views.py:48
+msgid "You do not have permission to access this page."
+msgstr "আপনার এই পৃষ্ঠায় প্রবেশের অনুমতি নেই।"
+
+#: templates/donor/requests.html:20
+msgid ""
+"You have <strong>%(counter)s pending request</strong> waiting for a "
+"decision. Respond before the food expires."
+msgid_plural ""
+"You have <strong>%(counter)s pending requests</strong> waiting for a "
+"decision. Respond before the food expires."
+msgstr[0] ""
+"সিদ্ধান্তের অপেক্ষায় আপনার <strong>%(counter)sটি অনুরোধ</strong> আছে। "
+"খাদ্যের মেয়াদ শেষ হওয়ার আগে সাড়া দিন।"
+msgstr[1] ""
+"সিদ্ধান্তের অপেক্ষায় আপনার <strong>%(counter)sটি অনুরোধ</strong> আছে। "
+"খাদ্যের মেয়াদ শেষ হওয়ার আগে সাড়া দিন।"
+
+#: core/views.py:1031
+msgid "You have already reported this post."
+msgstr "আপনি এই পোস্টটি ইতিমধ্যে রিপোর্ট করেছেন।"
+
+#: core/views.py:1062
+msgid "You have already reported this user."
+msgstr "আপনি এই ব্যবহারকারীকে ইতিমধ্যে রিপোর্ট করেছেন।"
+
+#: core/views.py:1142
+msgid "You have already submitted this rating."
+msgstr "আপনি এই রেটিংটি ইতিমধ্যে দিয়েছেন।"
+
+#: core/views.py:263
+msgid "You have been logged out successfully."
+msgstr "আপনি সফলভাবে লগ আউট করেছেন।"
+
+#: core/views.py:842
+msgid "You must confirm pickup first before confirming delivery."
+msgstr "ডেলিভারি নিশ্চিত করার আগে পিকআপ নিশ্চিত করতে হবে।"
+
+#: templates/auth/password_reset_email.html:3
+msgid ""
+"You requested a password reset for your AhaarBonton account (%(email)s)."
+msgstr ""
+"আপনার AhaarBonton অ্যাকাউন্টের (%(email)s) পাসওয়ার্ড রিসেটের অনুরোধ করা "
+"হয়েছে।"
+
+#: templates/volunteer/dashboard.html:73
+msgid ""
+"You will verify pickup with the donor’s OTP and delivery with the NGO’s OTP."
+msgstr "দাতার ওটিপি দিয়ে পিকআপ ও এনজিওর ওটিপি দিয়ে ডেলিভারি যাচাই করবেন।"
+
+#: templates/base.html:198 templates/auth/profile.html:9
+msgid "Your account"
+msgstr "আপনার অ্যাকাউন্ট"
+
+#: templates/auth/login.html:29
+msgid ""
+"Your account brings food posts, requests, deliveries, and community impact "
+"into one clear workspace."
+msgstr ""
+"আপনার অ্যাকাউন্টে খাদ্য পোস্ট, অনুরোধ, ডেলিভারি ও কমিউনিটির প্রভাব একই "
+"স্পষ্ট ওয়ার্কস্পেসে আসে।"
+
+#: templates/403.html:4
+msgid ""
+"Your account doesn’t have permission to access this page. Return to your own"
+" workspace to keep helping."
+msgstr ""
+"আপনার অ্যাকাউন্টের এই পৃষ্ঠায় প্রবেশের অনুমতি নেই। সাহায্য চালিয়ে যেতে "
+"নিজের ওয়ার্কস্পেসে ফিরুন।"
+
+#: core/views.py:229
+msgid "Your account is ready. Welcome to AhaarBonton."
+msgstr "আপনার অ্যাকাউন্ট প্রস্তুত। AhaarBonton-এ স্বাগতম।"
+
+#: templates/auth/password_reset_complete.html:10
+msgid "Your account is secure. Log in with your new password to continue."
+msgstr ""
+"আপনার অ্যাকাউন্ট নিরাপদ। চালিয়ে যেতে নতুন পাসওয়ার্ড দিয়ে লগ ইন করুন।"
+
+#: templates/auth/register.html:97
+msgid ""
+"Your contact details are used for account access and coordination. Public "
+"profiles do not display your email or phone number."
+msgstr ""
+"আপনার যোগাযোগের তথ্য অ্যাকাউন্টে প্রবেশ ও সমন্বয়ের জন্য ব্যবহৃত হয়। "
+"প্রকাশ্য প্রোফাইলে আপনার ইমেইল বা ফোন নম্বর দেখা যায় না।"
+
+#: templates/auth/register.html:65
+msgid "Your details"
+msgstr "আপনার তথ্য"
+
+#: templates/donor/add_food.html:181
+msgid ""
+"Your donation could become someone’s next safe meal today. Accurate details "
+"make every handover easier."
+msgstr ""
+"আজ আপনার অনুদান কারও পরবর্তী নিরাপদ খাবার হতে পারে। সঠিক তথ্য প্রতিটি "
+"হস্তান্তরকে সহজ করে।"
+
+#: templates/donor/dashboard.html:68
+msgid "Your donations"
+msgstr "আপনার অনুদান"
+
+#: templates/auth/profile.html:95
+msgid "Your email and phone number never appear on your public profile."
+msgstr "আপনার ইমেইল ও ফোন নম্বর প্রকাশ্য প্রোফাইলে কখনও দেখা যায় না।"
+
+#: templates/auth/profile.html:65
+msgid ""
+"Your email is used for sign-in and delivery notifications. Contact support "
+"if it needs to change."
+msgstr ""
+"আপনার ইমেইল লগ ইন ও ডেলিভারির বিজ্ঞপ্তিতে ব্যবহৃত হয়। পরিবর্তন প্রয়োজন হলে"
+" সহায়তার সঙ্গে যোগাযোগ করুন।"
+
+#: templates/donor/requests.html:235
+msgid "Your feedback has been recorded."
+msgstr "আপনার প্রতিক্রিয়া রেকর্ড করা হয়েছে।"
+
+#: templates/donor/requests.html:225
+msgid "Your feedback helps maintain a reliable volunteer network."
+msgstr ""
+"আপনার প্রতিক্রিয়া নির্ভরযোগ্য স্বেচ্ছাসেবক নেটওয়ার্ক বজায় রাখতে সহায়তা "
+"করে।"
+
+#: templates/donor/dashboard.html:131
+msgid "Your first donation starts here"
+msgstr "আপনার প্রথম অনুদান এখান থেকে শুরু"
+
+#: users/forms.py:33 templates/auth/register.html:67
+msgid "Your full name"
+msgstr "আপনার পুরো নাম"
+
+#: templates/donor/requests.html:244
+msgid "Your impact will appear here"
+msgstr "আপনার প্রভাব এখানে দেখা যাবে"
+
+#: templates/home.html:178
+msgid "Your next action can feed a community."
+msgstr "আপনার পরবর্তী পদক্ষেপ একটি কমিউনিটিকে খাবার দিতে পারে।"
+
+#: templates/ngo/my_requests.html:53
+msgid "Your note to the donor"
+msgstr "দাতার জন্য আপনার নোট"
+
+#: templates/ngo/my_requests.html:40
+msgid "Your organization"
+msgstr "আপনার সংস্থা"
+
+#: templates/donor/requests.html:165
+msgid ""
+"Your pickup OTP will be available once a volunteer accepts this delivery."
+msgstr "স্বেচ্ছাসেবক এই ডেলিভারি গ্রহণ করলে আপনার পিকআপ ওটিপি পাওয়া যাবে।"
+
+#: templates/auth/profile.html:101
+msgid "Your public identity"
+msgstr "আপনার প্রকাশ্য পরিচয়"
+
+#: templates/auth/profile.html:45
+msgid ""
+"Your public profile shows your name, role, ratings, and completed activity –"
+" not your contact information."
+msgstr ""
+"আপনার প্রকাশ্য প্রোফাইলে আপনার নাম, ভূমিকা, রেটিং ও সম্পন্ন কার্যকলাপ দেখা "
+"যায় — যোগাযোগের তথ্য নয়।"
+
+#: templates/partials/rating_form.html:7
+msgid "Your rating"
+msgstr "আপনার রেটিং"
+
+#: templates/ngo/request_confirm.html:84
+msgid "Your request and message are sent to the donor."
+msgstr "আপনার অনুরোধ ও বার্তা দাতার কাছে পাঠানো হয়েছে।"
+
+#: core/views.py:459
+msgid "Your request for '%(title)s' was approved. Delivery OTP: %(otp)s"
+msgstr "'%(title)s'-এর আপনার অনুরোধ অনুমোদিত হয়েছে। ডেলিভারি ওটিপি: %(otp)s"
+
+#: core/views.py:470
+msgid "Your request for '%(title)s' was rejected."
+msgstr "'%(title)s'-এর আপনার অনুরোধ প্রত্যাখ্যাত হয়েছে।"
+
+#: templates/donor/requests.html:287
+msgid "Your request history is clear."
+msgstr "আপনার অনুরোধের ইতিহাস খালি।"
+
+#: templates/ngo/my_requests.html:76
+msgid ""
+"Your request was approved. A volunteer can now accept the delivery task."
+msgstr ""
+"আপনার অনুরোধ অনুমোদিত হয়েছে। এখন একজন স্বেচ্ছাসেবক ডেলিভারির কাজ গ্রহণ করতে"
+" পারবেন।"
+
+#: templates/volunteer/dashboard.html:98
+msgid "Your routes"
+msgstr "আপনার পথ"
+
+#: templates/donor/add_food.html:165
+msgid "Your selected food photo will appear here."
+msgstr "আপনার বেছে নেওয়া খাদ্যের ছবি এখানে দেখা যাবে।"
+
+#: templates/donor/requests.html:101
+msgid "You’re all caught up"
+msgstr "আপনার সবকিছু হালনাগাদ"
+
+#: templates/offline.html:31
+msgid "You’re offline"
+msgstr "আপনি অফলাইনে আছেন"
+
+#: food/forms.py:37 templates/donor/add_food.html:45
+#: templates/donor/edit_food.html:45
+msgid "e.g. Fresh meals for 20 people"
+msgstr "যেমন: ২০ জনের জন্য তাজা খাবার"
+
+#: templates/auth/profile.html:56 templates/auth/register.html:70
+#: templates/ngo/request_confirm.html:66 templates/reports/report_post.html:34
+#: templates/reports/report_user.html:36
+msgid "optional"
+msgstr "ঐচ্ছিক"
