@@ -1,0 +1,148 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AhaarBonton\n"
+"Report-Msgid-Bugs-To: EMAIL\n"
+"Language: bn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: static/js/main.js:404
+msgid "%(count)s food post available"
+msgid_plural "%(count)s food posts available"
+msgstr[0] "%(count)sটি খাদ্য পোস্ট উপলব্ধ"
+msgstr[1] "%(count)sটি খাদ্য পোস্ট উপলব্ধ"
+
+#: static/js/main.js:460
+msgid "%(count)s hour"
+msgid_plural "%(count)s hours"
+msgstr[0] "%(count)s ঘণ্টা"
+msgstr[1] "%(count)s ঘণ্টা"
+
+#: static/js/main.js:461
+msgid "%(count)s minute"
+msgid_plural "%(count)s minutes"
+msgstr[0] "%(count)s মিনিট"
+msgstr[1] "%(count)s মিনিট"
+
+#: static/js/main.js:232
+msgid "%(field)s: %(error)s"
+msgstr "%(field)s: %(error)s"
+
+#: static/js/main.js:539
+msgid "%(size)s KB · selected"
+msgstr "%(size)s KB · নির্বাচিত"
+
+#: static/js/main.js:538
+msgid "%(size)s MB · selected"
+msgstr "%(size)s MB · নির্বাচিত"
+
+#: static/js/main.js:493
+msgid "Accept delivery tasks and help food reach people safely."
+msgstr ""
+"ডেলিভারির কাজ গ্রহণ করুন এবং খাদ্য নিরাপদে মানুষের কাছে পৌঁছে সাহায্য করুন।"
+
+#: static/js/main.js:126
+msgid "Choose color theme (current: %(mode)s)"
+msgstr "রঙের থিম বেছে নিন (বর্তমান: %(mode)s)"
+
+#: static/js/main.js:55
+msgid "Close navigation"
+msgstr "নেভিগেশন বন্ধ করুন"
+
+#: static/js/main.js:618
+msgid ""
+"Could not access your location. Allow location permission or enter the "
+"address manually."
+msgstr ""
+"আপনার অবস্থান পাওয়া যায়নি। অবস্থানের অনুমতি দিন বা ঠিকানা নিজে লিখুন।"
+
+#: static/js/main.js:567
+msgid "Could not preview this image. Choose a valid image file."
+msgstr "এই ছবির প্রিভিউ দেখা যায়নি। একটি বৈধ ছবির ফাইল বেছে নিন।"
+
+#: static/js/main.js:29
+msgid "Dark"
+msgstr "ডার্ক"
+
+#: static/js/main.js:453
+msgid "Expired"
+msgstr "মেয়াদোত্তীর্ণ"
+
+#: static/js/main.js:465
+msgid "Expires in %(count)s minute"
+msgid_plural "Expires in %(count)s minutes"
+msgstr[0] "%(count)s মিনিটে মেয়াদ শেষ হবে"
+msgstr[1] "%(count)s মিনিটে মেয়াদ শেষ হবে"
+
+#: static/js/main.js:462
+msgid "Expires in %(time)s"
+msgstr "%(time)s-এ মেয়াদ শেষ হবে"
+
+#: static/js/main.js:492
+msgid "Find food donations and request support for your community."
+msgstr "আপনার কমিউনিটির জন্য খাদ্য অনুদান খুঁজুন ও সহায়তা অনুরোধ করুন।"
+
+#: static/js/main.js:480
+msgid "Hide password"
+msgstr "পাসওয়ার্ড লুকান"
+
+#: static/js/main.js:28
+msgid "Light"
+msgstr "লাইট"
+
+#: static/js/main.js:596
+msgid "Locating…"
+msgstr "অবস্থান খোঁজা হচ্ছে…"
+
+#: static/js/main.js:608
+msgid ""
+"Location captured: %(latitude)s, %(longitude)s. Add a nearby landmark for "
+"volunteers."
+msgstr ""
+"অবস্থান পাওয়া গেছে: %(latitude)s, %(longitude)s। স্বেচ্ছাসেবকদের জন্য কাছের"
+" একটি পরিচিত স্থান যোগ করুন।"
+
+#: static/js/main.js:593
+msgid ""
+"Location is not supported by this browser. Enter your address manually."
+msgstr "এই ব্রাউজারে অবস্থান জানানো সমর্থিত নয়। আপনার ঠিকানা নিজে লিখুন।"
+
+#: static/js/main.js:39 static/js/main.js:55
+msgid "Open navigation"
+msgstr "নেভিগেশন খুলুন"
+
+#: static/js/main.js:227
+msgid "Please check the highlighted fields."
+msgstr "চিহ্নিত ক্ষেত্রগুলো পরীক্ষা করুন।"
+
+#: static/js/main.js:353
+msgid "Please wait…"
+msgstr "অনুগ্রহ করে অপেক্ষা করুন…"
+
+#: static/js/main.js:597
+msgid "Requesting your location…"
+msgstr "আপনার অবস্থান খোঁজা হচ্ছে…"
+
+#: static/js/main.js:491
+msgid "Share surplus food from your home, business, or community event."
+msgstr ""
+"আপনার বাড়ি, ব্যবসা বা কমিউনিটির অনুষ্ঠান থেকে অতিরিক্ত খাদ্য ভাগ করুন।"
+
+#: static/js/main.js:480
+msgid "Show password"
+msgstr "পাসওয়ার্ড দেখান"
+
+#: static/js/main.js:30
+msgid "System"
+msgstr "সিস্টেম"
+
+#: static/js/main.js:170
+msgid "This field"
+msgstr "এই ক্ষেত্র"
+
+#: static/js/main.js:613 static/js/main.js:617
+msgid "Use my location"
+msgstr "আমার অবস্থান ব্যবহার করুন"
