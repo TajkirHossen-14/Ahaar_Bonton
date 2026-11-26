@@ -1,10 +1,11 @@
-{% load static %}
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AhaarBonton connects surplus food with communities through donors, NGOs, and volunteers.">
+    <meta name="description" content="{% trans 'AhaarBonton connects surplus food with communities through donors, NGOs, and volunteers.' %}">
     <meta name="theme-color" content="#176b45">
     <title>{% block page_title %}AhaarBonton{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,12 +27,13 @@
     <link rel="icon" type="image/svg+xml" href="{% static 'favicon/favicon.svg' %}">
     <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon/favicon-96x96.png' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
-    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="manifest" href="{% if LANGUAGE_CODE == 'en' %}{% static 'manifest.en.json' %}{% else %}{% static 'manifest.json' %}{% endif %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% url 'jsi18n' %}"></script>
     {% block extra_head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
-    <a class="skip-link" href="#main-content">Skip to content</a>
+    <a class="skip-link" href="#main-content">{% trans "Skip to content" %}</a>
 
     <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C12 3 5 6 5 13a6 6 0 0 0 6 6c7 0 9-8 9-15Z"/><path d="M4 21 15 10"/></symbol>
@@ -79,52 +81,53 @@
     {% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}
     <header class="site-header">
         <div class="container nav-shell">
-            <a href="{% url 'home' %}" class="brand" aria-label="AhaarBonton home">
+            <a href="{% url 'home' %}" class="brand" aria-label="{% trans 'AhaarBonton home' %}">
                 <span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span>
                 <span class="brand-name">Ahaar<span>Bonton</span></span>
             </a>
 
-            <nav class="main-nav" id="mainNav" aria-label="Main navigation">
-                <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
-                <a href="{% url 'home' %}#how-it-works" class="nav-link"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-layers"/></svg><span>How it works</span></a>
-                <a href="{% url 'transparency' %}" class="nav-link {% if request.resolver_match.url_name == 'transparency' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Impact</span></a>
-                <a href="{% url 'leaderboard' %}" class="nav-link {% if request.resolver_match.url_name == 'leaderboard' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-trophy"/></svg><span>Leaderboard</span></a>
+            <nav class="main-nav" id="mainNav" aria-label="{% trans 'Main navigation' %}">
+                <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-home"/></svg><span>{% trans "Home" %}</span></a>
+                <a href="{% url 'transparency' %}" class="nav-link {% if request.resolver_match.url_name == 'transparency' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-chart"/></svg><span>{% trans "Impact" %}</span></a>
+                <a href="{% url 'leaderboard' %}" class="nav-link {% if request.resolver_match.url_name == 'leaderboard' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-trophy"/></svg><span>{% trans "Leaderboard" %}</span></a>
                 <details class="nav-dropdown explore-menu">
-                    <summary class="nav-link"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-map"/></svg><span>Explore</span><svg class="icon icon-sm nav-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+                    <summary class="nav-link"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-map"/></svg><span>{% trans "Explore" %}</span><svg class="icon icon-sm nav-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
                     <div class="nav-dropdown-panel">
-                        <a href="{% url 'food_map' %}"><svg class="icon"><use href="#i-map"/></svg><span>Food map<small>Find available donations</small></span></a>
-                        <a href="{% url 'heatmap' %}"><svg class="icon"><use href="#i-layers"/></svg><span>Community heatmap<small>See impact across Bangladesh</small></span></a>
+                        <a href="{% url 'food_map' %}"><svg class="icon"><use href="#i-map"/></svg><span>{% trans "Food map" %}<small>{% trans "Find available donations" %}</small></span></a>
+                        <a href="{% url 'heatmap' %}"><svg class="icon"><use href="#i-layers"/></svg><span>{% trans "Community heatmap" %}<small>{% trans "See impact across Bangladesh" %}</small></span></a>
                     </div>
                 </details>
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="nav-link nav-dashboard {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Dashboard</span></a>
+                    <a href="{% url 'dashboard' %}" class="nav-link nav-dashboard {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-grid"/></svg><span>{% trans "Dashboard" %}</span></a>
                     {% if request.user.role == 'donor' %}
-                        <a href="{% url 'donor_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'donor_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Requests</span></a>
+                        <a href="{% url 'donor_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'donor_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>{% trans "Requests" %}</span></a>
                     {% elif request.user.role == 'ngo' %}
-                        <a href="{% url 'ngo_my_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'ngo_my_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>My requests</span></a>
+                        <a href="{% url 'ngo_my_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'ngo_my_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>{% trans "My requests" %}</span></a>
                     {% endif %}
                 {% endif %}
 
-                <div class="mobile-theme-controls" role="group" aria-label="Color theme">
-                    <span class="mobile-nav-label">Appearance</span>
+                {% include 'partials/language_switcher.html' %}
+                <div class="mobile-theme-controls" role="group" aria-label="{% trans 'Color theme' %}">
+                    <span class="mobile-nav-label">{% trans "Appearance" %}</span>
                     <div class="mobile-theme-options">
-                        <button type="button" class="mobile-theme-option" data-theme-value="light" aria-pressed="false"><svg class="icon"><use href="#i-sun"/></svg>Light</button>
-                        <button type="button" class="mobile-theme-option" data-theme-value="dark" aria-pressed="false"><svg class="icon"><use href="#i-moon"/></svg>Dark</button>
-                        <button type="button" class="mobile-theme-option" data-theme-value="system" aria-pressed="false"><svg class="icon"><use href="#i-monitor"/></svg>System</button>
+                        <button type="button" class="mobile-theme-option" data-theme-value="light" aria-pressed="false"><svg class="icon"><use href="#i-sun"/></svg>{% trans "Light" %}</button>
+                        <button type="button" class="mobile-theme-option" data-theme-value="dark" aria-pressed="false"><svg class="icon"><use href="#i-moon"/></svg>{% trans "Dark" %}</button>
+                        <button type="button" class="mobile-theme-option" data-theme-value="system" aria-pressed="false"><svg class="icon"><use href="#i-monitor"/></svg>{% trans "System" %}</button>
                     </div>
                 </div>
                 {% if not request.user.is_authenticated %}
                     <div class="mobile-account-actions">
-                        <a href="{% url 'login' %}" class="btn btn-ghost"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Log in</a>
-                        <a href="{% url 'register' %}" class="btn btn-primary">Get Started <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
+                        <a href="{% url 'login' %}" class="btn btn-ghost"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>{% trans "Log in" %}</a>
+                        <a href="{% url 'register' %}" class="btn btn-primary">{% trans "Get Started" %} <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
                     </div>
                 {% endif %}
             </nav>
 
             <div class="nav-actions">
+                {% include 'partials/language_switcher.html' %}
                 {% if request.user.is_authenticated %}
                     <details class="user-menu">
-                        <summary class="user-menu-toggle" aria-label="Open account menu">
+                        <summary class="user-menu-toggle" aria-label="{% trans 'Open account menu' %}">
                             <span class="avatar avatar-sm">
                                 {% if request.user.profile_pic %}<img src="{{ request.user.profile_pic.url }}" alt="">{% else %}{{ request.user.full_name|default:request.user.email|slice:":1"|upper }}{% endif %}
                             </span>
@@ -132,34 +135,34 @@
                             <svg class="icon icon-sm"><use href="#i-chevron"/></svg>
                         </summary>
                         <div class="user-panel">
-                            <div class="user-panel-head"><strong>{{ request.user.full_name }}</strong><span>{{ request.user.role|title }}</span></div>
-                            <a href="{% url 'profile' %}"><svg class="icon"><use href="#i-user"/></svg>Profile settings</a>
-                            <a href="{% url 'user_profile' request.user.pk %}"><svg class="icon"><use href="#i-heart"/></svg>My public profile</a>
+                            <div class="user-panel-head"><strong>{{ request.user.full_name }}</strong><span>{{ request.user.get_role_display }}</span></div>
+                            <a href="{% url 'profile' %}"><svg class="icon"><use href="#i-user"/></svg>{% trans "Profile settings" %}</a>
+                            <a href="{% url 'user_profile' request.user.pk %}"><svg class="icon"><use href="#i-heart"/></svg>{% trans "My public profile" %}</a>
                             <form method="post" action="{% url 'logout' %}">
                                 {% csrf_token %}
-                                <button type="submit"><svg class="icon"><use href="#i-logout"/></svg>Log out</button>
+                                <button type="submit"><svg class="icon"><use href="#i-logout"/></svg>{% trans "Log out" %}</button>
                             </form>
                         </div>
                     </details>
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-ghost btn-sm nav-login">Log in</a>
-                    <a href="{% url 'register' %}" class="btn btn-primary btn-sm nav-signup">Get Started <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
+                    <a href="{% url 'login' %}" class="btn btn-ghost btn-sm nav-login">{% trans "Log in" %}</a>
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-sm nav-signup">{% trans "Get Started" %} <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
                 {% endif %}
 
-                <button class="icon-button mobile-nav-toggle" id="mobileNavToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Open navigation">
+                <button class="icon-button mobile-nav-toggle" id="mobileNavToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="{% trans 'Open navigation' %}">
                     <svg class="icon menu-open-icon"><use href="#i-menu"/></svg>
                     <svg class="icon menu-close-icon"><use href="#i-x"/></svg>
                 </button>
                 <details class="theme-menu" id="themeMenu">
-                    <summary class="icon-button" id="themeToggle" aria-label="Choose color theme" title="Choose color theme">
+                    <summary class="icon-button" id="themeToggle" aria-label="{% trans 'Choose color theme' %}" title="{% trans 'Choose color theme' %}">
                         <svg class="icon theme-icon-light" aria-hidden="true"><use href="#i-sun"/></svg>
                         <svg class="icon theme-icon-dark" aria-hidden="true"><use href="#i-moon"/></svg>
                         <svg class="icon theme-icon-system" aria-hidden="true"><use href="#i-monitor"/></svg>
                     </summary>
-                    <div class="theme-panel" role="group" aria-label="Color theme">
-                        <button type="button" data-theme-value="light"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg>Light</button>
-                        <button type="button" data-theme-value="dark"><svg class="icon" aria-hidden="true"><use href="#i-moon"/></svg>Dark</button>
-                        <button type="button" data-theme-value="system"><svg class="icon" aria-hidden="true"><use href="#i-monitor"/></svg>System</button>
+                    <div class="theme-panel" role="group" aria-label="{% trans 'Color theme' %}">
+                        <button type="button" data-theme-value="light"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg>{% trans "Light" %}</button>
+                        <button type="button" data-theme-value="dark"><svg class="icon" aria-hidden="true"><use href="#i-moon"/></svg>{% trans "Dark" %}</button>
+                        <button type="button" data-theme-value="system"><svg class="icon" aria-hidden="true"><use href="#i-monitor"/></svg>{% trans "System" %}</button>
                     </div>
                 </details>
             </div>
@@ -173,7 +176,7 @@
                     <div class="alert alert-{{ message.tags|default:'info' }}" role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}">
                         <svg class="icon alert-icon"><use href="{% if 'success' in message.tags %}#i-check{% elif 'error' in message.tags %}#i-alert{% elif 'warning' in message.tags %}#i-alert{% else %}#i-info{% endif %}"/></svg>
                         <span>{{ message }}</span>
-                        <button class="alert-close" type="button" aria-label="Dismiss message"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+                        <button class="alert-close" type="button" aria-label="{% trans 'Dismiss message' %}"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
                     </div>
                 {% endfor %}
             </div>
@@ -186,14 +189,14 @@
         <div class="container footer-grid">
             <div class="footer-brand">
                 <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span><span class="brand-name">Ahaar<span>Bonton</span></span></a>
-                <p>Good food deserves a second chance. Together, we turn surplus into shared meals and stronger communities.</p>
-                <span class="footer-made"><svg class="icon icon-sm"><use href="#i-heart"/></svg> Built for a hunger-free Bangladesh</span>
+                <p>{% trans "Good food deserves a second chance. Together, we turn surplus into shared meals and stronger communities." %}</p>
+                <span class="footer-made"><svg class="icon icon-sm"><use href="#i-heart"/></svg> {% trans "Built for a hunger-free Bangladesh" %}</span>
             </div>
-            <div><h3>Discover</h3><a href="{% url 'home' %}#how-it-works">How it works</a><a href="{% url 'food_map' %}">Food map</a><a href="{% url 'heatmap' %}">Community heatmap</a></div>
-            <div><h3>Community</h3><a href="{% url 'transparency' %}">Our impact</a><a href="{% url 'leaderboard' %}">Leaderboard</a><a href="{% url 'register' %}">Become a member</a></div>
-            <div><h3>Your account</h3>{% if request.user.is_authenticated %}<a href="{% url 'dashboard' %}">Dashboard</a><a href="{% url 'profile' %}">Profile settings</a>{% else %}<a href="{% url 'login' %}">Log in</a><a href="{% url 'register' %}">Create account</a>{% endif %}<a href="mailto:hello@ahaarbonton.com">Contact support</a></div>
+            <div><h3>{% trans "Discover" %}</h3><a href="{% url 'home' %}#how-it-works">{% trans "How it works" %}</a><a href="{% url 'food_map' %}">{% trans "Food map" %}</a><a href="{% url 'heatmap' %}">{% trans "Community heatmap" %}</a></div>
+            <div><h3>{% trans "Community" %}</h3><a href="{% url 'transparency' %}">{% trans "Our impact" %}</a><a href="{% url 'leaderboard' %}">{% trans "Leaderboard" %}</a><a href="{% url 'register' %}">{% trans "Become a member" %}</a></div>
+            <div><h3>{% trans "Your account" %}</h3>{% if request.user.is_authenticated %}<a href="{% url 'dashboard' %}">{% trans "Dashboard" %}</a><a href="{% url 'profile' %}">{% trans "Profile settings" %}</a>{% else %}<a href="{% url 'login' %}">{% trans "Log in" %}</a><a href="{% url 'register' %}">{% trans "Create account" %}</a>{% endif %}<a href="mailto:hello@ahaarbonton.com">{% trans "Contact support" %}</a></div>
         </div>
-        <div class="container footer-bottom"><span>&copy; {% now "Y" %} AhaarBonton. Every meal matters.</span><span>Food safety · Trust · Transparency</span></div>
+        <div class="container footer-bottom"><span>&copy; {% now "Y" %} AhaarBonton. {% trans "All rights reserved." %}</span><span>{% trans "Food safety" %} · {% trans "Trust" %} · {% trans "Transparency" %}</span></div>
     </footer>
     {% endif %}
     <script src="{% static 'js/main.js' %}" defer></script>
