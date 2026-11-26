@@ -1,6 +1,22 @@
 (function () {
     'use strict';
 
+    function gettext(message) {
+        return typeof window.gettext === 'function' ? window.gettext(message) : message;
+    }
+
+    function ngettext(singular, plural, count) {
+        if (typeof window.ngettext === 'function') return window.ngettext(singular, plural, count);
+        return count === 1 ? singular : plural;
+    }
+
+    function interpolate(format, values) {
+        if (typeof window.interpolate === 'function') return window.interpolate(format, values, true);
+        return format.replace(/%\((\w+)\)[sd]/g, function (match, key) {
+            return Object.prototype.hasOwnProperty.call(values, key) ? String(values[key]) : match;
+        });
+    }
+
     const root = document.documentElement;
     const navToggle = document.getElementById('mobileNavToggle');
     const mainNav = document.getElementById('mainNav');
@@ -8,6 +24,11 @@
 const themeToggle = document.getElementById('themeToggle');
     const THEME_KEY = 'ahaar_theme_preference';
     const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const themeModeLabels = {
+        light: gettext('Light'),
+        dark: gettext('Dark'),
+        system: gettext('System')
+    };
 
     function closeNav(restoreFocus) {
         if (!mainNav || !navToggle) return;
@@ -15,7 +36,7 @@ const themeToggle = document.getElementById('themeToggle');
         const shouldRestoreFocus = restoreFocus && wasOpen && mainNav.contains(document.activeElement);
         mainNav.classList.remove('open');
         navToggle.setAttribute('aria-expanded', 'false');
-        navToggle.setAttribute('aria-label', 'Open navigation');
+        navToggle.setAttribute('aria-label', gettext('Open navigation'));
         document.body.classList.remove('menu-open');
         if (shouldRestoreFocus) navToggle.focus();
     }
@@ -31,7 +52,7 @@ const themeToggle = document.getElementById('themeToggle');
             const open = !mainNav.classList.contains('open');
             mainNav.classList.toggle('open', open);
             navToggle.setAttribute('aria-expanded', String(open));
-            navToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+            navToggle.setAttribute('aria-label', open ? gettext('Close navigation') : gettext('Open navigation'));
             document.body.classList.toggle('menu-open', open);
             if (open) {
                 closeMenus();
@@ -101,7 +122,10 @@ const themeToggle = document.getElementById('themeToggle');
         const themeMeta = document.querySelector('meta[name="theme-color"]');
         if (themeMeta) themeMeta.content = root.dataset.theme === 'dark' ? '#101a15' : '#176b45';
         if (themeToggle) {
-            const label = `Choose color theme (current: ${safeMode})`;
+            const label = interpolate(
+                gettext('Choose color theme (current: %(mode)s)'),
+                { mode: themeModeLabels[safeMode] }
+            );
             themeToggle.setAttribute('aria-label', label);
             themeToggle.title = label;
         }
@@ -143,7 +167,7 @@ const themeToggle = document.getElementById('themeToggle');
     function fieldLabel(field) {
         if (field.labels && field.labels.length) return field.labels[0].textContent.trim();
         if (field.getAttribute('aria-label')) return field.getAttribute('aria-label');
-        return (field.name || 'This field').replace(/_/g, ' ').replace(/^\w/, function (letter) {
+        return (field.name || gettext('This field')).replace(/_/g, ' ').replace(/^\w/, function (letter) {
             return letter.toUpperCase();
         });
     }
@@ -200,11 +224,14 @@ const themeToggle = document.getElementById('themeToggle');
         }
         summary.replaceChildren();
         const title = document.createElement('strong');
-        title.textContent = 'Please check the highlighted fields.';
+        title.textContent = gettext('Please check the highlighted fields.');
         const list = document.createElement('ul');
         fields.forEach(function (field) {
             const item = document.createElement('li');
-            item.textContent = fieldLabel(field) + ': ' + field.validationMessage;
+            item.textContent = interpolate(
+                            gettext('%(field)s: %(error)s'),
+                            { field: fieldLabel(field), error: field.validationMessage }
+                        );
             list.appendChild(item);
         });
         summary.append(title, list);
@@ -323,7 +350,7 @@ const themeToggle = document.getElementById('themeToggle');
             form.setAttribute('aria-busy', 'true');
             if (button.tagName === 'BUTTON') {
                 button.dataset.originalText = button.innerHTML;
-                button.textContent = 'Please wait…';
+                button.textContent = gettext('Please wait…');
             }
             window.setTimeout(function () {
                 button.disabled = false;
@@ -372,7 +399,12 @@ const themeToggle = document.getElementById('themeToggle');
             if (matches) visible += 1;
         });
         const count = document.getElementById('postCount');
-        if (count) count.textContent = visible + ' food post' + (visible === 1 ? '' : 's') + ' available';
+        if (count) {
+                    count.textContent = interpolate(
+                        ngettext('%(count)s food post available', '%(count)s food posts available', visible),
+                        { count: visible }
+                    );
+                }
         const empty = document.getElementById('noResults');
         if (empty) empty.classList.toggle('hidden', visible !== 0);
     };
@@ -418,13 +450,22 @@ const themeToggle = document.getElementById('themeToggle');
         function update() {
             const remaining = expiry - Date.now();
             if (remaining <= 0) {
-                element.textContent = 'Expired';
+                element.textContent = gettext('Expired');
                 element.classList.add('expiry-red');
                 return;
             }
             const hours = Math.floor(remaining / 3600000);
             const minutes = Math.floor((remaining % 3600000) / 60000);
-            element.textContent = hours > 0 ? 'Expires in ' + hours + 'h ' + minutes + 'm' : 'Expires in ' + minutes + 'm';
+            if (hours > 0) {
+                const hourText = interpolate(ngettext('%(count)s hour', '%(count)s hours', hours), { count: hours });
+                const minuteText = interpolate(ngettext('%(count)s minute', '%(count)s minutes', minutes), { count: minutes });
+                element.textContent = interpolate(gettext('Expires in %(time)s'), { time: hourText + ' ' + minuteText });
+            } else {
+                element.textContent = interpolate(
+                    ngettext('Expires in %(count)s minute', 'Expires in %(count)s minutes', minutes),
+                    { count: minutes }
+                );
+            }
         }
         update();
         window.setInterval(update, 60000);
@@ -436,7 +477,7 @@ const themeToggle = document.getElementById('themeToggle');
             if (!input) return;
             const show = input.type === 'password';
             input.type = show ? 'text' : 'password';
-            button.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            button.setAttribute('aria-label', show ? gettext('Hide password') : gettext('Show password'));
             button.setAttribute('aria-pressed', String(show));
             button.querySelector('use').setAttribute('href', show ? '#i-eye' : '#i-eye-off');
         });
@@ -447,9 +488,9 @@ const themeToggle = document.getElementById('themeToggle');
         const description = document.getElementById('roleDescription');
         if (!selected || !description) return;
         const descriptions = {
-            donor: 'Share surplus food from your home, business, or community event.',
-            ngo: 'Find food donations and request support for your community.',
-            volunteer: 'Accept delivery tasks and help food reach people safely.'
+            donor: gettext('Share surplus food from your home, business, or community event.'),
+            ngo: gettext('Find food donations and request support for your community.'),
+            volunteer: gettext('Accept delivery tasks and help food reach people safely.')
         };
         description.textContent = descriptions[selected.value] || '';
     }
@@ -494,8 +535,8 @@ const themeToggle = document.getElementById('themeToggle');
                 const size = input.files[0].size / 1024;
                 if (name) name.textContent = input.files[0].name;
                 if (detail) detail.textContent = size > 1024
-                    ? (size / 1024).toFixed(1) + ' MB · selected'
-                    : Math.max(1, Math.round(size)) + ' KB · selected';
+                    ? interpolate(gettext('%(size)s MB · selected'), { size: (size / 1024).toFixed(1) })
+                    : interpolate(gettext('%(size)s KB · selected'), { size: Math.max(1, Math.round(size)) });
             }
             if (!preview) return;
             if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
@@ -523,7 +564,7 @@ const themeToggle = document.getElementById('themeToggle');
                     if (placeholder) placeholder.classList.remove('hidden');
                 }
                 const detail = upload ? upload.querySelector('small') : null;
-                if (detail) detail.textContent = 'Could not preview this image. Choose a valid image file.';
+                if (detail) detail.textContent = gettext('Could not preview this image. Choose a valid image file.');
             };
         });
     });
@@ -549,11 +590,11 @@ const themeToggle = document.getElementById('themeToggle');
         const button = document.getElementById('detectLocationBtn');
         const status = document.getElementById('locationStatus');
         if (!navigator.geolocation) {
-            showLocationError('Location is not supported by this browser. Enter your address manually.');
+            showLocationError(gettext('Location is not supported by this browser. Enter your address manually.'));
             return;
         }
-        setLocationButtonState(button, 'Locating…', true);
-        if (status) { status.textContent = 'Requesting your location…'; status.className = 'form-hint'; }
+        setLocationButtonState(button, gettext('Locating…'), true);
+        if (status) { status.textContent = gettext('Requesting your location…'); status.className = 'form-hint'; }
         navigator.geolocation.getCurrentPosition(function (position) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -563,15 +604,18 @@ const themeToggle = document.getElementById('themeToggle');
             if (latInput) latInput.value = latitude.toFixed(6);
             if (lngInput) lngInput.value = longitude.toFixed(6);
             if (status) {
-                status.textContent = 'Location captured: ' + latitude.toFixed(5) + ', ' + longitude.toFixed(5) + '. Add a nearby landmark for volunteers.';
+                status.textContent = interpolate(
+                                    gettext('Location captured: %(latitude)s, %(longitude)s. Add a nearby landmark for volunteers.'),
+                                    { latitude: latitude.toFixed(5), longitude: longitude.toFixed(5) }
+                                );
                 status.className = 'location-coords';
             }
-            setLocationButtonState(button, 'Use my location', false);
+            setLocationButtonState(button, gettext('Use my location'), false);
             window.dispatchEvent(new CustomEvent('ahaar:location', { detail: { latitude: latitude, longitude: longitude } }));
             if (locationInput && !locationInput.value) locationInput.focus();
         }, function () {
-            setLocationButtonState(button, 'Use my location', false);
-            showLocationError('Could not access your location. Allow location permission or enter the address manually.');
+            setLocationButtonState(button, gettext('Use my location'), false);
+            showLocationError(gettext('Could not access your location. Allow location permission or enter the address manually.'));
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
     };
 
@@ -581,7 +625,9 @@ const themeToggle = document.getElementById('themeToggle');
         const start = performance.now();
         function tick(now) {
             const progress = Math.min((now - start) / 900, 1);
-            element.textContent = Math.floor(target * (1 - Math.pow(1 - progress, 3))).toLocaleString();
+            element.textContent = Math.floor(target * (1 - Math.pow(1 - progress, 3))).toLocaleString(
+                            document.documentElement.lang || undefined
+                        );
             if (progress < 1) requestAnimationFrame(tick);
         }
         requestAnimationFrame(tick);
