@@ -8,6 +8,7 @@ from django.db import models, transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _, ngettext
 
 
 def generate_otp():
@@ -22,9 +23,9 @@ class CustomUserManager(BaseUserManager):
     # OOP: Encapsulation - create_user and create_superuser logic is encapsulated in manager methods.
     def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError("Email must be provided.")
+            raise ValueError(_("Email must be provided."))
         if not password:
-            raise ValueError("Password must be provided.")
+            raise ValueError(_("Password must be provided."))
 
         email = self.normalize_email(email).strip().lower()
         user = self.model(email=email, **extra_fields)
@@ -39,9 +40,9 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("role", CustomUser.RoleChoices.ADMIN)
 
         if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
+            raise ValueError(_("Superuser must have is_staff=True."))
         if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
+            raise ValueError(_("Superuser must have is_superuser=True."))
 
         return self.create_user(email, password, **extra_fields)
 
@@ -49,10 +50,10 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     # OOP: Inheritance - CustomUser inherits authentication and permissions behavior.
     class RoleChoices(models.TextChoices):
-        DONOR = "donor", "Donor"
-        NGO = "ngo", "NGO"
-        VOLUNTEER = "volunteer", "Volunteer"
-        ADMIN = "admin", "Admin"
+        DONOR = "donor", _("Donor")
+        NGO = "ngo", _("NGO")
+        VOLUNTEER = "volunteer", _("Volunteer")
+        ADMIN = "admin", _("Admin")
 
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
@@ -103,15 +104,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def get_rating_label(self):
         avg = self.get_average_rating()
         if avg is None:
-            return 'No ratings yet'
+            return _('No ratings yet')
         elif avg >= 4.5:
-            return 'Excellent'
+            return _('Excellent')
         elif avg >= 3.5:
-            return 'Good'
+            return _('Good')
         elif avg >= 2.5:
-            return 'Average'
+            return _('Average')
         else:
-            return 'Poor'
+            return _('Poor')
 
 
 class DonorProfile(models.Model):
@@ -127,7 +128,7 @@ class DonorProfile(models.Model):
     )
 
     def __str__(self):
-        return f"DonorProfile<{self.user.email}>"
+        return _("Donor profile for %(email)s") % {"email": self.user.email}
 
     def update_trust_score(self, delta):
         self.trust_score = max(0, min(100, self.trust_score + delta))
@@ -149,12 +150,12 @@ class DonorProfile(models.Model):
 
     def get_score_label(self):
         if self.trust_score >= 85:
-            return "Excellent"
+            return _("Excellent")
         if self.trust_score >= 70:
-            return "Good"
+            return _("Good")
         if self.trust_score >= 50:
-            return "Average"
-        return "Needs Improvement"
+            return _("Average")
+        return _("Needs Improvement")
 
 
 class VolunteerProfile(models.Model):
@@ -170,7 +171,7 @@ class VolunteerProfile(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.full_name} – Score: {self.trust_score}"
+        return _("%(name)s — Score: %(score)s") % {"name": self.user.full_name, "score": self.trust_score}
 
     def update_trust_score(self, delta):
         self.trust_score = max(0, min(100, self.trust_score + delta))
@@ -194,27 +195,27 @@ class VolunteerProfile(models.Model):
 
     def get_score_label(self):
         if self.trust_score >= 90:
-            return "Excellent"
+            return _("Excellent")
         if self.trust_score >= 70:
-            return "Good"
+            return _("Good")
         if self.trust_score >= 50:
-            return "Average"
-        return "Needs Improvement"
+            return _("Average")
+        return _("Needs Improvement")
 
 
 class FoodPost(models.Model):
     # OOP: Encapsulation - post state transitions and checks are wrapped inside model methods.
     class CategoryChoices(models.TextChoices):
-        COOKED = "cooked", "Cooked"
-        RAW = "raw", "Raw"
-        PACKAGED = "packaged", "Packaged"
-        BAKERY = "bakery", "Bakery"
+        COOKED = "cooked", _("Cooked")
+        RAW = "raw", _("Raw")
+        PACKAGED = "packaged", _("Packaged")
+        BAKERY = "bakery", _("Bakery")
 
     class StatusChoices(models.TextChoices):
-        AVAILABLE = "available", "Available"
-        CLAIMED = "claimed", "Claimed"
-        DELIVERED = "delivered", "Delivered"
-        EXPIRED = "expired", "Expired"
+        AVAILABLE = "available", _("Available")
+        CLAIMED = "claimed", _("Claimed")
+        DELIVERED = "delivered", _("Delivered")
+        EXPIRED = "expired", _("Expired")
 
     donor = models.ForeignKey(
         CustomUser,
@@ -273,7 +274,7 @@ class FoodPost(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.title} ({self.get_status_display()})"
+        return _("%(title)s (%(status)s)") % {"title": self.title, "status": self.get_status_display()}
 
     def is_expired(self):
         return timezone.now() >= self.expiry_time
@@ -299,11 +300,11 @@ class FoodPost(models.Model):
         hours, minutes = divmod(remaining_minutes, 60)
         parts = []
         if days:
-            parts.append(f"{days}d")
+            parts.append(ngettext("%(count)d day", "%(count)d days", days) % {"count": days})
         if hours:
-            parts.append(f"{hours}h")
+            parts.append(ngettext("%(count)d hour", "%(count)d hours", hours) % {"count": hours})
         if minutes or not parts:
-            parts.append(f"{minutes}m")
+            parts.append(ngettext("%(count)d minute", "%(count)d minutes", minutes) % {"count": minutes})
         return " ".join(parts)
 
     @property
@@ -317,10 +318,10 @@ class FoodPost(models.Model):
 
 class FoodRequest(models.Model):
     class StatusChoices(models.TextChoices):
-        PENDING = "pending", "Pending"
-        APPROVED = "approved", "Approved"
-        REJECTED = "rejected", "Rejected"
-        COMPLETED = "completed", "Completed"
+        PENDING = "pending", _("Pending")
+        APPROVED = "approved", _("Approved")
+        REJECTED = "rejected", _("Rejected")
+        COMPLETED = "completed", _("Completed")
 
     ngo = models.ForeignKey(
         CustomUser,
@@ -357,9 +358,9 @@ class FoodRequest(models.Model):
             food_post = FoodPost.objects.select_for_update().get(pk=food_request.food_post_id)
 
             if food_request.status != self.StatusChoices.PENDING:
-                raise ValueError("Only pending requests can be approved.")
+                raise ValueError(_("Only pending requests can be approved."))
             if food_post.status != FoodPost.StatusChoices.AVAILABLE or food_post.is_expired():
-                raise ValueError("This food post is no longer available.")
+                raise ValueError(_("This food post is no longer available."))
 
             food_request.status = self.StatusChoices.APPROVED
             food_request.save(update_fields=["status"])
@@ -369,7 +370,7 @@ class FoodRequest(models.Model):
                 status=self.StatusChoices.PENDING,
             ).exclude(pk=food_request.pk).update(status=self.StatusChoices.REJECTED)
 
-            delivery, _ = Delivery.objects.get_or_create(
+            delivery, _created = Delivery.objects.get_or_create(
                 food_request=food_request,
                 defaults={
                     "pickup_otp": generate_otp(),
@@ -383,7 +384,7 @@ class FoodRequest(models.Model):
         with transaction.atomic():
             food_request = FoodRequest.objects.select_for_update().get(pk=self.pk)
             if food_request.status != self.StatusChoices.PENDING:
-                raise ValueError("Only pending requests can be rejected.")
+                raise ValueError(_("Only pending requests can be rejected."))
             food_request.status = self.StatusChoices.REJECTED
             food_request.save(update_fields=["status"])
             self.refresh_from_db()
@@ -391,9 +392,9 @@ class FoodRequest(models.Model):
 
 class Delivery(models.Model):
     class StatusChoices(models.TextChoices):
-        PENDING = "pending", "Pending"
-        PICKED_UP = "picked_up", "Picked Up"
-        DELIVERED = "delivered", "Delivered"
+        PENDING = "pending", _("Pending")
+        PICKED_UP = "picked_up", _("Picked Up")
+        DELIVERED = "delivered", _("Delivered")
 
     STATUS_CHOICES = StatusChoices.choices
 
@@ -498,9 +499,9 @@ class Delivery(models.Model):
                 ]
             )
 
-            volunteer_profile, _ = VolunteerProfile.objects.get_or_create(user=delivery.volunteer)
+            volunteer_profile, _created = VolunteerProfile.objects.get_or_create(user=delivery.volunteer)
             volunteer_profile.increase_score()
-            donor_profile, _ = DonorProfile.objects.get_or_create(
+            donor_profile, _created = DonorProfile.objects.get_or_create(
                 user=delivery.food_request.food_post.donor
             )
             donor_profile.increase_score()
@@ -510,11 +511,11 @@ class Delivery(models.Model):
     def mark_picked_up(self):
         """Mark pickup without an OTP for trusted internal/admin use only."""
         if self.is_confirmed or self.pickup_confirmed:
-            raise ValueError("Pickup has already been confirmed.")
+            raise ValueError(_("Pickup has already been confirmed."))
         if self.volunteer_id is None:
-            raise ValueError("Assign a volunteer before confirming pickup.")
+            raise ValueError(_("Assign a volunteer before confirming pickup."))
         if self.food_request.food_post.is_expired():
-            raise ValueError("Expired food cannot be picked up.")
+            raise ValueError(_("Expired food cannot be picked up."))
         self.status = self.StatusChoices.PICKED_UP
         self.pickup_confirmed = True
         self.picked_up_at = timezone.now()
@@ -526,7 +527,7 @@ class Delivery(models.Model):
         return self.delivery_otp
 
     def __str__(self):
-        return f"Delivery – {self.food_request.food_post.title} ({self.get_status_display()})"
+        return _("Delivery — %(title)s (%(status)s)") % {"title": self.food_request.food_post.title, "status": self.get_status_display()}
 
     class Meta:
         ordering = ['-created_at']
@@ -569,9 +570,9 @@ class Rating(models.Model):
     SCORE_CHOICES = [(i, str(i)) for i in range(1, 6)]
 
     RATER_TYPE_CHOICES = [
-        ('ngo_to_donor',      'NGO rates Donor'),
-        ('donor_to_volunteer','Donor rates Volunteer'),
-        ('ngo_to_volunteer',  'NGO rates Volunteer'),
+        ('ngo_to_donor',      _('NGO rates Donor')),
+        ('donor_to_volunteer', _('Donor rates Volunteer')),
+        ('ngo_to_volunteer',  _('NGO rates Volunteer')),
     ]
 
     rater       = models.ForeignKey(
@@ -621,22 +622,22 @@ class Rating(models.Model):
 
 class Report(models.Model):
     REPORT_TYPE = [
-        ('post',  'Inappropriate Food Post'),
-        ('user',  'Fraudulent User'),
+        ('post',  _('Inappropriate Food Post')),
+        ('user',  _('Fraudulent User')),
     ]
     REASON_CHOICES = [
-        ('fake_food',    'Fake or misleading food info'),
-        ('expired',      'Food is already expired'),
-        ('fraud',        'Fraudulent activity'),
-        ('spam',         'Spam or repeated posts'),
-        ('inappropriate','Inappropriate content'),
-        ('other',        'Other'),
+        ('fake_food',    _('Fake or misleading food info')),
+        ('expired',      _('Food is already expired')),
+        ('fraud',        _('Fraudulent activity')),
+        ('spam',         _('Spam or repeated posts')),
+        ('inappropriate', _('Inappropriate content')),
+        ('other',        _('Other')),
     ]
     STATUS_CHOICES = [
-        ('pending',   'Pending Review'),
-        ('reviewed',  'Reviewed'),
-        ('resolved',  'Resolved'),
-        ('dismissed', 'Dismissed'),
+        ('pending',   _('Pending Review')),
+        ('reviewed',  _('Reviewed')),
+        ('resolved',  _('Resolved')),
+        ('dismissed', _('Dismissed')),
     ]
 
     reporter = models.ForeignKey(
@@ -681,7 +682,7 @@ class Report(models.Model):
     admin_note = models.TextField(blank=True)
 
     def __str__(self):
-        return f"Report by {self.reporter.full_name} – {self.report_type}"
+        return _("Report by %(name)s — %(type)s") % {"name": self.reporter.full_name, "type": self.get_report_type_display()}
 
     class Meta:
         ordering = ['-created_at']
