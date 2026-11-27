@@ -1,5 +1,6 @@
 {% load static i18n %}
 {% get_current_language as LANGUAGE_CODE %}
+{% trans "AhaarBonton" as brand_name %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" dir="ltr">
 <head>
@@ -7,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{% trans 'AhaarBonton connects surplus food with communities through donors, NGOs, and volunteers.' %}">
     <meta name="theme-color" content="#176b45">
-    <title>{% block page_title %}AhaarBonton{% endblock %}</title>
+    <title>{% block page_title %}{{ brand_name }}{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -30,9 +31,27 @@
     <link rel="manifest" href="{% if LANGUAGE_CODE == 'en' %}{% static 'manifest.en.json' %}{% else %}{% static 'manifest.json' %}{% endif %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="{% url 'jsi18n' %}"></script>
+    <script>
+        window.ahaarLocalizeDigits = function (value) {
+            var text = String(value);
+            var language = (document.documentElement.lang || '').split('-')[0];
+            if (language !== 'bn') return text;
+            return text.replace(/[0-9]/g, function (digit) {
+                return '০১২৩৪৫৬৭৮৯'[Number(digit)];
+            });
+        };
+        window.ahaarInterpolate = function (format, values) {
+            var result = String(format).replace(/%\((\w+)\)[sd]/g, function (match, key) {
+                return Object.prototype.hasOwnProperty.call(values, key)
+                    ? String(values[key])
+                    : match;
+            });
+            return window.ahaarLocalizeDigits(result);
+        };
+    </script>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="{% block body_class %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}{% if request.user.is_authenticated %} authenticated{% endif %}">
     <a class="skip-link" href="#main-content">{% trans "Skip to content" %}</a>
 
     <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -83,11 +102,25 @@
         <div class="container nav-shell">
             <a href="{% url 'home' %}" class="brand" aria-label="{% trans 'AhaarBonton home' %}">
                 <span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span>
-                <span class="brand-name">Ahaar<span>Bonton</span></span>
+                <span class="brand-name">{% blocktrans %}Ahaar<span>Bonton</span>{% endblocktrans %}</span>
             </a>
 
             <nav class="main-nav" id="mainNav" aria-label="{% trans 'Main navigation' %}">
-                <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-home"/></svg><span>{% trans "Home" %}</span></a>
+                {% if not request.user.is_authenticated %}
+                    <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-home"/></svg><span>{% trans "Home" %}</span></a>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="nav-link nav-dashboard {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-grid"/></svg><span>{% trans "Dashboard" %}</span></a>
+                    {% if request.user.role == 'donor' %}
+                        <a href="{% url 'donor_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'donor_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>{% trans "Requests" %}</span></a>
+                    {% elif request.user.role == 'ngo' %}
+                        <a href="{% url 'ngo_my_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'ngo_my_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>{% trans "Requests" %}</span></a>
+                    {% elif request.user.role == 'volunteer' %}
+                        <a href="{% url 'volunteer_dashboard' %}#tab-available" class="nav-link nav-requests"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>{% trans "Requests" %}</span></a>
+                    {% elif request.user.role == 'admin' %}
+                        <a href="{% url 'admin_dashboard' %}#recent-requests-title" class="nav-link nav-requests"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>{% trans "Requests" %}</span></a>
+                    {% endif %}
+                {% endif %}
                 <a href="{% url 'transparency' %}" class="nav-link {% if request.resolver_match.url_name == 'transparency' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-chart"/></svg><span>{% trans "Impact" %}</span></a>
                 <a href="{% url 'leaderboard' %}" class="nav-link {% if request.resolver_match.url_name == 'leaderboard' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-trophy"/></svg><span>{% trans "Leaderboard" %}</span></a>
                 <details class="nav-dropdown explore-menu">
@@ -97,14 +130,6 @@
                         <a href="{% url 'heatmap' %}"><svg class="icon"><use href="#i-layers"/></svg><span>{% trans "Community heatmap" %}<small>{% trans "See impact across Bangladesh" %}</small></span></a>
                     </div>
                 </details>
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="nav-link nav-dashboard {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-grid"/></svg><span>{% trans "Dashboard" %}</span></a>
-                    {% if request.user.role == 'donor' %}
-                        <a href="{% url 'donor_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'donor_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>{% trans "Requests" %}</span></a>
-                    {% elif request.user.role == 'ngo' %}
-                        <a href="{% url 'ngo_my_requests' %}" class="nav-link nav-requests {% if request.resolver_match.url_name == 'ngo_my_requests' %}active{% endif %}"><svg class="icon mobile-nav-icon" aria-hidden="true"><use href="#i-clock"/></svg><span>{% trans "My requests" %}</span></a>
-                    {% endif %}
-                {% endif %}
 
                 {% include 'partials/language_switcher.html' %}
                 <div class="mobile-theme-controls" role="group" aria-label="{% trans 'Color theme' %}">
@@ -131,8 +156,6 @@
                             <span class="avatar avatar-sm">
                                 {% if request.user.profile_pic %}<img src="{{ request.user.profile_pic.url }}" alt="">{% else %}{{ request.user.full_name|default:request.user.email|slice:":1"|upper }}{% endif %}
                             </span>
-                            <span class="user-menu-label">{{ request.user.full_name|truncatechars:18 }}</span>
-                            <svg class="icon icon-sm"><use href="#i-chevron"/></svg>
                         </summary>
                         <div class="user-panel">
                             <div class="user-panel-head"><strong>{{ request.user.full_name }}</strong><span>{{ request.user.get_role_display }}</span></div>
@@ -145,8 +168,15 @@
                         </div>
                     </details>
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-ghost btn-sm nav-login">{% trans "Log in" %}</a>
-                    <a href="{% url 'register' %}" class="btn btn-primary btn-sm nav-signup">{% trans "Get Started" %} <svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
+                    <details class="account-menu">
+                        <summary class="icon-button account-menu-toggle" aria-label="{% trans 'Open account menu' %}">
+                            <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg>
+                        </summary>
+                        <div class="account-panel">
+                            <a href="{% url 'login' %}" class="btn btn-ghost"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>{% trans "Log in" %}</a>
+                            <a href="{% url 'register' %}" class="btn btn-primary">{% trans "Get Started" %} <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                        </div>
+                    </details>
                 {% endif %}
 
                 <button class="icon-button mobile-nav-toggle" id="mobileNavToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="{% trans 'Open navigation' %}">
@@ -188,7 +218,7 @@
     <footer class="site-footer">
         <div class="container footer-grid">
             <div class="footer-brand">
-                <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span><span class="brand-name">Ahaar<span>Bonton</span></span></a>
+                <a href="{% url 'home' %}" class="brand"><span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span><span class="brand-name">{% blocktrans %}Ahaar<span>Bonton</span>{% endblocktrans %}</span></a>
                 <p>{% trans "Good food deserves a second chance. Together, we turn surplus into shared meals and stronger communities." %}</p>
                 <span class="footer-made"><svg class="icon icon-sm"><use href="#i-heart"/></svg> {% trans "Built for a hunger-free Bangladesh" %}</span>
             </div>
@@ -196,7 +226,15 @@
             <div><h3>{% trans "Community" %}</h3><a href="{% url 'transparency' %}">{% trans "Our impact" %}</a><a href="{% url 'leaderboard' %}">{% trans "Leaderboard" %}</a><a href="{% url 'register' %}">{% trans "Become a member" %}</a></div>
             <div><h3>{% trans "Your account" %}</h3>{% if request.user.is_authenticated %}<a href="{% url 'dashboard' %}">{% trans "Dashboard" %}</a><a href="{% url 'profile' %}">{% trans "Profile settings" %}</a>{% else %}<a href="{% url 'login' %}">{% trans "Log in" %}</a><a href="{% url 'register' %}">{% trans "Create account" %}</a>{% endif %}<a href="mailto:hello@ahaarbonton.com">{% trans "Contact support" %}</a></div>
         </div>
-        <div class="container footer-bottom"><span>&copy; {% now "Y" %} AhaarBonton. {% trans "All rights reserved." %}</span><span>{% trans "Food safety" %} · {% trans "Trust" %} · {% trans "Transparency" %}</span></div>
+        <div class="container footer-bottom">
+            <span>&copy; {% now "Y" %} {{ brand_name }}. {% trans "All rights reserved." %}</span>
+            <nav class="footer-links" aria-label="{% trans 'Footer resources' %}">
+                <a href="{% url 'home' %}#faq">{% trans "FAQ" %}</a>
+                <a href="{% url 'privacy_policy' %}">{% trans "Privacy Policy" %}</a>
+                <a href="{% url 'terms_conditions' %}">{% trans "Terms & Conditions" %}</a>
+            </nav>
+            <span class="footer-values">{% trans "Food safety" %} · {% trans "Trust" %} · {% trans "Transparency" %}</span>
+        </div>
     </footer>
     {% endif %}
     <script src="{% static 'js/main.js' %}" defer></script>
