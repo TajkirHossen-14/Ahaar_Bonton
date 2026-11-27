@@ -1,6 +1,6 @@
 <div align="center">
 <p align="center">
-  <img src="Assets/Banner/AhaarBonton Banner 3.png" alt="Ahaar Bonton Banner" width="100%">
+  <img src="Assets/Banner/AhaarBonton Banner 3.png" alt="AhaarBonton Banner" width="100%">
 </p>
 
 # AhaarBonton
@@ -30,6 +30,7 @@ A Surplus Food Redistribution Platform
 - [🚀 Getting Started](#-getting-started)
 - [👥 User Roles](#-user-roles)
 - [🤝🏼 Contributing](#-contributing)
+- [📜 License](#-license)
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
 
@@ -53,12 +54,14 @@ This platform provides a structured, community-driven solution to that contradic
 - 📍 **GPS Auto-Location** – One-tap location detection auto-fills addresses using the browser's GPS and OpenStreetMap Nominatim
 - 🗺️ **Interactive Food Map & Heatmap** – View all available donations on a live map, or see donation density by area (Leaflet.js + OpenStreetMap)
 - ⭐ **Trust Score System** – Both Donors and Volunteers build a 0–100 trust score based on successful, on-time deliveries
-- 🏆 **Community Leaderboard** – Dual-view leaderboard ranking top Donors & Volunteers by **Activity** (donations/deliveries) or by **Trust Score**
+- 🏆 **Community Leaderboard** – Rankings for top Donors & Volunteers by **Activity**, **Rating**, or **Trust Score**
 - 💬 **Ratings & Reviews** – NGOs rate Donors & Volunteers, Donors rate Volunteers — visible on public profiles
 - 🚩 **Report System** – Users can report inappropriate food posts or fraudulent accounts for Admin review
 - 📊 **Transparency Dashboard** – A public-facing impact page with real-time statistics on food saved, deliveries completed, and communities served
 - 🖼️ **Image Uploads** – Food listings and user profiles support photo uploads via Pillow
-- 📶 **Basic Offline Support (PWA)** – Service Worker caches key pages for smoother reloads on unstable connections
+- 🌐 **Bangla-First Localization** – Switch between Bangla and English, with Bengali digits, a localized brand name, and translated dynamic content
+- 🎨 **Light, Dark, and System Themes** – Choose an appearance manually or follow the device theme
+- 📶 **Basic Offline Support (PWA)** – Service Worker caches static assets and a localized offline fallback for unstable connections
 - 🛠️ **Custom Admin Panel** – A dedicated dashboard for monitoring users, food posts, and platform-wide statistics
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%"/>
@@ -154,6 +157,7 @@ Ahaar_Bonton/
 │   ├── settings.py
 │   ├── urls.py
 │   ├── asgi.py
+│   ├── middleware.py
 │   └── wsgi.py
 │
 ├── core/                         # Shared models, views & core logic
@@ -163,6 +167,7 @@ Ahaar_Bonton/
 │   ├── models.py
 │   ├── urls.py
 │   ├── views.py
+│   ├── tests.py
 │   ├── migrations/
 │   ├── services/
 │   │   ├── matching.py
@@ -227,10 +232,12 @@ Ahaar_Bonton/
 │   │   ├── report_post.html
 │   │   └── report_user.html
 │   └── partials/
+│       ├── language_switcher.html
 │       └── rating_form.html
 │
 ├── static/
 │   ├── manifest.json
+│   ├── manifest.en.json
 │   ├── css/
 │   │   └── style.css
 │   ├── js/
@@ -238,6 +245,13 @@ Ahaar_Bonton/
 │   │   └── service-worker.js
 │   ├── img/
 │   └── favicon/
+│
+├── locale/                   # Bangla gettext catalogs
+│   └── bn/LC_MESSAGES/
+│       ├── django.mo
+│       ├── django.po
+│       ├── djangojs.mo
+│       └── djangojs.po
 │
 ├── media/                    # User-uploaded files (food images, profile pics)
 ├── Assets/                   # README banners & screenshots
@@ -260,6 +274,8 @@ Ahaar_Bonton/
 | Database | SQLite (default) |
 | Frontend | HTML5, CSS3, JavaScript |
 | Maps | OpenStreetMap + Leaflet.js (Free, no API key) |
+| Charts | Chart.js |
+| Localization | Django i18n + gettext (Bangla and English) |
 | Image Handling | Pillow |
 | Templating | Django Templates |
 | Offline Support | Service Worker (PWA) |
@@ -270,7 +286,7 @@ Ahaar_Bonton/
 
 ### Prerequisites
 
-- Python 3.10 or higher
+- Python 3.12 or higher (required by Django 6.0)
 - pip
 
 ### Installation
