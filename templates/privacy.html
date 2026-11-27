@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block page_title %}{% trans "Privacy Policy" %} - {{ brand_name }}{% endblock %}
+
+{% block content %}
+<section class="container-narrow page-section policy-page">
+    <header class="policy-header">
+        <span class="policy-icon" aria-hidden="true"><svg class="icon"><use href="#i-shield"/></svg></span>
+        <div>
+            <span class="eyebrow">{% trans "Your privacy" %}</span>
+            <h1>{% trans "Privacy Policy" %}</h1>
+            <p class="policy-lead">{% trans "How AhaarBonton handles your account, food-sharing, and community activity." %}</p>
+        </div>
+    </header>
+
+    <article class="card policy-card" aria-label="{% trans 'Privacy Policy' %}">
+        <section class="policy-section" id="privacy-collection">
+            <h2>{% trans "Information we collect" %}</h2>
+            <p>{% trans "We collect the details needed to run accounts, food posts, requests, deliveries, ratings, and reports." %}</p>
+            <ul class="policy-list">
+                <li>{% trans "Account details such as your name, email, optional phone number, role, and profile photo." %}</li>
+                <li>{% trans "Food-sharing details such as listings, pickup locations, map coordinates, expiry times, and request status." %}</li>
+                <li>{% trans "Community activity such as delivery records, ratings, reviews, reports, and trust or impact statistics." %}</li>
+            </ul>
+        </section>
+
+        <section class="policy-section" id="privacy-use">
+            <h2>{% trans "How we use information" %}</h2>
+            <p>{% trans "We use this information to match food with community needs, coordinate handovers, verify pickup and delivery codes, send service updates, and keep the platform safe and accountable." %}</p>
+        </section>
+
+        <section class="policy-section" id="privacy-visibility">
+            <h2>{% trans "What other members can see" %}</h2>
+            <p>{% trans "Your name, profile photo, role, community activity, trust information, and reviews may appear on public profiles, leaderboards, or transparency views. Map pins are rounded for privacy. Pickup details entered on food listings are visible to help participants coordinate a handover." %}</p>
+            <p>{% trans "Your email address and phone number are not shown on your public profile." %}</p>
+        </section>
+
+        <section class="policy-section" id="privacy-sharing">
+            <h2>{% trans "Sharing and protection" %}</h2>
+            <p>{% trans "Information is shared only as needed to coordinate requests and deliveries, operate the service, handle reports, or meet legal obligations. We do not sell your personal information." %}</p>
+            <p>{% trans "No online service can guarantee complete security. Keep your password private, and contact support if you suspect misuse of your account." %}</p>
+        </section>
+
+        <section class="policy-section" id="privacy-storage">
+            <h2>{% trans "Browser storage and retention" %}</h2>
+            <p>{% trans "Your language and theme preferences are stored in your browser. Account and activity records are kept for as long as needed to run the service, resolve issues, prevent misuse, and maintain reliable community statistics." %}</p>
+        </section>
+
+        <section class="policy-section" id="privacy-choices">
+            <h2>{% trans "Your choices" %}</h2>
+            <p>{% trans "You can review or update your profile details from account settings. For questions about access, correction, or deletion of your information, contact support. Some records may be retained when needed for safety, dispute resolution, or legitimate operational reasons." %}</p>
+        </section>
+    </article>
+
+    <div class="policy-actions">
+        <a href="{% url 'home' %}" class="btn btn-ghost">{% trans "Back to home" %}</a>
+        <a href="{% url 'terms_conditions' %}" class="btn btn-ghost">{% trans "Terms & Conditions" %}</a>
+        <a href="mailto:hello@ahaarbonton.com" class="btn btn-primary">{% trans "Contact support" %}</a>
+    </div>
+</section>
+{% endblock %}
