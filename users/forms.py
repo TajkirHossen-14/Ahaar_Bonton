@@ -3,6 +3,7 @@ import re
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from core.models import CustomUser
 
@@ -14,37 +15,40 @@ def validate_phone_number(value):
     compact = re.sub(r"[\s()-]", "", value)
     if not re.fullmatch(r"\+?\d{7,15}", compact):
         raise ValidationError(
-            "Enter a valid phone number using 7 to 15 digits, optionally starting with +."
+            _("Enter a valid phone number using 7 to 15 digits, optionally starting with +.")
         )
     return compact
 
 
 class CustomRegistrationForm(UserCreationForm):
     ROLE_CHOICES = [
-        (CustomUser.RoleChoices.DONOR, "Donor"),
-        (CustomUser.RoleChoices.NGO, "NGO"),
-        (CustomUser.RoleChoices.VOLUNTEER, "Volunteer"),
+        (CustomUser.RoleChoices.DONOR, _("Donor")),
+        (CustomUser.RoleChoices.NGO, _("NGO")),
+        (CustomUser.RoleChoices.VOLUNTEER, _("Volunteer")),
     ]
 
     full_name = forms.CharField(
         max_length=255,
-        widget=forms.TextInput(attrs={"autocomplete": "name", "placeholder": "Your full name"}),
+        label=_("Full name"),
+        widget=forms.TextInput(attrs={"autocomplete": "name", "placeholder": _("Your full name")}),
     )
     email = forms.EmailField(
+        label=_("Email address"),
         widget=forms.EmailInput(
             attrs={"autocomplete": "email", "placeholder": "you@example.com"}
         )
     )
     phone_number = forms.CharField(
         max_length=20,
+        label=_("Phone number"),
         required=False,
         validators=[validate_phone_number],
         widget=forms.TextInput(
             attrs={"autocomplete": "tel", "placeholder": "+8801XXXXXXXXX"}
         ),
     )
-    role = forms.ChoiceField(choices=ROLE_CHOICES)
-    profile_pic = forms.ImageField(required=False)
+    role = forms.ChoiceField(choices=ROLE_CHOICES, label=_("I want to join as"))
+    profile_pic = forms.ImageField(required=False, label=_("Profile photo"))
 
     class Meta:
         model = CustomUser
@@ -61,13 +65,13 @@ class CustomRegistrationForm(UserCreationForm):
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
         if CustomUser.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError("An account with this email already exists.")
+            raise forms.ValidationError(_("An account with this email already exists."))
         return email
 
     def clean_full_name(self):
         full_name = self.cleaned_data["full_name"].strip()
         if len(full_name) < 2:
-            raise forms.ValidationError("Enter your full name.")
+            raise forms.ValidationError(_("Enter your full name."))
         return full_name
 
     def clean_phone_number(self):
@@ -88,7 +92,7 @@ class CustomRegistrationForm(UserCreationForm):
 
 class CustomLoginForm(forms.Form):
     identifier = forms.CharField(
-        label="Email or Phone Number",
+        label=_("Email or phone number"),
         widget=forms.TextInput(
             attrs={
                 "autocomplete": "username",
@@ -97,18 +101,24 @@ class CustomLoginForm(forms.Form):
         ),
     )
     password = forms.CharField(
+        label=_("Password"),
         widget=forms.PasswordInput(
-            attrs={"autocomplete": "current-password", "placeholder": "Enter your password"}
+            attrs={"autocomplete": "current-password", "placeholder": _("Enter your password")}
         )
     )
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    remove_profile_pic = forms.BooleanField(required=False)
+    remove_profile_pic = forms.BooleanField(required=False, label=_("Remove profile photo"))
 
     class Meta:
         model = CustomUser
         fields = ("full_name", "phone_number", "profile_pic")
+        labels = {
+            "full_name": _("Full name"),
+            "phone_number": _("Phone number"),
+            "profile_pic": _("Profile photo"),
+        }
         widgets = {
             "full_name": forms.TextInput(attrs={"autocomplete": "name"}),
             "phone_number": forms.TextInput(
@@ -119,7 +129,7 @@ class ProfileUpdateForm(forms.ModelForm):
     def clean_full_name(self):
         full_name = self.cleaned_data["full_name"].strip()
         if len(full_name) < 2:
-            raise forms.ValidationError("Enter your full name.")
+            raise forms.ValidationError(_("Enter your full name."))
         return full_name
 
     def clean_phone_number(self):
