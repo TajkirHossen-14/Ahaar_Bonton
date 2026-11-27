@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
-{% block page_title %}Donor dashboard - AhaarBonton{% endblock %}
+{% load i18n %}
+{% block page_title %}{% trans "Donor dashboard" %} - {{ brand_name }}{% endblock %}
 {% block content %}
 <section class="container page-section">
     <div class="dashboard-hero">
         <div>
-            <span class="eyebrow">Donor workspace</span>
-            <h1>Welcome back, {{ request.user.full_name|truncatechars:32 }}</h1>
-            <p>Every shared meal starts with a clear, caring donor. Here’s what is happening with your donations.</p>
+            <span class="eyebrow">{% trans "Donor workspace" %}</span>
+            <h1>{% blocktrans with name=request.user.full_name|truncatechars:32 %}Welcome back, {{ name }}{% endblocktrans %}</h1>
+            <p>{% trans "Every shared meal starts with a clear, caring donor. Here’s what is happening with your donations." %}</p>
         </div>
         <div class="banner-actions">
             <a href="{% url 'donor_requests' %}" class="btn btn-ghost">
-                <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>Requests{% if pending_count %} ({{ pending_count }}){% endif %}
+                <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>{% trans "Requests" %}{% if pending_count %} ({{ pending_count }}){% endif %}
             </a>
             <a href="{% url 'add_food' %}" class="btn btn-primary">
-                <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Share food
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>{% trans "Share food" %}
             </a>
         </div>
     </div>
@@ -21,55 +22,55 @@
     {% if pending_count %}
     <div class="alert alert-warning" role="status">
         <svg class="icon alert-icon" aria-hidden="true"><use href="#i-clock"/></svg>
-        <span><strong>{{ pending_count }} NGO request{{ pending_count|pluralize }}</strong> waiting for your response.</span>
-        <a href="{% url 'donor_requests' %}#pending-heading">Review requests</a>
+        <span>{% blocktrans count counter=pending_count %}<strong>{{ counter }} NGO request</strong> waiting for your response.{% plural %}<strong>{{ counter }} NGO requests</strong> waiting for your response.{% endblocktrans %}</span>
+        <a href="{% url 'donor_requests' %}#pending-heading">{% trans "Review requests" %}</a>
     </div>
     {% endif %}
 
-    <div class="stats-grid" aria-label="Donation overview">
+    <div class="stats-grid" aria-label="{% trans "Donation overview" %}">
         <article class="stat-card">
             <div class="stat-card-top">
-                <h2>Total posts</h2>
+                <h2>{% trans "Total posts" %}</h2>
                 <span class="stat-icon"><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg></span>
             </div>
             <p>{{ total_posts }}</p>
-            <div class="stat-card-note">All food posts you have shared</div>
+            <div class="stat-card-note">{% trans "All food posts you have shared" %}</div>
         </article>
         <article class="stat-card">
             <div class="stat-card-top">
-                <h2>Available now</h2>
+                <h2>{% trans "Available now" %}</h2>
                 <span class="stat-icon teal"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span>
             </div>
             <p>{{ active_posts }}</p>
-            <div class="stat-card-note">Ready for NGOs to request</div>
+            <div class="stat-card-note">{% trans "Ready for NGOs to request" %}</div>
         </article>
         <article class="stat-card">
             <div class="stat-card-top">
-                <h2>Delivered</h2>
+                <h2>{% trans "Delivered" %}</h2>
                 <span class="stat-icon teal"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg></span>
             </div>
             <p>{{ delivered_posts }}</p>
-            <div class="stat-card-note">Donations that reached their community</div>
+            <div class="stat-card-note">{% trans "Donations that reached their community" %}</div>
         </article>
         <article class="stat-card">
             <div class="stat-card-top">
-                <h2>Trust score</h2>
+                <h2>{% trans "Trust score" %}</h2>
                 <span class="stat-icon amber"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
             </div>
             <p>{{ donor_profile.trust_score|default:0 }}<small class="muted">/ 100</small></p>
-            <div class="stat-card-note">Built through reliable donation follow-through</div>
+            <div class="stat-card-note">{% trans "Built through reliable donation follow-through" %}</div>
         </article>
     </div>
 
     <section class="workspace-section" aria-labelledby="food-posts-heading">
         <div class="section-header">
             <div>
-                <span class="eyebrow">Your donations</span>
-                <h2 id="food-posts-heading">Food posts</h2>
-                <p class="section-description">{{ total_posts }} post{{ total_posts|pluralize }} shared with the community{% if expired_posts %} · {{ expired_posts }} expired{% endif %}.</p>
+                <span class="eyebrow">{% trans "Your donations" %}</span>
+                <h2 id="food-posts-heading">{% trans "Food posts" %}</h2>
+                <p class="section-description">{% if expired_posts %}{% blocktrans count counter=total_posts with expired=expired_posts %}{{ counter }} post shared with the community · {{ expired }} expired.{% plural %}{{ counter }} posts shared with the community · {{ expired }} expired.{% endblocktrans %}{% else %}{% blocktrans count counter=total_posts %}{{ counter }} post shared with the community.{% plural %}{{ counter }} posts shared with the community.{% endblocktrans %}{% endif %}</p>
             </div>
             <a href="{% url 'add_food' %}" class="btn btn-ghost btn-sm">
-                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg>New post
+                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-plus"/></svg>{% trans "New post" %}
             </a>
         </div>
 
@@ -92,32 +93,32 @@
                     </div>
                     <div class="food-card-heading">
                         <h3>{{ post.title }}</h3>
-                        <p class="food-meta">{{ post.quantity }} serving{{ post.quantity|pluralize }} · {{ post.get_category_display }}</p>
+                        <p class="food-meta">{% blocktrans count counter=post.quantity %}{{ counter }} serving{% plural %}{{ counter }} servings{% endblocktrans %} · {{ post.get_category_display }}</p>
                     </div>
                     <p class="food-meta"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-pin"/></svg>{{ post.location|truncatechars:52 }}</p>
                     <p class="food-meta {% if post.is_expired %}expiry-red{% else %}expiry-green{% endif %}">
                         <svg class="icon icon-sm" aria-hidden="true"><use href="#i-clock"/></svg>
-                        {% if post.is_expired %}Expired{% else %}{{ post.time_remaining_display }} remaining{% endif %}
+                        {% if post.is_expired %}{% trans "Expired" %}{% else %}{% blocktrans with remaining=post.time_remaining_display %}{{ remaining }} remaining{% endblocktrans %}{% endif %}
                     </p>
                     <div class="food-card-footer">
                         {% if post.status == 'available' or post.status == 'expired' %}
                         <div class="food-card-actions">
                             <a href="{% url 'edit_food' post.pk %}" class="btn btn-secondary btn-sm">
-                                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"/></svg>Edit
+                                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-edit"/></svg>{% trans "Edit" %}
                             </a>
                             <form method="post" action="{% url 'delete_food' post.pk %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm" data-confirm="Delete this food post permanently?">
-                                    <svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg>Delete
+                                <button type="submit" class="btn btn-danger btn-sm" data-confirm="{% trans "Delete this food post permanently?" %}">
+                                    <svg class="icon icon-sm" aria-hidden="true"><use href="#i-trash"/></svg>{% trans "Delete" %}
                                 </button>
                             </form>
                         </div>
                         {% elif post.status == 'claimed' %}
-                        <p class="status-note">Collection is in progress. Follow the handover in your requests.</p>
-                        <a href="{% url 'donor_requests' %}#approved-heading" class="btn btn-ghost btn-sm">View delivery</a>
+                        <p class="status-note">{% trans "Collection is in progress. Follow the handover in your requests." %}</p>
+                        <a href="{% url 'donor_requests' %}#approved-heading" class="btn btn-ghost btn-sm">{% trans "View delivery" %}</a>
                         {% else %}
-                        <p class="status-note">Thank you for helping this meal reach its community.</p>
-                        <a href="{% url 'donor_requests' %}#completed-heading" class="btn btn-ghost btn-sm">View outcome</a>
+                        <p class="status-note">{% trans "Thank you for helping this meal reach its community." %}</p>
+                        <a href="{% url 'donor_requests' %}#completed-heading" class="btn btn-ghost btn-sm">{% trans "View outcome" %}</a>
                         {% endif %}
                     </div>
                 </div>
@@ -127,10 +128,10 @@
         {% else %}
         <div class="empty-state">
             <div class="empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-box"/></svg></div>
-            <h3>Your first donation starts here</h3>
-            <p>Share accurate food details and help a nearby community reduce waste. It takes only a few minutes.</p>
+            <h3>{% trans "Your first donation starts here" %}</h3>
+            <p>{% trans "Share accurate food details and help a nearby community reduce waste. It takes only a few minutes." %}</p>
             <a href="{% url 'add_food' %}" class="btn btn-primary empty-action-btn">
-                <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Share surplus food
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>{% trans "Share surplus food" %}
             </a>
         </div>
         {% endif %}
