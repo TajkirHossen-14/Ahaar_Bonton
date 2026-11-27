@@ -1,3 +1,4 @@
+import json
 import re
 from datetime import timedelta
 from io import BytesIO
@@ -6,11 +7,14 @@ from unittest.mock import patch
 
 from PIL import Image
 
+from django.conf import settings
+from django.core import mail
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, translation
+from django.utils.translation import gettext, ngettext
 
 from food.services.matching import FoodMatcher
 
@@ -30,6 +34,8 @@ class AhaarBontonTests(TestCase):
     password = "Testpass123!"
 
     def setUp(self):
+        self.enterContext(translation.override("en"))
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "en"
         cache.clear()
         self.donor = self.create_user("donor", "Donor", "donor@example.com")
         self.volunteer = self.create_user(
@@ -391,13 +397,85 @@ class AhaarBontonTests(TestCase):
         delivery.refresh_from_db()
         self.assertEqual(delivery.volunteer, self.volunteer)
 
+    def main_nav_labels(self, response):
+        html = response.content.decode(response.charset or "utf-8")
+        nav_match = re.search(r'<nav class="main-nav"[^>]*>(.*?)</nav>', html, re.DOTALL)
+        self.assertIsNotNone(nav_match)
+        items = re.findall(
+            r'<(?:a|summary)\b[^>]*class="[^"]*nav-link[^"]*"[^>]*>(.*?)</(?:a|summary)>',
+            nav_match.group(1),
+            re.DOTALL,
+        )
+        return [re.sub(r"<[^>]+>", "", item).strip() for item in items]
+
+    def test_anonymous_navigation_keeps_home_first(self):
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(
+            self.main_nav_labels(response),
+            ["Home", "Impact", "Leaderboard", "Explore"],
+        )
+
+    def test_authenticated_navigation_order_excludes_home(self):
+        admin = self.create_user("admin", "Admin", "admin@example.com")
+        users = {
+            "donor": self.donor,
+            "ngo": self.ngo,
+            "volunteer": self.volunteer,
+            "admin": admin,
+        }
+        expected_requests_urls = {
+            "donor": reverse("donor_requests"),
+            "ngo": reverse("ngo_my_requests"),
+            "volunteer": reverse("volunteer_dashboard") + "#tab-available",
+            "admin": reverse("admin_dashboard") + "#recent-requests-title",
+        }
+
+        for role, user in users.items():
+            with self.subTest(role=role):
+                self.client.force_login(user)
+                self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "en"
+                response = self.client.get(reverse("home"))
+                self.assertEqual(
+                    self.main_nav_labels(response),
+                    ["Dashboard", "Requests", "Impact", "Leaderboard", "Explore"],
+                )
+                nav_html = re.search(
+                    r'<nav class="main-nav"[^>]*>(.*?)</nav>',
+                    response.content.decode(response.charset or "utf-8"),
+                    re.DOTALL,
+                ).group(1)
+                self.assertNotIn(f'href="{reverse("home")}"', nav_html)
+                self.assertIn(
+                    f'href="{expected_requests_urls[role]}"', nav_html
+                )
+                page_html = response.content.decode(response.charset or "utf-8")
+                summary_match = re.search(
+                    r'<summary class="user-menu-toggle"[^>]*>(.*?)</summary>',
+                    page_html,
+                    re.DOTALL,
+                )
+                self.assertIsNotNone(summary_match)
+                self.assertIn('class="avatar avatar-sm"', summary_match.group(1))
+                self.assertNotIn(user.full_name, summary_match.group(1))
+                self.assertNotIn("<svg", summary_match.group(1))
+                self.client.logout()
+
     def test_public_pages_render_for_anonymous_visitors(self):
         post = self.create_food_post()
         post.latitude = 23.8103
         post.longitude = 90.4125
         post.save(update_fields=["latitude", "longitude"])
 
-        for url_name in ("home", "transparency", "leaderboard", "food_map", "heatmap"):
+        for url_name in (
+            "home",
+            "privacy_policy",
+            "terms_conditions",
+            "transparency",
+            "leaderboard",
+            "food_map",
+            "heatmap",
+        ):
             with self.subTest(page=url_name):
                 response = self.client.get(reverse(url_name))
                 self.assertEqual(response.status_code, 200)
@@ -406,6 +484,37 @@ class AhaarBontonTests(TestCase):
         home = self.client.get(reverse("home"))
         self.assertContains(home, 'class="mobile-theme-controls"')
         self.assertContains(home, 'class="mobile-account-actions"')
+
+    def test_footer_links_to_faq_and_policy_pages(self):
+        response = self.client.get(reverse("home"))
+        html = response.content.decode(response.charset or "utf-8")
+        footer_match = re.search(
+            r'<footer class="site-footer">(.*?)</footer>', html, re.DOTALL
+        )
+        self.assertIsNotNone(footer_match)
+        footer_html = footer_match.group(1)
+
+        self.assertContains(response, 'id="faq"')
+        expected_hrefs = (
+            reverse("home") + "#faq",
+            reverse("privacy_policy"),
+            reverse("terms_conditions"),
+        )
+        for href in expected_hrefs:
+            with self.subTest(href=href):
+                self.assertIn(f'href="{href}"', footer_html)
+
+    def test_policy_pages_render_in_bengali(self):
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "bn"
+        expected_headings = {
+            "privacy_policy": "প্রাইভেসি পলিসি",
+            "terms_conditions": "শর্তাবলি",
+        }
+
+        for url_name, heading in expected_headings.items():
+            with self.subTest(page=url_name):
+                response = self.client.get(reverse(url_name))
+                self.assertContains(response, f"<h1>{heading}</h1>")
 
     def test_map_json_escapes_user_generated_script_content(self):
         post = self.create_food_post()
@@ -620,14 +729,22 @@ class AhaarBontonTests(TestCase):
         self.assertNotContains(anonymous_home, 'class="hero-route"')
         self.assertContains(anonymous_home, 'class="hero-note"')
         self.assertContains(anonymous_home, "Successful deliveries")
+        self.assertContains(anonymous_home, "Community members")
+        self.assertNotContains(anonymous_home, "Meals delivered")
         self.assertNotContains(anonymous_home, "Servings delivered")
-        self.assertEqual(anonymous_home.content.count(b'class="impact-stat"'), 3)
+        self.assertEqual(anonymous_home.context["community_count"], CustomUser.objects.count())
+        self.assertContains(anonymous_home, 'class="account-menu"')
+        self.assertNotContains(anonymous_home, 'nav-login')
+        self.assertEqual(anonymous_home.content.count(b'class="impact-stat"'), 4)
+        self.assertContains(anonymous_home, 'class="impact-stat-icon"', count=4)
         self.assertContains(anonymous_home, "One platform. Three ways to help.")
 
         self.client.force_login(self.donor)
         member_home = self.client.get(reverse("home"))
         self.assertContains(member_home, 'href="/dashboard/"')
         self.assertContains(member_home, "Go to your dashboard")
+        self.assertContains(member_home, '<body class="home-page authenticated">')
+        self.assertNotContains(member_home, 'class="account-menu"')
         self.assertNotContains(member_home, "One platform. Three ways to help.")
 
     def test_public_maps_expose_designed_empty_states(self):
@@ -766,13 +883,15 @@ class AhaarBontonTests(TestCase):
 
     def test_food_countdown_display_is_human_readable(self):
         post = self.create_food_post()
-        post.expiry_time = timezone.now() + timedelta(hours=2, minutes=30)
+        now = timezone.now()
 
-        self.assertRegex(post.time_remaining_display, r"^\d+h \d+m$")
-        self.assertNotIn("microsecond", post.time_remaining_display)
+        with patch("core.models.timezone.now", return_value=now):
+            post.expiry_time = now + timedelta(hours=2, minutes=30)
+            self.assertEqual(post.time_remaining_display, "2 hours 30 minutes")
+            self.assertNotIn("microsecond", post.time_remaining_display)
 
-        post.expiry_time = timezone.now() - timedelta(seconds=1)
-        self.assertEqual(post.time_remaining_display, "0m")
+            post.expiry_time = now - timedelta(seconds=1)
+            self.assertEqual(post.time_remaining_display, "0 minutes")
 
     def test_admin_dashboard_hides_unavailable_django_admin_links(self):
         admin = self.create_user("admin", "Limited Admin", "limited-admin@example.com")
@@ -806,3 +925,354 @@ class AhaarBontonTests(TestCase):
         self.assertContains(response, "Run expiry check")
         self.assertTrue(response.context["can_access_django_admin"])
         self.assertContains(response, reverse("admin:index"))
+
+
+class LocalizationTests(TestCase):
+    password = "Testpass123!"
+
+    def setUp(self):
+        self.enterContext(translation.override("bn"))
+        cache.clear()
+
+    def tearDown(self):
+        cache.clear()
+
+    def create_user(self, role, name, email):
+        return CustomUser.objects.create_user(
+            email=email,
+            password=self.password,
+            full_name=name,
+            role=role,
+        )
+
+    def test_bengali_is_the_default_language(self):
+        self.assertEqual(settings.LANGUAGE_CODE, "bn")
+
+        response = self.client.get(
+            reverse("home"),
+            HTTP_ACCEPT_LANGUAGE="en-US,en;q=0.9",
+        )
+
+        self.assertEqual(response.wsgi_request.LANGUAGE_CODE, "bn")
+        self.assertContains(response, '<html lang="bn" dir="ltr">')
+        self.assertContains(response, "হোম")
+        self.assertContains(response, "প্রতিটি খাবারই গুরুত্বপূর্ণ")
+        self.assertContains(response, 'href="/static/manifest.json"')
+        self.assertNotContains(response, 'href="/static/manifest.en.json"')
+        self.assertNotContains(response, 'href="/bn/')
+        self.assertNotContains(response, 'href="/en/')
+
+    def test_brand_name_is_localized_in_shared_and_auth_pages(self):
+        bangla_markup = '<span class="brand-name">আহার <span>বণ্টন</span></span>'
+        for page_name, brand_count in (("home", 2), ("login", 1), ("register", 1)):
+            with self.subTest(language="bn", page=page_name):
+                response = self.client.get(reverse(page_name))
+                self.assertContains(response, bangla_markup, count=brand_count)
+                self.assertContains(response, 'aria-label="আহার বণ্টন হোম"', count=1)
+                title = re.search(r"<title>(.*?)</title>", response.content.decode()).group(1)
+                self.assertIn("আহার বণ্টন", title)
+                self.assertNotIn("AhaarBonton", title)
+
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "en"
+        english_markup = '<span class="brand-name">Ahaar<span>Bonton</span></span>'
+        for page_name, brand_count in (("home", 2), ("login", 1), ("register", 1)):
+            with self.subTest(language="en", page=page_name):
+                response = self.client.get(reverse(page_name))
+                self.assertContains(response, english_markup, count=brand_count)
+                self.assertContains(response, 'aria-label="AhaarBonton home"', count=1)
+                title = re.search(r"<title>(.*?)</title>", response.content.decode()).group(1)
+                self.assertIn("AhaarBonton", title)
+                self.assertNotIn("আহার বণ্টন", title)
+
+    def test_brand_colors_are_theme_readable_and_bangla_font_is_localized(self):
+        css = (settings.BASE_DIR / "static" / "css" / "style.css").read_text(
+            encoding="utf-8"
+        )
+        dark_theme = re.search(
+            r'html\[data-theme="dark"\]\s*\{(.*?)\n\}', css, re.DOTALL
+        ).group(1)
+
+        self.assertIn("--brand-text: #183129;", css)
+        self.assertIn("--brand-accent: #23865a;", css)
+        self.assertIn("--brand-text: #e6edf3;", dark_theme)
+        self.assertIn("--brand-accent: #5ed68f;", dark_theme)
+        self.assertIn("color: var(--brand-text);", css)
+        self.assertIn("color: var(--brand-accent);", css)
+        self.assertIn(".site-footer .brand-name { color: white; }", css)
+        self.assertIn(".site-footer .brand-name span { color: #5ed68f; }", css)
+        self.assertIn(".auth-story .brand-name { color: white; }", css)
+        self.assertIn(".auth-story .brand-name span { color: #8ce6b3; }", css)
+        self.assertIn(
+            "--font-brand: 'Ador Noirrit', 'Noto Sans Bengali', sans-serif;", css
+        )
+        self.assertIn('html[lang="bn"] .brand-name { letter-spacing: 0; }', css)
+
+    def test_pwa_manifests_use_language_specific_brand_names(self):
+        for filename, expected in (
+            ("manifest.json", "আহার বণ্টন"),
+            ("manifest.en.json", "AhaarBonton"),
+        ):
+            with self.subTest(manifest=filename):
+                manifest = json.loads(
+                    (settings.BASE_DIR / "static" / filename).read_text(encoding="utf-8")
+                )
+                self.assertEqual(manifest["name"], expected)
+                self.assertEqual(manifest["short_name"], expected)
+
+    def test_invalid_language_cookie_falls_back_to_bengali(self):
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "fr"
+
+        response = self.client.get(
+            reverse("home"),
+            HTTP_ACCEPT_LANGUAGE="en-US,en;q=0.9",
+        )
+
+        self.assertEqual(response.wsgi_request.LANGUAGE_CODE, "bn")
+        self.assertContains(response, '<html lang="bn" dir="ltr">')
+
+    def test_language_switcher_is_accessible_on_shared_and_auth_pages(self):
+        for page_name, switcher_count in (("home", 2), ("login", 1), ("register", 1)):
+            with self.subTest(page=page_name):
+                response = self.client.get(reverse(page_name))
+
+                self.assertContains(response, 'class="language-switcher"', count=switcher_count)
+                self.assertContains(
+                    response,
+                    'role="group" aria-label="ভাষা"',
+                    count=switcher_count,
+                )
+                self.assertContains(
+                    response,
+                    'method="post" action="/i18n/setlang/"',
+                    count=switcher_count * 2,
+                )
+                self.assertContains(
+                    response,
+                    'class="language-option active" lang="bn" hreflang="bn" aria-current="true"',
+                    count=switcher_count,
+                )
+                self.assertContains(response, 'name="language" value="en"', count=switcher_count)
+
+    def test_language_switch_requires_csrf_and_persists_english(self):
+        client = Client(enforce_csrf_checks=True)
+        login_page = client.get(reverse("login"))
+        csrf_token = login_page.cookies[settings.CSRF_COOKIE_NAME].value
+        payload = {"language": "en", "next": reverse("home")}
+
+        self.assertEqual(client.post(reverse("set_language"), payload).status_code, 403)
+
+        response = client.post(
+            reverse("set_language"),
+            payload,
+            HTTP_X_CSRFTOKEN=csrf_token,
+        )
+
+        self.assertRedirects(response, reverse("home"))
+        self.assertEqual(response.cookies[settings.LANGUAGE_COOKIE_NAME].value, "en")
+
+        english_home = client.get(reverse("home"), HTTP_ACCEPT_LANGUAGE="bn")
+        self.assertContains(english_home, '<html lang="en" dir="ltr">')
+        self.assertContains(english_home, "Every Meal")
+        self.assertContains(english_home, 'href="/static/manifest.en.json"')
+        self.assertNotContains(english_home, "প্রতিটি খাবারই গুরুত্বপূর্ণ")
+
+    def test_bangla_mode_localizes_visible_digits_but_preserves_data_attributes(self):
+        response = self.client.get(reverse("transparency"))
+
+        self.assertContains(response, '<p data-counter="0">০</p>', count=4)
+        self.assertContains(response, 'data-counter="0"')
+        self.assertContains(response, '<span class="step-number" aria-hidden="true">০১</span>')
+        self.assertContains(response, '<span class="step-number" aria-hidden="true">০৪</span>')
+        self.assertContains(response, "window.ahaarLocalizeDigits")
+        self.assertContains(response, "window.ahaarInterpolate")
+
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "en"
+        english_response = self.client.get(reverse("transparency"))
+        self.assertContains(english_response, '<p data-counter="0">0</p>', count=4)
+        self.assertContains(english_response, '<span class="step-number" aria-hidden="true">01</span>')
+        self.assertContains(english_response, '<span class="step-number" aria-hidden="true">04</span>')
+
+    def test_bangla_digit_localization_preserves_scripts_and_form_values(self):
+        from ahaarbonton.middleware import localize_html_numbers
+
+        source = (
+            '<!DOCTYPE html><html lang="bn"><head>'
+            '<style>.count::after { content: "12"; }</style>'
+            '<script>const total = 12;</script></head><body>'
+            '<p title="Step 2" placeholder="Enter 12">12 meals</p>'
+            '<input value="12"><textarea>12</textarea>'
+            '</body></html>'
+        )
+        expected = (
+            '<!DOCTYPE html><html lang="bn"><head>'
+            '<style>.count::after { content: "12"; }</style>'
+            '<script>const total = 12;</script></head><body>'
+            '<p title="Step ২" placeholder="Enter ১২">১২ meals</p>'
+            '<input value="12"><textarea>12</textarea>'
+            '</body></html>'
+        )
+
+        self.assertEqual(localize_html_numbers(source), expected)
+
+    def test_bangla_javascript_catalog_contains_plural_translations(self):
+        response = self.client.get(reverse("jsi18n"))
+
+        self.assertTrue(response["Content-Type"].startswith("text/javascript"))
+        script = response.content.decode("utf-8")
+        match = re.search(r"const newcatalog = (\{.*?\});", script, re.DOTALL)
+        self.assertIsNotNone(match)
+        catalog = json.loads(match.group(1))
+        self.assertEqual(
+            catalog["%(count)s food post available"],
+            ["%(count)sটি খাবার পোস্ট পাওয়া যাচ্ছে", "%(count)sটি খাবার পোস্ট পাওয়া যাচ্ছে"]
+        )
+        self.assertEqual(
+            catalog["Expires in %(count)s minute"],
+            ["%(count)s মিনিট পরে সময় শেষ হবে", "%(count)s মিনিট পরে সময় শেষ হবে"]
+        )
+        self.assertEqual(catalog["Open navigation"], "মেনু খুলুন")
+
+    def test_model_choice_values_are_stable_while_labels_translate(self):
+        self.assertEqual(CustomUser.RoleChoices.DONOR.value, "donor")
+        self.assertEqual(CustomUser.RoleChoices.NGO.value, "ngo")
+        self.assertEqual(CustomUser.RoleChoices.VOLUNTEER.value, "volunteer")
+        self.assertEqual(str(CustomUser.RoleChoices.DONOR.label), "ডোনার")
+        self.assertEqual(str(CustomUser.RoleChoices.NGO.label), "এনজিও")
+        self.assertEqual(str(CustomUser.RoleChoices.VOLUNTEER.label), "ভলান্টিয়ার")
+        self.assertEqual(FoodPost.CategoryChoices.COOKED.value, "cooked")
+        self.assertEqual(str(FoodPost.CategoryChoices.COOKED.label), "রান্না করা")
+        self.assertEqual(FoodPost.CategoryChoices.RAW.value, "raw")
+        self.assertEqual(str(FoodPost.CategoryChoices.RAW.label), "কাঁচা")
+
+    def test_bangla_forms_use_translated_labels_and_validation(self):
+        from users.forms import CustomRegistrationForm
+
+        form = CustomRegistrationForm(
+            {
+                "full_name": "Test User",
+                "email": "localized@example.com",
+                "phone_number": "123abc",
+                "role": CustomUser.RoleChoices.DONOR,
+                "password1": self.password,
+                "password2": self.password,
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(str(form.fields["full_name"].label), "পুরো নাম")
+        self.assertEqual(str(form.fields["phone_number"].label), "ফোন নম্বর")
+        self.assertEqual(
+            list(form.fields["role"].choices),
+            [("donor", "ডোনার"), ("ngo", "এনজিও"), ("volunteer", "ভলান্টিয়ার")],
+        )
+        self.assertEqual(
+            form.errors["phone_number"][0],
+            "৭–১৫টি সংখ্যা দিয়ে সঠিক ফোন নম্বর লিখুন; চাইলে শুরুতে + থাকতে পারে।"
+        )
+
+    def test_bangla_view_renders_translated_flash_message(self):
+        response = self.client.post(
+            reverse("login"),
+            {"identifier": "missing@example.com", "password": "wrong-password"},
+        )
+
+        self.assertTemplateUsed(response, "auth/login.html")
+        self.assertContains(response, "ইমেইল/ফোন বা পাসওয়ার্ড সঠিক নয়।")
+
+    def test_approval_notification_translates_copy_but_preserves_user_content(self):
+        donor = self.create_user("donor", "Donor", "donor@example.com")
+        ngo = self.create_user("ngo", "NGO", "ngo@example.com")
+        title = "Bhat & Curry"
+        post = FoodPost.objects.create(
+            donor=donor,
+            title=title,
+            description="Fresh meals",
+            quantity=10,
+            category=FoodPost.CategoryChoices.COOKED,
+            location="Dhaka",
+            expiry_time=timezone.now() + timedelta(hours=2),
+        )
+        food_request = FoodRequest.objects.create(ngo=ngo, food_post=post)
+        self.client.force_login(donor)
+
+        with patch("core.views.notify") as notify_mock:
+            response = self.client.post(
+                reverse("handle_request", args=[food_request.pk]),
+                {"action": "approve"},
+            )
+
+        self.assertRedirects(
+            response,
+            reverse("donor_requests"),
+            fetch_redirect_response=False,
+        )
+        notification = notify_mock.call_args.kwargs
+        self.assertEqual(notification["subject"], "খাবার রিকোয়েস্ট অনুমোদিত")
+        self.assertIn(title, notification["message"])
+        delivery = food_request.delivery
+        self.assertRegex(delivery.delivery_otp, r"^\d{6}$")
+        self.assertIn(delivery.delivery_otp, notification["message"])
+        self.assertEqual(
+            list(response.wsgi_request._messages)[-1].message,
+            "রিকোয়েস্ট অনুমোদিত। ভলান্টিয়ারদের জন্য এখন একটি ডেলিভারি কাজ খোলা।"
+        )
+
+    def test_password_reset_email_is_bangla_and_preserves_dynamic_values(self):
+        user = self.create_user("donor", "Test User", "reset@example.com")
+
+        response = self.client.post(reverse("password_reset"), {"email": user.email})
+
+        self.assertRedirects(response, reverse("password_reset_done"))
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, [user.email])
+        self.assertEqual(email.subject, "পাসওয়ার্ড রিসেটের অনুরোধ — আহার বণ্টন")
+        self.assertIn("হাই Test User,", email.body)
+        self.assertIn(user.email, email.body)
+        self.assertIn("নতুন পাসওয়ার্ড নির্ধারণের জন্য নিচের লিংকে ক্লিক করুন:", email.body)
+        self.assertIn("এই লিংক এক ঘণ্টা পরে কাজ করা বন্ধ করবে।", email.body)
+        self.assertIn("আহার বণ্টন দল", email.body)
+        self.assertIn("/reset/", email.body)
+
+    def test_bangla_countdown_uses_plural_aware_model_strings(self):
+        donor = self.create_user("donor", "Donor", "donor@example.com")
+        post = FoodPost.objects.create(
+            donor=donor,
+            title="Meals",
+            description="Fresh meals",
+            quantity=10,
+            category=FoodPost.CategoryChoices.COOKED,
+            location="Dhaka",
+            expiry_time=timezone.now() + timedelta(hours=2),
+        )
+        now = timezone.now()
+
+        with patch("core.models.timezone.now", return_value=now):
+            post.expiry_time = now + timedelta(days=1, hours=2, minutes=3)
+            self.assertEqual(post.time_remaining_display, "1 দিন 2 ঘণ্টা 3 মিনিট")
+            post.expiry_time = now + timedelta(minutes=1)
+            self.assertEqual(post.time_remaining_display, "1 মিনিট")
+            post.expiry_time = now + timedelta(minutes=2)
+            self.assertEqual(post.time_remaining_display, "2 মিনিট")
+
+    def test_offline_page_is_bangla_and_never_personalized(self):
+        user = self.create_user("donor", "Private User", "private@example.com")
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("offline"))
+
+        self.assertContains(response, '<html lang="bn" dir="ltr">')
+        self.assertContains(response, "আপনি অফলাইনে আছেন")
+        self.assertContains(response, "আবার চেষ্টা করুন")
+        self.assertNotContains(response, user.full_name)
+        self.assertNotContains(response, "লগ আউট")
+
+    @override_settings(DEBUG=False)
+    def test_custom_404_page_uses_bangla_copy(self):
+        response = self.client.get("/__qa_nonexistent__/")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, "404.html")
+        self.assertContains(response, "পৃষ্ঠাটি পাওয়া যায়নি", status_code=404)
+        self.assertContains(response, "এই পৃষ্ঠার অস্তিত্ব শেষ হয়েছে।", status_code=404)
+        self.assertContains(response, "হোমে ফিরুন", status_code=404)
