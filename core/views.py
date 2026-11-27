@@ -1,5 +1,4 @@
-import calendar
-from datetime import timedelta
+from datetime import date, timedelta
 from io import BytesIO
 from pathlib import Path
 
@@ -18,6 +17,8 @@ from django.db.models.functions import TruncMonth
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.formats import date_format
+from django.utils.translation import gettext as _, ngettext
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
@@ -44,7 +45,7 @@ OTP_LOCK_SECONDS = 300
 
 def _require_role(request, allowed_roles):
     if request.user.role not in allowed_roles:
-        messages.error(request, "You do not have permission to access this page.")
+        messages.error(request, _("You do not have permission to access this page."))
         return redirect("dashboard")
     return None
 
@@ -90,13 +91,22 @@ def _clear_otp_attempts(request, delivery, stage):
 # PUBLIC
 def home_view(request):
     stats = FoodMatcher().get_stats()
-    return render(request, "home.html", {"stats": stats})
+    community_count = CustomUser.objects.count()
+    return render(request, "home.html", {"stats": stats, "community_count": community_count})
+
+
+def privacy_policy_view(request):
+    return render(request, "privacy.html")
+
+
+def terms_conditions_view(request):
+    return render(request, "terms.html")
 
 
 def profile_avatar(request, user_pk):
     user = get_object_or_404(CustomUser.objects.only("profile_pic"), pk=user_pk)
     if not user.profile_pic:
-        raise Http404("Profile image not found.")
+        raise Http404(_("Profile image not found."))
 
     cache_key = f"profile-avatar:{user.profile_pic.name}"
     image_data = cache.get(cache_key)
@@ -112,7 +122,7 @@ def profile_avatar(request, user_pk):
                         image.save(output, format="WEBP", quality=82, method=6)
                         image_data = output.getvalue()
         except (OSError, ValueError, Image.DecompressionBombError):
-            raise Http404("Profile image could not be processed.")
+            raise Http404(_("Profile image could not be processed."))
         cache.set(cache_key, image_data, timeout=60 * 60 * 24)
 
     response = HttpResponse(image_data, content_type="image/webp")
@@ -138,19 +148,19 @@ def transparency_view(request):
     category_counts_qs = FoodPost.objects.values("category").annotate(total=Count("id"))
     category_count_map = {row["category"]: row["total"] for row in category_counts_qs}
     category_order = [
-        (FoodPost.CategoryChoices.COOKED, "Cooked"),
-        (FoodPost.CategoryChoices.RAW, "Raw"),
-        (FoodPost.CategoryChoices.PACKAGED, "Packaged"),
-        (FoodPost.CategoryChoices.BAKERY, "Bakery"),
+        (FoodPost.CategoryChoices.COOKED, FoodPost.CategoryChoices.COOKED.label),
+        (FoodPost.CategoryChoices.RAW, FoodPost.CategoryChoices.RAW.label),
+        (FoodPost.CategoryChoices.PACKAGED, FoodPost.CategoryChoices.PACKAGED.label),
+        (FoodPost.CategoryChoices.BAKERY, FoodPost.CategoryChoices.BAKERY.label),
     ]
     category_chart_labels = [label for _, label in category_order]
     category_chart_values = [category_count_map.get(code, 0) for code, _ in category_order]
 
     status_order = [
-        (FoodPost.StatusChoices.AVAILABLE, "Available"),
-        (FoodPost.StatusChoices.CLAIMED, "Claimed"),
-        (FoodPost.StatusChoices.DELIVERED, "Delivered"),
-        (FoodPost.StatusChoices.EXPIRED, "Expired"),
+        (FoodPost.StatusChoices.AVAILABLE, FoodPost.StatusChoices.AVAILABLE.label),
+        (FoodPost.StatusChoices.CLAIMED, FoodPost.StatusChoices.CLAIMED.label),
+        (FoodPost.StatusChoices.DELIVERED, FoodPost.StatusChoices.DELIVERED.label),
+        (FoodPost.StatusChoices.EXPIRED, FoodPost.StatusChoices.EXPIRED.label),
     ]
     status_chart_labels = [label for _, label in status_order]
     status_chart_values = [
@@ -183,7 +193,7 @@ def transparency_view(request):
             year -= 1
         month_points.append((year, month))
 
-    monthly_chart_labels = [f"{calendar.month_abbr[m]} {str(y)[-2:]}" for y, m in month_points]
+    monthly_chart_labels = [date_format(date(y, m, 1), "M y") for y, m in month_points]
     monthly_chart_values = [monthly_deliveries_map.get((y, m), 0) for y, m in month_points]
 
     context = {
@@ -222,10 +232,10 @@ def register_view(request):
                     elif user.role == CustomUser.RoleChoices.VOLUNTEER:
                         VolunteerProfile.objects.get_or_create(user=user)
             except IntegrityError:
-                messages.error(request, "An account with these details already exists.")
+                messages.error(request, _("An account with these details already exists."))
             else:
                 login(request, user, backend="users.backends.EmailOrPhoneBackend")
-                messages.success(request, "Your account is ready. Welcome to AhaarBonton.")
+                messages.success(request, _("Your account is ready. Welcome to AhaarBonton."))
                 return redirect(user.get_dashboard_url())
     else:
         initial = {}
@@ -248,9 +258,9 @@ def login_view(request):
         user = authenticate(request, username=identifier, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, "Welcome back. You are now signed in.")
+            messages.success(request, _("Welcome back. You are now signed in."))
             return redirect(_safe_next_url(request, user.get_dashboard_url()))
-        messages.error(request, "Invalid email/phone or password.")
+        messages.error(request, _("Invalid email/phone or password."))
 
     next_url = request.POST.get("next") or request.GET.get("next", "")
     return render(request, "auth/login.html", {"form": form, "next": next_url})
@@ -259,7 +269,7 @@ def login_view(request):
 @require_POST
 def logout_view(request):
     logout(request)
-    messages.info(request, "You have been logged out successfully.")
+    messages.info(request, _("You have been logged out successfully."))
     return redirect("login")
 
 
@@ -274,7 +284,7 @@ def profile_view(request):
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, "Profile updated successfully.")
+            messages.success(request, _("Profile updated successfully."))
             return redirect("profile")
     else:
         form = ProfileUpdateForm(instance=request.user)
@@ -333,7 +343,7 @@ def add_food_post(request):
             post = form.save(commit=False)
             post.donor = request.user
             post.save()
-            messages.success(request, "Food post created.")
+            messages.success(request, _("Food post created."))
             return redirect("donor_dashboard")
     else:
         form = FoodPostForm()
@@ -350,14 +360,14 @@ def edit_food_post(request, pk):
     post = get_object_or_404(FoodPost, pk=pk, donor=request.user)
     blocked_statuses = [FoodPost.StatusChoices.CLAIMED, FoodPost.StatusChoices.DELIVERED]
     if post.status in blocked_statuses:
-        messages.warning(request, "Claimed or delivered posts cannot be edited.")
+        messages.warning(request, _("Claimed or delivered posts cannot be edited."))
         return redirect("donor_dashboard")
 
     if request.method == "POST":
         form = FoodPostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
-            messages.success(request, "Food post updated.")
+            messages.success(request, _("Food post updated."))
             return redirect("donor_dashboard")
     else:
         form = FoodPostForm(instance=post)
@@ -375,10 +385,10 @@ def delete_food_post(request, pk):
     post = get_object_or_404(FoodPost, pk=pk, donor=request.user)
     blocked_statuses = [FoodPost.StatusChoices.CLAIMED, FoodPost.StatusChoices.DELIVERED]
     if post.status in blocked_statuses:
-        messages.warning(request, "Claimed or delivered posts cannot be deleted.")
+        messages.warning(request, _("Claimed or delivered posts cannot be deleted."))
     else:
         post.delete()
-        messages.success(request, "Food post deleted.")
+        messages.success(request, _("Food post deleted."))
     return redirect("donor_dashboard")
 
 
@@ -428,7 +438,7 @@ def handle_request(request, pk):
         return denied
 
     if request.method != "POST":
-        messages.error(request, "Invalid request method.")
+        messages.error(request, _("Invalid request method."))
         return redirect("donor_requests")
 
     food_request = get_object_or_404(
@@ -445,7 +455,7 @@ def handle_request(request, pk):
             food_request.reject()
             delivery = None
         else:
-            messages.error(request, "Unknown action.")
+            messages.error(request, _("Unknown action."))
             return redirect("donor_requests")
     except ValueError as exc:
         messages.error(request, str(exc))
@@ -454,22 +464,22 @@ def handle_request(request, pk):
     if action == "approve":
         notify(
             recipient=food_request.ngo.email,
-            subject="Food Request Approved",
-            message=(
-                f"Your request for '{food_request.food_post.title}' was approved. "
-                f"Delivery OTP: {delivery.delivery_otp}"
-            ),
+            subject=_("Food Request Approved"),
+            message=_("Your request for '%(title)s' was approved. Delivery OTP: %(otp)s") % {
+                "title": food_request.food_post.title,
+                "otp": delivery.delivery_otp,
+            },
             method="email",
         )
-        messages.success(request, "Request approved. A delivery is now open for volunteers.")
+        messages.success(request, _("Request approved. A delivery is now open for volunteers."))
     else:
         notify(
             recipient=food_request.ngo.email,
-            subject="Food Request Rejected",
-            message=f"Your request for '{food_request.food_post.title}' was rejected.",
+            subject=_("Food Request Rejected"),
+            message=_("Your request for '%(title)s' was rejected.") % {"title": food_request.food_post.title},
             method="email",
         )
-        messages.warning(request, "Request rejected.")
+        messages.warning(request, _("Request rejected."))
 
     return redirect("donor_requests")
 
@@ -513,11 +523,11 @@ def request_food(request, pk):
 
     food_post = get_object_or_404(FoodPost, pk=pk)
     if food_post.is_expired():
-        messages.error(request, "This food post is already expired.")
+        messages.error(request, _("This food post is already expired."))
         return redirect("ngo_dashboard")
 
     if food_post.status != FoodPost.StatusChoices.AVAILABLE:
-        messages.error(request, "This food post is not available for requests.")
+        messages.error(request, _("This food post is not available for requests."))
         return redirect("ngo_dashboard")
 
     existing_request = FoodRequest.objects.filter(
@@ -525,7 +535,7 @@ def request_food(request, pk):
         food_post=food_post,
     ).first()
     if existing_request and existing_request.status != FoodRequest.StatusChoices.REJECTED:
-        messages.warning(request, "You already have an active request for this food post.")
+        messages.warning(request, _("You already have an active request for this food post."))
         return redirect("ngo_dashboard")
 
     if request.method == "POST":
@@ -534,7 +544,7 @@ def request_food(request, pk):
             with transaction.atomic():
                 locked_post = FoodPost.objects.select_for_update().get(pk=food_post.pk)
                 if locked_post.is_expired() or locked_post.status != FoodPost.StatusChoices.AVAILABLE:
-                    raise ValueError("This food post is no longer available.")
+                    raise ValueError(_("This food post is no longer available."))
                 if existing_request:
                     existing_request.status = FoodRequest.StatusChoices.PENDING
                     existing_request.message = message
@@ -551,17 +561,20 @@ def request_food(request, pk):
         except (ValueError, IntegrityError) as exc:
             messages.error(
                 request,
-                str(exc) if isinstance(exc, ValueError) else "This request already exists.",
+                str(exc) if isinstance(exc, ValueError) else _("This request already exists."),
             )
             return redirect("ngo_dashboard")
 
         notify(
             recipient=food_post.donor.email,
-            subject="New Food Request Received",
-            message=f"{request.user.full_name} requested your post '{food_post.title}'.",
+            subject=_("New Food Request Received"),
+            message=_("%(name)s requested your post '%(title)s'.") % {
+                "name": request.user.full_name,
+                "title": food_post.title,
+            },
             method="email",
         )
-        messages.success(request, "Food request submitted. You can track it in My Requests.")
+        messages.success(request, _("Food request submitted. You can track it in My Requests."))
         return redirect("ngo_my_requests")
 
     return render(
@@ -647,7 +660,7 @@ def volunteer_dashboard(request):
         "food_request__food_post__donor",
         "food_request__ngo",
     )
-    volunteer_profile, _ = VolunteerProfile.objects.get_or_create(user=request.user)
+    volunteer_profile, _created = VolunteerProfile.objects.get_or_create(user=request.user)
 
     available_count = available_deliveries.count()
     my_count = my_deliveries.count()
@@ -673,7 +686,7 @@ def volunteer_dashboard(request):
 @require_POST
 def accept_delivery(request, pk):
     if request.user.role != 'volunteer':
-        messages.error(request, 'Access denied.')
+        messages.error(request, _('Access denied.'))
         return redirect('/')
     try:
         with transaction.atomic():
@@ -693,40 +706,39 @@ def accept_delivery(request, pk):
                 or food_post.status != FoodPost.StatusChoices.CLAIMED
                 or food_post.is_expired()
             ):
-                raise ValueError("This delivery is no longer available.")
+                raise ValueError(_("This delivery is no longer available."))
             delivery.volunteer = request.user
             delivery.save(update_fields=["volunteer"])
     except (Delivery.DoesNotExist, ValueError):
-        messages.error(request, "This delivery is no longer available or was already accepted.")
+        messages.error(request, _("This delivery is no longer available or was already accepted."))
         return redirect("volunteer_dashboard")
 
     notify(
         recipient=(
             delivery.food_request.food_post.donor.email
         ),
-        subject='Volunteer assigned for your delivery',
-        message=(
-            f'Hello '
-            f'{delivery.food_request.food_post.donor.full_name}'
-            f',\n\n'
-            f'{request.user.full_name} has accepted the '
-            f'delivery for '
-            f'"{delivery.food_request.food_post.title}".\n\n'
-            f'They will pick up the food from your '
-            f'location soon.\n\n'
-            f'Your Pickup OTP: {delivery.pickup_otp}\n'
-            f'Give this OTP to the volunteer when '
-            f'they arrive for pickup.\n\n'
-            f'- AhaarBonton'
-        ),
+        subject=_('Volunteer assigned for your delivery'),
+        message=_(
+            'Hello %(donor_name)s,\n\n'
+            '%(volunteer_name)s has accepted the delivery for "%(title)s".\n\n'
+            'They will pick up the food from your location soon.\n\n'
+            'Your Pickup OTP: %(otp)s\n'
+            'Give this OTP to the volunteer when they arrive for pickup.\n\n'
+            '- AhaarBonton'
+        ) % {
+            'donor_name': delivery.food_request.food_post.donor.full_name,
+            'volunteer_name': request.user.full_name,
+            'title': delivery.food_request.food_post.title,
+            'otp': delivery.pickup_otp,
+        },
         method='email'
     )
 
     messages.success(
         request,
-        f'Delivery accepted! '
-        f'Pickup from: '
-        f'{delivery.food_request.food_post.location}'
+        _('Delivery accepted! Pickup from: %(location)s') % {
+            'location': delivery.food_request.food_post.location
+        }
     )
     return redirect('volunteer_dashboard')
 
@@ -740,7 +752,7 @@ def confirm_pickup(request, pk):
     that food has been picked up from the donor.
     """
     if request.user.role != 'volunteer':
-        messages.error(request, 'Access denied.')
+        messages.error(request, _('Access denied.'))
         return redirect('/')
     delivery = get_object_or_404(
         Delivery,
@@ -750,12 +762,12 @@ def confirm_pickup(request, pk):
 
     entered_otp = request.POST.get('otp', '').strip()
     if not entered_otp:
-        messages.error(request, 'Please enter the 6-digit OTP.')
+        messages.error(request, _('Please enter the 6-digit OTP.'))
         return redirect('volunteer_dashboard')
 
-    locked, _, _ = _otp_state(request, delivery, 'pickup')
+    locked, _state, _cache_key = _otp_state(request, delivery, 'pickup')
     if locked:
-        messages.error(request, 'Too many incorrect attempts. Try again in 5 minutes.')
+        messages.error(request, _('Too many incorrect attempts. Try again in 5 minutes.'))
         return redirect('volunteer_dashboard')
 
     result = delivery.confirm_pickup(entered_otp)
@@ -766,42 +778,38 @@ def confirm_pickup(request, pk):
         # Also send them the delivery OTP
         notify(
             recipient=delivery.food_request.ngo.email,
-            subject='Food is on the way!',
-            message=(
-                f'Hello '
-                f'{delivery.food_request.ngo.full_name}'
-                f',\n\n'
-                f'{request.user.full_name} has picked up '
-                f'"{delivery.food_request.food_post.title}"'
-                f' and is on the way to you.\n\n'
-                f'Your Delivery OTP: '
-                f'{delivery.delivery_otp}\n\n'
-                f'When the volunteer arrives, '
-                f'give them this OTP to confirm '
-                f'the delivery.\n\n'
-                f'- AhaarBonton'
-            ),
+            subject=_('Food is on the way!'),
+            message=_(
+                'Hello %(ngo_name)s,\n\n'
+                '%(volunteer_name)s has picked up "%(title)s" and is on the way to you.\n\n'
+                'Your Delivery OTP: %(otp)s\n\n'
+                'When the volunteer arrives, give them this OTP to confirm the delivery.\n\n'
+                '- AhaarBonton'
+            ) % {
+                'ngo_name': delivery.food_request.ngo.full_name,
+                'volunteer_name': request.user.full_name,
+                'title': delivery.food_request.food_post.title,
+                'otp': delivery.delivery_otp,
+            },
             method='email'
         )
         messages.success(
             request,
-            'Pickup confirmed! '
-            'The NGO has been notified that '
-            'food is on the way.'
+            _('Pickup confirmed! The NGO has been notified that food is on the way.')
         )
     elif result == 'already_confirmed':
-        messages.info(request, 'Pickup was already confirmed.')
+        messages.info(request, _('Pickup was already confirmed.'))
     elif result == 'expired':
-        messages.error(request, 'This food post has expired and cannot be picked up.')
+        messages.error(request, _('This food post has expired and cannot be picked up.'))
     elif result == 'not_assigned':
-        messages.error(request, 'This delivery is not assigned to you.')
+        messages.error(request, _('This delivery is not assigned to you.'))
     elif result == 'not_available':
-        messages.error(request, 'This delivery is no longer active.')
+        messages.error(request, _('This delivery is no longer active.'))
     else:
         _record_failed_otp(request, delivery, 'pickup')
         messages.error(
             request,
-            'Incorrect Pickup OTP. Please get the correct OTP from the donor.'
+            _('Incorrect Pickup OTP. Please get the correct OTP from the donor.')
         )
 
     return redirect('volunteer_dashboard')
@@ -817,7 +825,7 @@ def confirm_delivery(request, pk):
     Pickup must be confirmed first.
     """
     if request.user.role != 'volunteer':
-        messages.error(request, 'Access denied.')
+        messages.error(request, _('Access denied.'))
         return redirect('/')
     delivery = get_object_or_404(
         Delivery,
@@ -827,12 +835,12 @@ def confirm_delivery(request, pk):
 
     entered_otp = request.POST.get('otp', '').strip()
     if not entered_otp:
-        messages.error(request, 'Please enter the 6-digit OTP.')
+        messages.error(request, _('Please enter the 6-digit OTP.'))
         return redirect('volunteer_dashboard')
 
-    locked, _, _ = _otp_state(request, delivery, 'delivery')
+    locked, _state, _cache_key = _otp_state(request, delivery, 'delivery')
     if locked:
-        messages.error(request, 'Too many incorrect attempts. Try again in 5 minutes.')
+        messages.error(request, _('Too many incorrect attempts. Try again in 5 minutes.'))
         return redirect('volunteer_dashboard')
 
     result = delivery.confirm_delivery(entered_otp)
@@ -840,7 +848,7 @@ def confirm_delivery(request, pk):
     if result == 'pickup_first':
         messages.error(
             request,
-            'You must confirm pickup first before confirming delivery.'
+            _('You must confirm pickup first before confirming delivery.')
         )
 
     elif result == 'success':
@@ -850,40 +858,38 @@ def confirm_delivery(request, pk):
             recipient=(
                 delivery.food_request.food_post.donor.email
             ),
-            subject='Delivery completed!',
-            message=(
-                f'Hello '
-                f'{delivery.food_request.food_post.donor.full_name}'
-                f',\n\n'
-                f'"{delivery.food_request.food_post.title}"'
-                f' has been successfully delivered to '
-                f'{delivery.food_request.ngo.full_name}.'
-                f'\n\nYour trust score has been '
-                f'increased by 5 points. Thank you!\n\n'
-                f'- AhaarBonton'
-            ),
+            subject=_('Delivery completed!'),
+            message=_(
+                'Hello %(donor_name)s,\n\n'
+                '"%(title)s" has been successfully delivered to %(ngo_name)s.\n\n'
+                'Your trust score has been increased by 5 points. Thank you!\n\n'
+                '- AhaarBonton'
+            ) % {
+                'donor_name': delivery.food_request.food_post.donor.full_name,
+                'ngo_name': delivery.food_request.ngo.full_name,
+                'title': delivery.food_request.food_post.title,
+            },
             method='email'
         )
 
         messages.success(
             request,
-            'Delivery fully confirmed! '
-            'Food has reached the NGO.'
+            _('Delivery fully confirmed! Food has reached the NGO.')
         )
 
     elif result == 'already_confirmed':
-        messages.info(request, 'This delivery was already completed.')
+        messages.info(request, _('This delivery was already completed.'))
     elif result == 'expired':
-        messages.error(request, 'This food post has expired and cannot be delivered.')
+        messages.error(request, _('This food post has expired and cannot be delivered.'))
     elif result == 'not_assigned':
-        messages.error(request, 'This delivery is not assigned to you.')
+        messages.error(request, _('This delivery is not assigned to you.'))
     elif result == 'not_available':
-        messages.error(request, 'This delivery is no longer active.')
+        messages.error(request, _('This delivery is no longer active.'))
     else:
         _record_failed_otp(request, delivery, 'delivery')
         messages.error(
             request,
-            'Incorrect Delivery OTP. Please get the correct OTP from the NGO.'
+            _('Incorrect Delivery OTP. Please get the correct OTP from the NGO.')
         )
 
     return redirect('volunteer_dashboard')
@@ -991,11 +997,15 @@ def admin_expire_food(request):
         return denied
 
     if request.method != "POST":
-        messages.error(request, "Invalid request method.")
+        messages.error(request, _("Invalid request method."))
         return redirect("admin_dashboard")
 
     expired_count = FoodMatcher().auto_expire_old_posts()
-    messages.info(request, f"{expired_count} posts marked as expired.")
+    messages.info(
+        request,
+        ngettext("%(count)d post marked as expired.", "%(count)d posts marked as expired.", expired_count)
+        % {"count": expired_count},
+    )
     return redirect("admin_dashboard")
 
 
@@ -1012,7 +1022,7 @@ def custom_403(request, exception):
 def report_post(request, post_pk):
     post = get_object_or_404(FoodPost, pk=post_pk)
     if post.donor_id == request.user.pk:
-        messages.error(request, "You cannot report your own food post.")
+        messages.error(request, _("You cannot report your own food post."))
         return redirect(request.user.get_dashboard_url())
 
     form = ReportForm(request.POST or None, report_type="post")
@@ -1027,9 +1037,9 @@ def report_post(request, post_pk):
                     description=form.cleaned_data["description"],
                 )
         except IntegrityError:
-            messages.warning(request, "You have already reported this post.")
+            messages.warning(request, _("You have already reported this post."))
         else:
-            messages.success(request, "Report submitted. Our team will review it.")
+            messages.success(request, _("Report submitted. Our team will review it."))
         return redirect(request.user.get_dashboard_url())
 
     return render(
@@ -1043,7 +1053,7 @@ def report_post(request, post_pk):
 def report_user(request, user_pk):
     reported = get_object_or_404(CustomUser, pk=user_pk)
     if reported.pk == request.user.pk:
-        messages.error(request, "You cannot report your own account.")
+        messages.error(request, _("You cannot report your own account."))
         return redirect("user_profile", user_pk=reported.pk)
 
     form = ReportForm(request.POST or None, report_type="user")
@@ -1058,9 +1068,9 @@ def report_user(request, user_pk):
                     description=form.cleaned_data["description"],
                 )
         except IntegrityError:
-            messages.warning(request, "You have already reported this user.")
+            messages.warning(request, _("You have already reported this user."))
         else:
-            messages.success(request, "Report submitted. Our team will review it.")
+            messages.success(request, _("Report submitted. Our team will review it."))
         return redirect("user_profile", user_pk=reported.pk)
 
     return render(
@@ -1095,7 +1105,7 @@ def submit_rating(request, delivery_pk):
         "ngo_to_volunteer": request.user.pk == delivery.food_request.ngo_id,
     }
     if not participant_checks.get(rating_type, False):
-        messages.error(request, "You are not allowed to submit this rating.")
+        messages.error(request, _("You are not allowed to submit this rating."))
         return redirect(request.user.get_dashboard_url())
 
     # Determine who is being rated
@@ -1108,7 +1118,7 @@ def submit_rating(request, delivery_pk):
         rated_user = delivery.volunteer
 
     if not rated_user:
-        messages.error(request, 'Could not find user to rate.')
+        messages.error(request, _('Could not find user to rate.'))
         return redirect('/')
 
     # Validate score
@@ -1118,14 +1128,14 @@ def submit_rating(request, delivery_pk):
             raise ValueError
     except (ValueError, TypeError):
         messages.error(
-            request, 'Invalid score. Choose between 1-5.'
+            request, _('Invalid score. Choose between 1-5.')
         )
         return redirect('/')
 
     comment = comment.strip()[:1000]
     try:
         with transaction.atomic():
-            _, created = Rating.objects.get_or_create(
+            _rating, created = Rating.objects.get_or_create(
                 rater=request.user,
                 rated_user=rated_user,
                 delivery=delivery,
@@ -1136,9 +1146,9 @@ def submit_rating(request, delivery_pk):
         created = False
 
     if created:
-        messages.success(request, "Thank you. Your rating has been submitted.")
+        messages.success(request, _("Thank you. Your rating has been submitted."))
     else:
-        messages.warning(request, "You have already submitted this rating.")
+        messages.warning(request, _("You have already submitted this rating."))
     return redirect(request.user.get_dashboard_url())
 
 
@@ -1168,16 +1178,16 @@ def user_profile(request, user_pk):
         activity_count = profile_user.food_posts.filter(
             status=FoodPost.StatusChoices.DELIVERED
         ).count()
-        activity_label = "Donations delivered"
+        activity_label = _("Donations delivered")
     elif profile_user.role == CustomUser.RoleChoices.VOLUNTEER:
         trust_score = getattr(profile_user, "volunteer_profile", None)
         activity_count = profile_user.deliveries.filter(is_confirmed=True).count()
-        activity_label = "Deliveries completed"
+        activity_label = _("Deliveries completed")
     elif profile_user.role == CustomUser.RoleChoices.NGO:
         activity_count = profile_user.food_requests.filter(
             status=FoodRequest.StatusChoices.COMPLETED
         ).count()
-        activity_label = "Requests completed"
+        activity_label = _("Requests completed")
 
     context = {
         'profile_user': profile_user,
@@ -1283,7 +1293,8 @@ def food_map_view(request):
                 "id": post.pk,
                 "title": post.title,
                 "quantity": post.quantity,
-                "category": post.get_category_display(),
+                "category": post.category,
+                "category_label": post.get_category_display(),
                 "location": post.location,
                 "lat": round(float(post.latitude), 3),
                 "lng": round(float(post.longitude), 3),
