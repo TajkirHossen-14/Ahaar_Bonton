@@ -1,6 +1,6 @@
-const CACHE_NAME = 'ahaarbonton-v12';
+const CACHE_NAME = 'ahaarbonton-v21';
 const OFFLINE_PATH = '/offline/';
-const OFFLINE_CACHE_PREFIX = 'ahaarbonton-offline-v12-';
+const OFFLINE_CACHE_PREFIX = 'ahaarbonton-offline-v21-';
 const SUPPORTED_LANGUAGES = ['bn', 'en'];
 const FONT_ASSETS = [];
 const STATIC_ASSETS = ['/static/css/style.css', '/static/js/main.js', ...FONT_ASSETS];
