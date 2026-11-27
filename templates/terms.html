@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block page_title %}{% trans "Terms & Conditions" %} - {{ brand_name }}{% endblock %}
+
+{% block content %}
+<section class="container-narrow page-section policy-page">
+    <header class="policy-header">
+        <span class="policy-icon" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span>
+        <div>
+            <span class="eyebrow">{% trans "Community guidelines" %}</span>
+            <h1>{% trans "Terms & Conditions" %}</h1>
+            <p class="policy-lead">{% trans "Clear responsibilities for everyone who shares, requests, receives, or delivers food through AhaarBonton." %}</p>
+        </div>
+    </header>
+
+    <article class="card policy-card" aria-label="{% trans 'Terms & Conditions' %}">
+        <section class="policy-section" id="terms-account">
+            <h2>{% trans "Using your account" %}</h2>
+            <p>{% trans "Provide accurate information, choose the role that matches your participation, and keep your login details secure. You are responsible for activity carried out through your account." %}</p>
+        </section>
+
+        <section class="policy-section" id="terms-safety">
+            <h2>{% trans "Food safety comes first" %}</h2>
+            <p>{% trans "Donors must post only safe, usable food and provide accurate details about its condition, packaging, quantity, and expiry. NGOs and volunteers should check the food before handover and never distribute food they believe is unsafe." %}</p>
+        </section>
+
+        <section class="policy-section" id="terms-deliveries">
+            <h2>{% trans "Requests and deliveries" %}</h2>
+            <ul class="policy-list">
+                <li>{% trans "Request food only for genuine community needs." %}</li>
+                <li>{% trans "Honor accepted requests and delivery commitments, and communicate promptly if plans change." %}</li>
+                <li>{% trans "Keep pickup and delivery codes private. Share a code only with the person involved at that handover." %}</li>
+                <li>{% trans "Provide truthful confirmation when food is collected or delivered." %}</li>
+            </ul>
+        </section>
+
+        <section class="policy-section" id="terms-respect">
+            <h2>{% trans "Respect and honest participation" %}</h2>
+            <p>{% trans "Do not post misleading information, spam, abusive content, fraudulent requests, or false reports. Treat other members respectfully and use the reporting tools when something appears unsafe or dishonest." %}</p>
+        </section>
+
+        <section class="policy-section" id="terms-ratings">
+            <h2>{% trans "Ratings and reviews" %}</h2>
+            <p>{% trans "Rate only deliveries you took part in. Reviews should reflect the actual experience and must not contain harassment, hate speech, or another person's private information." %}</p>
+        </section>
+
+        <section class="policy-section" id="terms-platform">
+            <h2>{% trans "Platform responsibilities and limits" %}</h2>
+            <p>{% trans "AhaarBonton provides coordination and accountability tools; it does not certify the condition of food. Participants remain responsible for safe handling, storage, and distribution." %}</p>
+            <p>{% trans "Administrators may review reports, expire or remove unsafe or misleading posts, and restrict accounts that violate these terms." %}</p>
+        </section>
+
+        <section class="policy-section" id="terms-changes">
+            <h2>{% trans "Changes to these terms" %}</h2>
+            <p>{% trans "These terms may be updated as the platform evolves. Continued use after an update means you accept the revised terms." %}</p>
+        </section>
+    </article>
+
+    <div class="policy-actions">
+        <a href="{% url 'home' %}" class="btn btn-ghost">{% trans "Back to home" %}</a>
+        <a href="{% url 'privacy_policy' %}" class="btn btn-ghost">{% trans "Read the Privacy Policy" %}</a>
+        <a href="mailto:hello@ahaarbonton.com" class="btn btn-primary">{% trans "Contact support" %}</a>
+    </div>
+</section>
+{% endblock %}
