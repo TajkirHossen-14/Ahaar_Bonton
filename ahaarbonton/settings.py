@@ -55,6 +55,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "ahaarbonton.middleware.DefaultLanguageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "ahaarbonton.middleware.BengaliNumberMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
