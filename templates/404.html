@@ -1,4 +1,4 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% block page_title %}{% trans "Page not found" %} - AhaarBonton{% endblock %}
+{% block page_title %}{% trans "Page not found" %} - {{ brand_name }}{% endblock %}
 {% block content %}<section class="error-page"><div><div class="error-code">404</div><h1>{% trans "This page has moved on." %}</h1><p>{% trans "The link may be outdated, or the page may no longer exist. Let’s get you back to the community." %}</p><a href="{% url 'home' %}" class="btn btn-primary"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>{% trans "Back to home" %}</a></div></section>{% endblock %}
