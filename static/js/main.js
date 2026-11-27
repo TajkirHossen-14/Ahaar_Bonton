@@ -10,18 +10,27 @@
         return count === 1 ? singular : plural;
     }
 
+    function localizeDigits(value) {
+        return typeof window.ahaarLocalizeDigits === 'function'
+            ? window.ahaarLocalizeDigits(value)
+            : String(value);
+    }
+
     function interpolate(format, values) {
-        if (typeof window.interpolate === 'function') return window.interpolate(format, values, true);
-        return format.replace(/%\((\w+)\)[sd]/g, function (match, key) {
+        if (typeof window.ahaarInterpolate === 'function') {
+            return window.ahaarInterpolate(format, values);
+        }
+        const result = format.replace(/%\((\w+)\)[sd]/g, function (match, key) {
             return Object.prototype.hasOwnProperty.call(values, key) ? String(values[key]) : match;
         });
+        return localizeDigits(result);
     }
 
     const root = document.documentElement;
     const navToggle = document.getElementById('mobileNavToggle');
     const mainNav = document.getElementById('mainNav');
     const themeMenu = document.getElementById('themeMenu');
-const themeToggle = document.getElementById('themeToggle');
+    const themeToggle = document.getElementById('themeToggle');
     const THEME_KEY = 'ahaar_theme_preference';
     const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const themeModeLabels = {
@@ -41,9 +50,44 @@ const themeToggle = document.getElementById('themeToggle');
         if (shouldRestoreFocus) navToggle.focus();
     }
 
+    const menuCloseTimers = new WeakMap();
+    const animatedMenuSelector = '.nav-dropdown, .account-menu';
+
+    function isAnimatedMenu(menu) {
+        return Boolean(menu && menu.matches(animatedMenuSelector));
+    }
+
+    function openAnimatedMenu(menu) {
+        if (!isAnimatedMenu(menu)) return;
+        const closeTimer = menuCloseTimers.get(menu);
+        if (closeTimer) {
+            window.clearTimeout(closeTimer);
+            menuCloseTimers.delete(menu);
+        }
+        menu.classList.remove('is-closing');
+        menu.setAttribute('open', '');
+    }
+
+    function closeAnimatedMenu(menu) {
+        if (!menu || !menu.open) return;
+        if (!isAnimatedMenu(menu)) {
+            menu.removeAttribute('open');
+            return;
+        }
+        if (menu.classList.contains('is-closing')) return;
+        menu.classList.add('is-closing');
+        const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 180;
+        const closeTimer = window.setTimeout(function () {
+            menu.removeAttribute('open');
+            menu.classList.remove('is-closing');
+            menuCloseTimers.delete(menu);
+        }, delay);
+        menuCloseTimers.set(menu, closeTimer);
+    }
+
     function closeMenus(except) {
         document.querySelectorAll('details[open]').forEach(function (menu) {
-            if (menu !== except) menu.removeAttribute('open');
+            if (menu !== except) closeAnimatedMenu(menu);
         });
     }
 
@@ -69,6 +113,16 @@ const themeToggle = document.getElementById('themeToggle');
     document.addEventListener('click', function (event) {
         const menu = event.target.closest('details');
         if (menu) {
+            if (event.target.closest('summary') && isAnimatedMenu(menu)) {
+                event.preventDefault();
+                if (menu.open && !menu.classList.contains('is-closing')) {
+                    closeAnimatedMenu(menu);
+                } else {
+                    closeMenus(menu);
+                    openAnimatedMenu(menu);
+                }
+                return;
+            }
             closeMenus(menu);
             const mobileExploreMenu = window.innerWidth <= 900 && menu.classList.contains('nav-dropdown');
             if (!mobileExploreMenu || event.target.closest('a[href]')) closeNav();
@@ -519,7 +573,7 @@ const themeToggle = document.getElementById('themeToggle');
     document.querySelectorAll('.rating-form').forEach(function (form) {
         const output = form.querySelector('.rating-value');
         form.addEventListener('change', function () {
-            if (output) output.textContent = ratingValue(form) + ' / 5';
+            if (output) output.textContent = localizeDigits(ratingValue(form) + ' / 5');
         });
     });
 
@@ -619,15 +673,59 @@ const themeToggle = document.getElementById('themeToggle');
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
     };
 
+    const protectedTextSelector = 'script, style, textarea, input';
+    const localizableAttributes = ['title', 'alt', 'placeholder', 'aria-label', 'aria-valuetext'];
+
+    function localizeTextTree(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            if (node.parentElement && node.parentElement.closest(protectedTextSelector)) return;
+            const localized = localizeDigits(node.nodeValue);
+            if (localized !== node.nodeValue) node.nodeValue = localized;
+            return;
+        }
+        if (node.nodeType !== Node.ELEMENT_NODE || node.matches(protectedTextSelector)) return;
+        localizableAttributes.forEach(function (attribute) {
+            if (!node.hasAttribute(attribute)) return;
+            const current = node.getAttribute(attribute);
+            const localized = localizeDigits(current);
+            if (localized !== current) node.setAttribute(attribute, localized);
+        });
+        Array.from(node.childNodes).forEach(localizeTextTree);
+    }
+
+    if (root.lang === 'bn' && 'MutationObserver' in window) {
+        localizeTextTree(document.body);
+        const numberObserver = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.type === 'attributes') {
+                    const current = mutation.target.getAttribute(mutation.attributeName) || '';
+                    const localized = localizeDigits(current);
+                    if (localized !== current) mutation.target.setAttribute(mutation.attributeName, localized);
+                    return;
+                }
+                mutation.addedNodes.forEach(localizeTextTree);
+                if (mutation.type === 'characterData') localizeTextTree(mutation.target);
+            });
+        });
+        numberObserver.observe(document.body, {
+            childList: true,
+            subtree: true,
+            characterData: true,
+            attributes: true,
+            attributeFilter: localizableAttributes
+        });
+    }
+
     window.animateCounter = function (element) {
         const target = Number(element.dataset.count || element.textContent);
         if (!Number.isFinite(target) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const start = performance.now();
         function tick(now) {
             const progress = Math.min((now - start) / 900, 1);
-            element.textContent = Math.floor(target * (1 - Math.pow(1 - progress, 3))).toLocaleString(
-                            document.documentElement.lang || undefined
-                        );
+            const value = Math.floor(target * (1 - Math.pow(1 - progress, 3))).toLocaleString(
+                document.documentElement.lang || undefined
+            );
+            element.textContent = localizeDigits(value);
             if (progress < 1) requestAnimationFrame(tick);
         }
         requestAnimationFrame(tick);
