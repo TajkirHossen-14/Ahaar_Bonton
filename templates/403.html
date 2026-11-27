@@ -1,3 +1,4 @@
 {% extends 'base.html' %}
-{% block page_title %}Access denied - AhaarBonton{% endblock %}
-{% block content %}<section class="error-page"><div><div class="error-code">403</div><h1>This area needs a different role.</h1><p>Your account doesn’t have permission to access this page. Return to your own workspace to keep helping.</p><a href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" class="btn btn-primary"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>{% if request.user.is_authenticated %}Go to your workspace{% else %}Log in to continue{% endif %}</a></div></section>{% endblock %}
+{% load i18n %}
+{% block page_title %}{% trans "Access denied" %} - AhaarBonton{% endblock %}
+{% block content %}<section class="error-page"><div><div class="error-code">403</div><h1>{% trans "This area needs a different role." %}</h1><p>{% trans "Your account doesn’t have permission to access this page. Return to your own workspace to keep helping." %}</p><a href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" class="btn btn-primary"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>{% if request.user.is_authenticated %}{% trans "Go to your workspace" %}{% else %}{% trans "Log in to continue" %}{% endif %}</a></div></section>{% endblock %}
