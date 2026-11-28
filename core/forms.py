@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from food.forms import FoodPostForm
 from users.forms import CustomLoginForm, CustomRegistrationForm, ProfileUpdateForm
@@ -18,6 +19,10 @@ class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
         fields = ("reason", "description")
+        labels = {
+            "reason": _("Reason"),
+            "description": _("Details"),
+        }
         widgets = {
             "reason": forms.Select(attrs={"class": "form-control"}),
             "description": forms.Textarea(
@@ -25,7 +30,7 @@ class ReportForm(forms.ModelForm):
                     "class": "form-control",
                     "rows": 4,
                     "maxlength": 1500,
-                    "placeholder": "Add details that will help our team review this report.",
+                    "placeholder": _("Add details that will help our team review this report."),
                 }
             ),
         }
