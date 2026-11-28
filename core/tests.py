@@ -495,6 +495,23 @@ class AhaarBontonTests(TestCase):
         footer_html = footer_match.group(1)
 
         self.assertContains(response, 'id="faq"')
+        self.assertNotContains(response, "<h3>Resources</h3>")
+        bottom_match = re.search(
+            r'<div class="container footer-bottom">(.*?)</div>',
+            footer_html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(bottom_match)
+        bottom_html = bottom_match.group(1)
+        links_match = re.search(
+            r'<nav class="footer-links"[^>]*>(.*?)</nav>',
+            bottom_html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(links_match)
+        links_html = links_match.group(1)
+        self.assertNotIn("Food safety", bottom_html)
+
         expected_hrefs = (
             reverse("home") + "#faq",
             reverse("privacy_policy"),
@@ -502,7 +519,34 @@ class AhaarBontonTests(TestCase):
         )
         for href in expected_hrefs:
             with self.subTest(href=href):
-                self.assertIn(f'href="{href}"', footer_html)
+                self.assertIn(f'href="{href}"', links_html)
+
+    def test_faq_explains_end_to_end_donation_process(self):
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "bn"
+        response = self.client.get(reverse("home"))
+
+        self.assertContains(response, 'class="faq-process"')
+        self.assertContains(
+            response,
+            "ফুড পোস্ট থেকে ডেলিভারি পর্যন্ত পুরো প্রসেসটি কীভাবে চলে?",
+        )
+        for step in (
+            "ডোনার খাবারের পরিমাণ",
+            "এনজিও উপযুক্ত ফুড পোস্ট",
+            "দুইটি OTP-সহ একটি ডেলিভারি টাস্ক",
+            "ডোনারের OTP দিয়ে পিকআপ কনফার্ম",
+            "এনজিওর OTP দিয়ে ডেলিভারি কনফার্ম",
+            "লিডারবোর্ড ও ট্রান্সপারেন্সি ড্যাশবোর্ডে আপডেট",
+        ):
+            with self.subTest(step=step):
+                self.assertContains(response, step)
+
+        self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "en"
+        english_response = self.client.get(reverse("home"))
+        self.assertContains(
+            english_response,
+            "How does a donation move from post to delivery?",
+        )
 
     def test_policy_pages_render_in_bengali(self):
         self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = "bn"
@@ -515,6 +559,10 @@ class AhaarBontonTests(TestCase):
             with self.subTest(page=url_name):
                 response = self.client.get(reverse(url_name))
                 self.assertContains(response, f"<h1>{heading}</h1>")
+                self.assertNotContains(response, "<h3>রিসোর্স</h3>")
+                self.assertContains(response, 'class="footer-links"')
+                for label in ("সচরাচর জিজ্ঞাসা", "প্রাইভেসি পলিসি", "শর্তাবলি"):
+                    self.assertContains(response, f">{label}</a>")
 
     def test_map_json_escapes_user_generated_script_content(self):
         post = self.create_food_post()
@@ -728,12 +776,24 @@ class AhaarBontonTests(TestCase):
         self.assertNotContains(anonymous_home, 'class="hero-art-frame"')
         self.assertNotContains(anonymous_home, 'class="hero-route"')
         self.assertContains(anonymous_home, 'class="hero-note"')
+        self.assertContains(anonymous_home, 'class="hero-note hero-note-secondary"')
+        self.assertContains(anonymous_home, 'href="#i-truck"')
         self.assertContains(anonymous_home, "Successful deliveries")
         self.assertContains(anonymous_home, "Community members")
         self.assertNotContains(anonymous_home, "Meals delivered")
         self.assertNotContains(anonymous_home, "Servings delivered")
         self.assertEqual(anonymous_home.context["community_count"], CustomUser.objects.count())
         self.assertContains(anonymous_home, 'class="account-menu"')
+        account_summary_match = re.search(
+            r'<summary class="user-menu-toggle account-menu-toggle"[^>]*>(.*?)</summary>',
+            anonymous_home.content.decode(anonymous_home.charset or "utf-8"),
+            re.DOTALL,
+        )
+        self.assertIsNotNone(account_summary_match)
+        self.assertIn('class="avatar avatar-sm"', account_summary_match.group(1))
+        self.assertIn('href="#i-user"', account_summary_match.group(1))
+        self.assertNotIn('href="#i-menu"', account_summary_match.group(1))
+        self.assertContains(anonymous_home, 'id="mobileNavToggle"')
         self.assertNotContains(anonymous_home, 'nav-login')
         self.assertEqual(anonymous_home.content.count(b'class="impact-stat"'), 4)
         self.assertContains(anonymous_home, 'class="impact-stat-icon"', count=4)
