@@ -1,238 +1,293 @@
 {% extends 'base.html' %}
-
-{% block page_title %}Requests - AhaarBonton{% endblock %}
-
+{% load i18n %}
+{% block page_title %}{% trans "NGO requests" %} - {{ brand_name }}{% endblock %}
 {% block content %}
-<section class="container">
+<section class="container page-section">
     <header class="page-header">
         <div>
-            <h2>Incoming Requests</h2>
-            <p>Review and act on NGO requests for your food posts.</p>
+            <span class="eyebrow">{% trans "Donor workspace" %}</span>
+            <h1>{% trans "Incoming requests" %}</h1>
+            <p>{% trans "Review NGO requests, coordinate safe pickups, and follow every donation through delivery." %}</p>
         </div>
-        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm">Back</a>
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost">
+            <svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>{% trans "Back to dashboard" %}
+        </a>
     </header>
 
-    {% if pending_count > 0 %}
-        <div class="alert alert-warning">
-            <span class="alert-icon">⚠️</span>
-            <span class="alert-text">You have {{ pending_count }} pending request{{ pending_count|pluralize }}.</span>
-        </div>
+    {% if pending_count %}
+    <div class="alert alert-warning" role="status">
+        <svg class="icon alert-icon" aria-hidden="true"><use href="#i-clock"/></svg>
+        <span>{% blocktrans count counter=pending_count %}You have <strong>{{ counter }} pending request</strong> waiting for a decision. Respond before the food expires.{% plural %}You have <strong>{{ counter }} pending requests</strong> waiting for a decision. Respond before the food expires.{% endblocktrans %}</span>
+    </div>
     {% endif %}
 
-    {% if all_requests %}
-        <section class="how-section donor-pending-section">
-            <h3>Pending Requests</h3>
-            <div class="requests-list">
-                {% for req in pending_requests %}
-                    <article class="request-card">
-                        <div class="request-card-top">
-                            <div class="request-info">
-                                <h4>{{ req.food_post.title }}</h4>
-                                <p>Requested by {{ req.ngo.full_name }} · {{ req.requested_at|date:"d M Y, h:i A" }}</p>
-                                {% if req.message %}
-                                    <p class="request-message"><em>{{ req.message }}</em></p>
-                                {% endif %}
-                            </div>
-                            <div class="request-meta">
-                                <p><strong>Qty:</strong> {{ req.food_post.quantity }}</p>
-                                <p><strong>Expires:</strong> {{ req.food_post.expiry_time|date:"d M Y, h:i A" }}</p>
-                            </div>
-                        </div>
-                        <div class="request-actions">
-                            <form method="post" action="{% url 'handle_request' req.pk %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="approve">
-                                <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Approve this request?')">Approve</button>
-                            </form>
-                            <form method="post" action="{% url 'handle_request' req.pk %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="reject">
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject this request?')">Reject</button>
-                            </form>
-                        </div>
-                    </article>
-                {% empty %}
-                    <div class="empty-state card">
-                        <p>No pending requests.</p>
-                    </div>
-                {% endfor %}
+    <section class="workspace-section" aria-labelledby="pending-heading">
+        <div class="section-header">
+            <div>
+                <span class="eyebrow">{% trans "Needs your attention" %}</span>
+                <h2 id="pending-heading">{% trans "Awaiting your response" %}</h2>
+                <p class="section-description">{% trans "Check the NGO’s request and message before making a decision." %}</p>
             </div>
-        </section>
-
-        {% if approved_requests %}
-        <div class="section-header" style="margin-top:1.5rem;">
-            <h3>✅ Approved</h3>
+            <span class="badge badge-pending">{% blocktrans count counter=pending_count %}{{ counter }} pending{% plural %}{{ counter }} pending{% endblocktrans %}</span>
         </div>
-        <div class="requests-table-wrapper card"
-             style="padding:0;margin-bottom:1.5rem;">
-            <table class="requests-table donor-requests-table donor-approved-table">
-                <thead>
-                    <tr>
-                        <th>Food</th>
-                        <th>NGO</th>
-                        <th>Date</th>
-                        <th>Pickup OTP</th>
-                        <th>Pickup</th>
-                        <th>Delivery</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for req in approved_requests %}
-                <tr>
-                    <td data-label="Food">
-                        <strong>{{ req.food_post.title }}</strong>
-                    </td>
-                    <td data-label="NGO">{{ req.ngo.full_name }}</td>
-                    <td data-label="Date" style="font-size:0.82rem;
-                               color:var(--muted);">
-                        {{ req.requested_at|date:"M d, Y" }}
-                    </td>
-                    <td data-label="Pickup OTP">
-                        {% if req.delivery %}
+        <div class="request-list">
+            {% for req in pending_requests %}
+            <article class="card request-card">
+                <header class="request-card-header">
+                    <div class="request-person">
+                        {% if req.ngo.profile_pic %}
+                        <img class="avatar" src="{{ req.ngo.profile_pic.url }}" alt="">
+                        {% else %}
+                        <span class="avatar" aria-hidden="true">{{ req.ngo.full_name|slice:":1" }}</span>
+                        {% endif %}
                         <div>
-                            <p style="font-size:0.75rem;
-                                       color:var(--muted);
-                                       margin-bottom:4px;">
-                                Give to volunteer:
-                            </p>
-                            <span class="otp-box">
-                                {{ req.delivery.pickup_otp }}
-                            </span>
+                            <strong>{{ req.ngo.full_name }}</strong>
+                            <small>{% blocktrans with requested=req.requested_at|date:"d M Y, h:i A" %}Requested {{ requested }}{% endblocktrans %}</small>
+                        </div>
+                    </div>
+                    <span class="badge badge-pending">{% trans "Pending" %}</span>
+                </header>
+                <div class="request-card-body">
+                    <div class="request-card-title">
+                        <h3>{{ req.food_post.title }}</h3>
+                        <p>{% blocktrans with category=req.food_post.get_category_display %}{{ category }} donation{% endblocktrans %}</p>
+                    </div>
+                    <div class="request-facts-grid">
+                        <div>
+                            <small>{% trans "Quantity" %}</small>
+                            <strong>{% blocktrans count counter=req.food_post.quantity %}{{ counter }} serving{% plural %}{{ counter }} servings{% endblocktrans %}</strong>
+                        </div>
+                        <div>
+                            <small>{% trans "Pickup area" %}</small>
+                            <strong>{{ req.food_post.location|truncatechars:52 }}</strong>
+                        </div>
+                        <div>
+                            <small>{% trans "Best consumed before" %}</small>
+                            <strong{% if req.food_post.is_expired %} class="text-danger"{% endif %}>
+                                {% if req.food_post.is_expired %}{% trans "Expired" %}{% else %}{{ req.food_post.expiry_time|date:"d M Y, h:i A" }}{% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                    {% if req.message %}
+                    <div class="request-message">
+                        <strong>{% blocktrans with name=req.ngo.full_name %}Message from {{ name }}{% endblocktrans %}</strong>
+                        <p>{{ req.message }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <footer class="request-card-footer">
+                    <p>{% trans "Approving opens a delivery task for volunteers." %}</p>
+                    <div class="request-actions">
+                        <form method="post" action="{% url 'handle_request' req.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit" class="btn btn-primary btn-sm" data-confirm="{% trans "Approve this request and create a delivery task?" %}">
+                                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg>{% trans "Approve" %}
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'handle_request' req.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject">
+                            <button type="submit" class="btn btn-danger btn-sm" data-confirm="{% trans "Reject this request?" %}">
+                                <svg class="icon icon-sm" aria-hidden="true"><use href="#i-x"/></svg>{% trans "Reject" %}
+                            </button>
+                        </form>
+                    </div>
+                </footer>
+            </article>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-check"/></svg></div>
+                <h3>{% trans "You’re all caught up" %}</h3>
+                <p>{% trans "New NGO requests will appear here. Keep your available posts accurate so the right organizations can find them." %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="workspace-section" aria-labelledby="approved-heading">
+        <div class="section-header">
+            <div>
+                <span class="eyebrow">{% trans "Collection and handover" %}</span>
+                <h2 id="approved-heading">{% trans "Approved and in progress" %}</h2>
+                <p class="section-description">{% trans "Share the pickup OTP only with the volunteer assigned to this delivery." %}</p>
+            </div>
+        </div>
+        <div class="request-list">
+            {% for req in approved_requests %}
+            <article class="card request-list-card">
+                <header class="request-list-head">
+                    <div>
+                        <span class="eyebrow">{{ req.ngo.full_name }}</span>
+                        <h2>{{ req.food_post.title }}</h2>
+                        <p>{% blocktrans with requested=req.requested_at|date:"d M Y, h:i A" %}Requested {{ requested }}{% endblocktrans %}</p>
+                    </div>
+                    {% if req.delivery.delivery_confirmed %}
+                    <span class="badge badge-delivered">{% trans "Delivered" %}</span>
+                    {% elif req.delivery.pickup_confirmed %}
+                    <span class="badge badge-claimed">{% trans "In transit" %}</span>
+                    {% else %}
+                    <span class="badge badge-pending">{% trans "Waiting for pickup" %}</span>
+                    {% endif %}
+                </header>
+                <div class="request-list-body">
+                    <div class="request-list-main">
+                        <p>{% blocktrans count counter=req.food_post.quantity %}{{ counter }} serving{% plural %}{{ counter }} servings{% endblocktrans %} · {{ req.food_post.get_category_display }}</p>
+                        <div class="delivery-route">
+                            <div class="route-stop">
+                                <small><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>{% trans "Pickup" %}</small>
+                                <strong>{{ req.food_post.location|truncatechars:55 }}</strong>
+                                <span>{{ req.food_post.donor.full_name }}</span>
+                            </div>
+                            <span class="route-connector" aria-hidden="true"><svg class="icon icon-sm"><use href="#i-arrow"/></svg></span>
+                            <div class="route-stop">
+                                <small><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg>{% trans "Deliver to" %}</small>
+                                <strong>{{ req.ngo.full_name }}</strong>
+                                <span>{{ req.food_post.expiry_time|date:"d M Y, h:i A" }}</span>
+                            </div>
+                        </div>
+                        <div class="request-list-meta">
+                            <span><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>{% blocktrans with expiry=req.food_post.expiry_time|date:"d M Y, h:i A" %}Best consumed before {{ expiry }}{% endblocktrans %}</span>
+                            {% if req.delivery.volunteer %}
+                            <span><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>{% blocktrans with name=req.delivery.volunteer.full_name %}Volunteer: {{ name }}{% endblocktrans %}</span>
+                            {% endif %}
+                        </div>
+                        <div class="status-track" aria-hidden="true">
+                            <span class="complete"></span>
+                            <span class="{% if req.delivery.pickup_confirmed %}complete{% else %}current{% endif %}"></span>
+                            <span class="{% if req.delivery.delivery_confirmed %}complete{% elif req.delivery.pickup_confirmed %}current{% endif %}"></span>
+                        </div>
+                        <div class="status-caption" aria-hidden="true"><span>{% trans "Approved" %}</span><span>{% trans "Pickup" %}</span><span>{% trans "Delivered" %}</span></div>
+                    </div>
+                    <aside class="request-list-aside">
+                        {% if not req.delivery %}
+                        <h3>{% trans "Waiting for a volunteer" %}</h3>
+                        <p>{% trans "Your pickup OTP will be available once a volunteer accepts this delivery." %}</p>
+                        {% elif req.delivery.delivery_confirmed %}
+                        <h3>{% trans "Delivery complete" %}</h3>
+                        {% if req.delivery.delivered_at %}<p>{% blocktrans with name=req.ngo.full_name delivered=req.delivery.delivered_at|date:"d M Y, h:i A" %}This donation reached {{ name }} on {{ delivered }}.{% endblocktrans %}</p>{% else %}<p>{% blocktrans with name=req.ngo.full_name %}This donation reached {{ name }}.{% endblocktrans %}</p>{% endif %}
+                        <span class="badge badge-delivered"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg>{% trans "Confirmed" %}</span>
+                        {% else %}
+                        <h3>{% if req.delivery.pickup_confirmed %}{% trans "Food is in transit" %}{% else %}{% trans "Pickup verification" %}{% endif %}</h3>
+                        {% if not req.delivery.pickup_confirmed %}
+                        <p>{% trans "Give this six-digit code only to the assigned volunteer when they arrive." %}</p>
+                        <span class="otp-box" aria-label="{% blocktrans with otp=req.delivery.pickup_otp %}Pickup OTP {{ otp }}{% endblocktrans %}">{{ req.delivery.pickup_otp }}</span>
+                        {% else %}
+                        {% if req.delivery.picked_up_at %}<p>{% blocktrans with picked_up=req.delivery.picked_up_at|date:"h:i A" %}Pickup was confirmed at {{ picked_up }}. The volunteer will complete the handover with the NGO.{% endblocktrans %}</p>{% else %}<p>{% trans "Pickup was confirmed. The volunteer will complete the handover with the NGO." %}</p>{% endif %}
+                        <span class="badge badge-claimed">{% trans "Pickup confirmed" %}</span>
+                        {% endif %}
+                        {% endif %}
+                    </aside>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-truck"/></svg></div>
+                <h3>{% trans "No active deliveries" %}</h3>
+                <p>{% trans "Approved requests will appear here with pickup details and delivery progress." %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="workspace-section" aria-labelledby="completed-heading">
+        <div class="section-header">
+            <div>
+                <span class="eyebrow">{% trans "Community impact" %}</span>
+                <h2 id="completed-heading">{% trans "Completed deliveries" %}</h2>
+                <p class="section-description">{% trans "Confirm the volunteer’s handover with a rating once the donation is complete." %}</p>
+            </div>
+        </div>
+        <div class="request-list">
+            {% for req in completed_requests %}
+            <article class="card request-list-card">
+                <header class="request-list-head">
+                    <div>
+                        <span class="eyebrow">{% blocktrans with name=req.ngo.full_name %}Delivered to {{ name }}{% endblocktrans %}</span>
+                        <h2>{{ req.food_post.title }}</h2>
+                        <p>{% if req.delivery.delivered_at %}{{ req.delivery.delivered_at|date:"d M Y, h:i A" }}{% else %}{% trans "Delivery confirmed" %}{% endif %}</p>
+                    </div>
+                    <span class="badge badge-delivered">{% trans "Completed" %}</span>
+                </header>
+                <div class="request-list-body">
+                    <div class="request-list-main">
+                        <p>{% blocktrans count counter=req.food_post.quantity with name=req.ngo.full_name %}{{ counter }} serving reached {{ name }}.{% plural %}{{ counter }} servings reached {{ name }}.{% endblocktrans %}</p>
+                        <div class="request-list-meta">
+                            <span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>{{ req.food_post.location|truncatechars:60 }}</span>
+                            <span><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>{% trans "Donation delivered" %}</span>
+                        </div>
+                    </div>
+                    <aside class="request-list-aside">
+                        {% if req.delivery and req.delivery.is_confirmed and req.delivery.volunteer and req.delivery.pk not in donor_rated_delivery_ids %}
+                        <div class="rating-stack">
+                            <div class="rating-inline">
+                                <h3>{% blocktrans with name=req.delivery.volunteer.full_name %}Rate {{ name }}{% endblocktrans %}</h3>
+                                <p>{% trans "Your feedback helps maintain a reliable volunteer network." %}</p>
+                                {% with delivery=req.delivery %}
+                                    {% with rating_type="donor_to_volunteer" %}
+                                        {% include 'partials/rating_form.html' %}
+                                    {% endwith %}
+                                {% endwith %}
+                            </div>
                         </div>
                         {% else %}
-                            —
+                        <h3>{% trans "Thank you for sharing" %}</h3>
+                        <p>{% if req.delivery and req.delivery.pk in donor_rated_delivery_ids %}{% trans "Your feedback has been recorded." %}{% else %}{% trans "This completed donation is part of your community impact." %}{% endif %}</p>
+                        <span class="badge badge-delivered"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-check"/></svg>{% trans "Delivered" %}</span>
                         {% endif %}
-                    </td>
-                    <td data-label="Pickup">
-                        {% if req.delivery.pickup_confirmed %}
-                            <span class="badge badge-approved">
-                                Picked Up ✅
-                            </span>
-                            <div style="font-size:0.75rem;
-                                        color:var(--muted);
-                                        margin-top:3px;">
-                                {{ req.delivery.picked_up_at|date:"h:i A" }}
-                            </div>
-                        {% else %}
-                            <span class="badge badge-pending">
-                                Waiting
-                            </span>
-                        {% endif %}
-                    </td>
-                    <td data-label="Delivery">
-                        {% if req.delivery.delivery_confirmed %}
-                            <span class="badge badge-delivered">
-                                Delivered ✅
-                            </span>
-                            <div style="font-size:0.75rem;
-                                        color:var(--muted);
-                                        margin-top:3px;">
-                                {{ req.delivery.delivered_at|date:"h:i A" }}
-                            </div>
-                        {% elif req.delivery.pickup_confirmed %}
-                            <span class="badge badge-claimed">
-                                In Transit 🚚
-                            </span>
-                        {% else %}
-                            <span style="font-size:0.78rem;
-                                         color:var(--muted);">
-                                Not yet
-                            </span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </aside>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-heart"/></svg></div>
+                <h3>{% trans "Your impact will appear here" %}</h3>
+                <p>{% trans "Once a requested donation is delivered, you can follow its outcome and rate the volunteer." %}</p>
+            </div>
+            {% endfor %}
         </div>
-        {% endif %}
+    </section>
 
-        <section class="how-section donor-completed-section">
-            <h3>Completed Requests</h3>
-            <table class="requests-table donor-requests-table donor-completed-table">
-                <thead>
-                    <tr>
-                        <th>Food</th>
-                        <th>NGO</th>
-                        <th>Delivered Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for req in completed_requests %}
-                        <tr>
-                            <td data-label="Food">{{ req.food_post.title }}</td>
-                            <td data-label="NGO">{{ req.ngo.full_name }}</td>
-                            <td data-label="Delivered">{% if req.delivery %}{{ req.delivery.delivered_at|date:"d M Y, h:i A" }}{% else %}N/A{% endif %}</td>
-                            <td data-label="Status"><span class="badge-delivered">Completed</span></td>
-                        </tr>
-                        {% if req.delivery and req.delivery.is_confirmed and req.delivery.volunteer %}
-                            {% with delivery=req.delivery %}
-                            {# Check if already rated #}
-                            {% with already_rated=req.delivery.ratings.all %}
-                            {% if not already_rated|length %}
-                            <!-- Rating form for volunteer -->
-                            <tr>
-                                <td colspan="4"
-                                    style="padding:0 1rem 1rem;">
-                                    <div style="margin-top:0.5rem;">
-                                        <p style="font-size:0.82rem;
-                                                   font-weight:600;
-                                                   color:var(--green-700);
-                                                   margin-bottom:0.5rem;">
-                                            ⭐ Rate the Volunteer
-                                        </p>
-                                        {% with rating_type="donor_to_volunteer" %}
-                                        {% include 'partials/rating_form.html' %}
-                                        {% endwith %}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endif %}
-                            {% endwith %}
-                            {% endwith %}
-                        {% endif %}
-                    {% empty %}
-                        <tr>
-                            <td colspan="4">No completed requests.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </section>
-
-        <section class="how-section donor-rejected-section">
-            <h3>Rejected Requests</h3>
-            <table class="requests-table donor-requests-table donor-rejected-table">
-                <thead>
-                    <tr>
-                        <th>Food</th>
-                        <th>NGO</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for req in rejected_requests %}
-                        <tr>
-                            <td data-label="Food">{{ req.food_post.title }}</td>
-                            <td data-label="NGO">{{ req.ngo.full_name }}</td>
-                            <td data-label="Date">{{ req.requested_at|date:"d M Y, h:i A" }}</td>
-                            <td data-label="Status"><span class="badge-rejected">Rejected</span></td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="4">No rejected requests.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </section>
-    {% else %}
-        <div class="empty-state card">
-            <h4>No requests yet</h4>
-            <p>When NGOs request your posts, they will appear here.</p>
+    <section class="workspace-section" aria-labelledby="history-heading">
+        <div class="section-header">
+            <div>
+                <span class="eyebrow">{% trans "Record" %}</span>
+                <h2 id="history-heading">{% trans "Request history" %}</h2>
+                <p class="section-description">{% trans "Rejected requests remain visible for context." %}</p>
+            </div>
         </div>
-    {% endif %}
+        <div class="request-list">
+            {% for req in rejected_requests %}
+            <article class="card request-list-card">
+                <header class="request-list-head">
+                    <div>
+                        <span class="eyebrow">{{ req.ngo.full_name }}</span>
+                        <h2>{{ req.food_post.title }}</h2>
+                        <p>{% blocktrans with requested=req.requested_at|date:"d M Y, h:i A" %}Requested {{ requested }}{% endblocktrans %}</p>
+                    </div>
+                    <span class="badge badge-rejected">{% trans "Rejected" %}</span>
+                </header>
+                <div class="request-list-body">
+                    <div class="request-list-main">
+                        <p>{% blocktrans count counter=req.food_post.quantity %}{{ counter }} serving{% plural %}{{ counter }} servings{% endblocktrans %} · {{ req.food_post.get_category_display }}</p>
+                        <div class="request-list-meta">
+                            <span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>{{ req.food_post.location|truncatechars:60 }}</span>
+                        </div>
+                    </div>
+                    <aside class="request-list-aside">
+                        <h3>{% trans "Request closed" %}</h3>
+                        <p>{% trans "This request was not approved. No delivery task was created." %}</p>
+                    </aside>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-info"/></svg></div>
+                <h3>{% trans "No rejected requests" %}</h3>
+                <p>{% trans "Your request history is clear." %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
 </section>
 {% endblock %}
