@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-{% load static %}
-{% block page_title %}Log in - AhaarBonton{% endblock %}
+{% load static i18n %}
+{% block page_title %}{% trans "Log in" %} - {{ brand_name }}{% endblock %}
 {% block body_class %}auth-page{% endblock %}
 
 {% block content %}
 <section class="auth-wrapper">
     <div class="auth-shell auth-shell-login">
-        <aside class="auth-story" aria-label="About AhaarBonton">
-            <a href="{% url 'home' %}" class="brand" aria-label="AhaarBonton home">
+        <aside class="auth-story" aria-label="{% trans 'About AhaarBonton' %}">
+            <a href="{% url 'home' %}" class="brand" aria-label="{% trans 'AhaarBonton home' %}">
                 <span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span>
-                <span class="brand-name">Ahaar<span>Bonton</span></span>
+                <span class="brand-name">{% blocktrans %}Ahaar<span>Bonton</span>{% endblocktrans %}</span>
             </a>
             <div class="auth-network" aria-hidden="true">
                 <svg class="auth-network-lines" viewBox="0 0 520 340" fill="none">
@@ -19,28 +19,29 @@
                     <path d="M92 254C190 254 184 170 260 170S330 86 428 86"/>
                 </svg>
                 <div class="auth-network-center"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></div>
-                <div class="auth-network-node node-donor"><svg class="icon"><use href="#i-box"/></svg><span>Donor</span></div>
-                <div class="auth-network-node node-ngo"><svg class="icon"><use href="#i-building"/></svg><span>NGO</span></div>
-                <div class="auth-network-node node-volunteer"><svg class="icon"><use href="#i-truck"/></svg><span>Volunteer</span></div>
+                <div class="auth-network-node node-donor"><svg class="icon"><use href="#i-box"/></svg><span>{% trans "Donor" %}</span></div>
+                <div class="auth-network-node node-ngo"><svg class="icon"><use href="#i-building"/></svg><span>{% trans "NGO" %}</span></div>
+                <div class="auth-network-node node-volunteer"><svg class="icon"><use href="#i-truck"/></svg><span>{% trans "Volunteer" %}</span></div>
             </div>
             <div class="auth-story-copy">
-                <span class="auth-story-eyebrow">Every meal matters</span>
-                <h2>Good food moves when people connect.</h2>
-                <p>Your account brings food posts, requests, deliveries, and community impact into one clear workspace.</p>
+                <span class="auth-story-eyebrow">{% trans "Every meal matters" %}</span>
+                <h2>{% trans "Good food moves when people connect." %}</h2>
+                <p>{% trans "Your account brings food posts, requests, deliveries, and community impact into one clear workspace." %}</p>
                 <ul class="auth-story-list">
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Follow every request and delivery</li>
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Verify handovers with one-time codes</li>
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Build trust through completed actions</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>{% trans "Follow every request and delivery" %}</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>{% trans "Verify handovers with one-time codes" %}</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>{% trans "Build trust through completed actions" %}</li>
                 </ul>
-                <div class="auth-story-proof"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Verified handovers. Private by design.</div>
+                <div class="auth-story-proof"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>{% trans "Verified handovers. Private by design." %}</div>
             </div>
         </aside>
 
         <div class="auth-card">
             <header class="auth-header">
                 <div class="auth-logo"><svg aria-hidden="true"><use href="#i-leaf"/></svg></div>
-                <h1>Welcome back</h1>
-                <p>Log in to continue your community food-sharing journey.</p>
+                <h1>{% trans "Welcome back" %}</h1>
+                <p>{% trans "Log in to continue your community food-sharing journey." %}</p>
+                {% include 'partials/language_switcher.html' %}
             </header>
             <form method="post" action="{% url 'login' %}" novalidate data-enhanced-form>
                 {% csrf_token %}
@@ -50,7 +51,7 @@
                     <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
                 {% endif %}
                 <div class="form-group">
-                    <label for="id_identifier">Email or phone number</label>
+                    <label for="id_identifier">{% trans "Email or phone number" %}</label>
                     <div class="input-with-icon">
                         <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
                         <input type="text" id="id_identifier" name="identifier" value="{{ form.identifier.value|default:'' }}" autocomplete="username" placeholder="you@example.com or +8801XXXXXXXXX" required>
@@ -58,20 +59,20 @@
                     {{ form.identifier.errors }}
                 </div>
                 <div class="form-group">
-                    <label for="id_password">Password</label>
+                    <label for="id_password">{% trans "Password" %}</label>
                     <div class="password-field input-with-icon">
                         <svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>
-                        <input type="password" id="id_password" name="password" autocomplete="current-password" placeholder="Enter your password" required>
-                        <button type="button" class="password-toggle" data-target="id_password" aria-label="Show password" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></button>
+                        <input type="password" id="id_password" name="password" autocomplete="current-password" placeholder="{% trans 'Enter your password' %}" required>
+                        <button type="button" class="password-toggle" data-target="id_password" aria-label="{% trans 'Show password' %}" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></button>
                     </div>
                     {{ form.password.errors }}
                 </div>
                 <div class="form-actions">
-                    <a href="{% url 'password_reset' %}" class="muted auth-inline-link">Forgot password?</a>
+                    <a href="{% url 'password_reset' %}" class="muted auth-inline-link">{% trans "Forgot password?" %}</a>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg btn-full">Log in <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+                <button type="submit" class="btn btn-primary btn-lg btn-full">{% trans "Log in" %} <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
             </form>
-            <footer class="auth-footer">New to AhaarBonton? <a href="{% url 'register' %}">Create an account</a></footer>
+            <footer class="auth-footer">{% trans "New to AhaarBonton?" %} <a href="{% url 'register' %}">{% trans "Create an account" %}</a></footer>
         </div>
     </div>
 </section>
