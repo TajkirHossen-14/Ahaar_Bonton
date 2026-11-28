@@ -1,118 +1,231 @@
 {% extends 'base.html' %}
-
-{% block page_title %}Edit Food - AhaarBonton{% endblock %}
-
+{% load i18n %}
+{% block page_title %}{% blocktrans with title=post.title %}Edit {{ title }}{% endblocktrans %} - {{ brand_name }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+{% endblock %}
 {% block content %}
-<section class="container">
+<section class="container page-section">
     <header class="page-header">
         <div>
-            <h2>Edit Food Post</h2>
-            <p>Updating <strong>{{ post.title }}</strong></p>
+            <span class="eyebrow">{% trans "Donor workspace" %}</span>
+            <h1>{% trans "Edit food post" %}</h1>
+            <p>{% blocktrans with title=post.title %}Keep <strong>{{ title }}</strong> accurate and ready to collect.{% endblocktrans %}</p>
         </div>
-        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost btn-sm">Back</a>
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost">
+            <svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>{% trans "Back to dashboard" %}
+        </a>
     </header>
 
     <div class="add-food-layout">
-        <div class="card">
-            <form method="post" enctype="multipart/form-data" action="{% url 'edit_food' post.pk %}">
-                {% csrf_token %}
-
-                <div>
-                    <label for="id_title">Title</label>
-                    <input type="text" id="id_title" name="title" value="{{ form.title.value|default:post.title }}" required>
-                    {% if form.title.errors %}<p class="location-error">{{ form.title.errors.0 }}</p>{% endif %}
-                </div>
-
-                <div>
-                    <label for="id_description">Description</label>
-                    <textarea id="id_description" name="description" required>{{ form.description.value|default:post.description }}</textarea>
-                    {% if form.description.errors %}<p class="location-error">{{ form.description.errors.0 }}</p>{% endif %}
-                </div>
-
-                <div class="form-row">
-                    <div>
-                        <label for="id_quantity">Quantity</label>
-                        <input type="number" id="id_quantity" name="quantity" min="1" value="{{ form.quantity.value|default:post.quantity }}" required>
-                        {% if form.quantity.errors %}<p class="location-error">{{ form.quantity.errors.0 }}</p>{% endif %}
+        <div class="card form-card">
+            <div class="form-card-header">
+                <h2>{% trans "Donation details" %}</h2>
+                <p>{% trans "Update anything that has changed. NGOs see the latest details when they request this food." %}</p>
+            </div>
+            <div class="form-card-body">
+                <form method="post" enctype="multipart/form-data" action="{% url 'edit_food' post.pk %}" novalidate data-enhanced-form>
+                    {% csrf_token %}
+                    {% if form.errors %}
+                    <div class="form-summary" data-form-summary role="alert" tabindex="-1">
+                        <strong>{% trans "Please review your changes." %}</strong>
+                        <p>{% trans "Some fields need your attention before this post can be updated." %}</p>
                     </div>
-                    <div>
-                        <label for="id_category">Category</label>
-                        {% with selected_category=form.category.value|default:post.category %}
-                        <select id="id_category" name="category" required>
-                            <option value="cooked" {% if selected_category == 'cooked' %}selected{% endif %}>🍛 Cooked</option>
-                            <option value="raw" {% if selected_category == 'raw' %}selected{% endif %}>🥦 Raw</option>
-                            <option value="packaged" {% if selected_category == 'packaged' %}selected{% endif %}>📦 Packaged</option>
-                            <option value="bakery" {% if selected_category == 'bakery' %}selected{% endif %}>🥖 Bakery</option>
-                        </select>
-                        {% endwith %}
-                        {% if form.category.errors %}<p class="location-error">{{ form.category.errors.0 }}</p>{% endif %}
-                    </div>
-                </div>
-
-                <div>
-                    <label for="id_location">Location</label>
-                    <div class="location-field-wrapper">
-                        <input type="text" id="id_location" name="location" value="{{ form.location.value|default:post.location }}" required>
-                        <button type="button" id="detectLocationBtn" onclick="detectLocation()" class="btn btn-ghost location-detect-btn">📍 Use My Location</button>
-                    </div>
-                    <input type="hidden" id="id_latitude" name="latitude" value="{{ post.latitude|default:'' }}">
-                    <input type="hidden" id="id_longitude" name="longitude" value="{{ post.longitude|default:'' }}">
-                    <div id="locationMapPreview" class="location-map-preview"></div>
-                    <p id="locationCoords" class="location-coords"></p>
-                    <p class="form-hint">Click Use My Location to auto-fill address using GPS</p>
-                    {% if form.location.errors %}<p class="location-error">{{ form.location.errors.0 }}</p>{% endif %}
-                </div>
-
-                <div>
-                    <label for="id_expiry_time">Expiry Time</label>
-                    {% if form.expiry_time.value %}
-                        <input type="datetime-local" id="id_expiry_time" name="expiry_time" value="{{ form.expiry_time.value }}" required>
-                    {% else %}
-                        <input type="datetime-local" id="id_expiry_time" name="expiry_time" value="{{ post.expiry_time|date:'Y-m-d\\TH:i' }}" required>
                     {% endif %}
-                    {% if form.expiry_time.errors %}<p class="location-error">{{ form.expiry_time.errors.0 }}</p>{% endif %}
-                </div>
 
-                <div>
-                    <label for="id_image">Image</label>
-                    <input type="file" id="id_image" name="image" accept="image/*">
-                    {% if form.image.errors %}<p class="location-error">{{ form.image.errors.0 }}</p>{% endif %}
-                </div>
+                    <section class="form-section form-section-first" aria-labelledby="food-details-heading">
+                        <h3 class="form-section-title" id="food-details-heading">
+                            {% trans "Describe the food" %}
+                            <span>{% trans "Help people understand what they are collecting." %}</span>
+                        </h3>
+                        <div class="form-group">
+                            <label for="id_title">{% trans "Food title" %} <span aria-hidden="true">*</span></label>
+                            <input type="text" id="id_title" name="title" maxlength="255" minlength="3"
+                                   value="{% if form.is_bound %}{{ form.title.value|default:'' }}{% else %}{{ post.title }}{% endif %}"
+                                   placeholder="{% trans "e.g. Fresh meals for 20 people" %}"
+                                   aria-describedby="id_title_help{% if form.title.errors %} id_title_error{% endif %}"
+                                   {% if form.title.errors %}aria-invalid="true"{% endif %} required>
+                            <p class="form-hint" id="id_title_help">{% trans "Use a short, specific title that stands out." %}</p>
+                            {{ form.title.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_description">{% trans "Description" %} <span aria-hidden="true">*</span></label>
+                            <textarea id="id_description" name="description" rows="4" minlength="10"
+                                      placeholder="{% trans "What food is available? Mention freshness, ingredients, and packaging." %}"
+                                      aria-describedby="id_description_help{% if form.description.errors %} id_description_error{% endif %}"
+                                      {% if form.description.errors %}aria-invalid="true"{% endif %} required>{% if form.is_bound %}{{ form.description.value|default:'' }}{% else %}{{ post.description }}{% endif %}</textarea>
+                            <p class="form-hint" id="id_description_help">{% trans "Include ingredients, storage conditions, and whether containers are included." %}</p>
+                            {{ form.description.errors }}
+                        </div>
+                    </section>
 
-                {% if form.non_field_errors %}
-                    <p class="location-error">{{ form.non_field_errors.0 }}</p>
-                {% endif %}
+                    <section class="form-section" aria-labelledby="food-quantity-heading">
+                        <h3 class="form-section-title" id="food-quantity-heading">
+                            {% trans "Quantity and category" %}
+                            <span>{% trans "Give collectors a realistic idea of the portion size." %}</span>
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_quantity">{% trans "Servings or packages" %} <span aria-hidden="true">*</span></label>
+                                <input type="number" id="id_quantity" name="quantity" min="1" step="1"
+                                       value="{% if form.is_bound %}{{ form.quantity.value|default:'' }}{% else %}{{ post.quantity }}{% endif %}"
+                                       aria-describedby="id_quantity_help{% if form.quantity.errors %} id_quantity_error{% endif %}"
+                                       {% if form.quantity.errors %}aria-invalid="true"{% endif %} required>
+                                <p class="form-hint" id="id_quantity_help">{% trans "Estimate the number of people this donation can serve." %}</p>
+                                {{ form.quantity.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_category">{% trans "Category" %} <span aria-hidden="true">*</span></label>
+                                <select id="id_category" name="category"
+                                        aria-describedby="id_category_help{% if form.category.errors %} id_category_error{% endif %}"
+                                        {% if form.category.errors %}aria-invalid="true"{% endif %} required>
+                                    <option value="">{% trans "Select a category" %}</option>
+                                    {% for value, label in form.category.field.choices %}
+                                    <option value="{{ value }}" {% if form.is_bound %}{% if form.category.value == value %}selected{% endif %}{% elif post.category == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <p class="form-hint" id="id_category_help">{% trans "Choose the closest match." %}</p>
+                                {{ form.category.errors }}
+                            </div>
+                        </div>
+                    </section>
 
-                <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
-            </form>
+                    <section class="form-section" aria-labelledby="pickup-heading">
+                        <h3 class="form-section-title" id="pickup-heading">
+                            {% trans "Pickup location" %}
+                            <span>{% trans "A nearby landmark is essential; precise GPS coordinates are optional." %}</span>
+                        </h3>
+                        <div class="form-group">
+                            <label for="id_location">{% trans "Pickup address or landmark" %} <span aria-hidden="true">*</span></label>
+                            <div class="location-field-wrapper">
+                                <input type="text" id="id_location" name="location" maxlength="255" minlength="2"
+                                       value="{% if form.is_bound %}{{ form.location.value|default:'' }}{% else %}{{ post.location }}{% endif %}"
+                                       placeholder="{% trans "Area, street, or landmark" %}" autocomplete="street-address"
+                                       aria-describedby="id_location_help id_location_status{% if form.location.errors %} id_location_error{% endif %}"
+                                       {% if form.location.errors %}aria-invalid="true"{% endif %} required>
+                                <button type="button" id="detectLocationBtn" class="btn btn-ghost location-detect-btn">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span data-location-label>{% trans "Use my location" %}</span>
+                                </button>
+                            </div>
+                            <p class="form-hint" id="id_location_help">{% trans "Share enough detail for a volunteer to find the pickup point without exposing unnecessary personal information." %}</p>
+                            <input type="hidden" id="id_latitude" name="latitude"
+                                   value="{% if form.is_bound %}{{ form.latitude.value|default:'' }}{% elif post.latitude is not None %}{{ post.latitude }}{% endif %}">
+                            <input type="hidden" id="id_longitude" name="longitude"
+                                   value="{% if form.is_bound %}{{ form.longitude.value|default:'' }}{% elif post.longitude is not None %}{{ post.longitude }}{% endif %}">
+                            <div id="locationMapPreview" class="location-map-preview" aria-label="{% trans "Selected location preview" %}">
+                                <div class="location-map-fallback">{% trans "The interactive map is unavailable. You can still save with a clear address or landmark." %}</div>
+                            </div>
+                            <p id="locationStatus" class="form-hint" aria-live="polite">{% trans "GPS is optional. Add a nearby landmark for volunteers." %}</p>
+                            {{ form.latitude.errors }}{{ form.longitude.errors }}{{ form.location.errors }}
+                        </div>
+                    </section>
+
+                    <section class="form-section" aria-labelledby="safety-heading">
+                        <h3 class="form-section-title" id="safety-heading">
+                            {% trans "Food safety and photo" %}
+                            <span>{% trans "Set a safe deadline and show the actual donation." %}</span>
+                        </h3>
+                        <div class="form-group">
+                            <label for="id_expiry_time">{% trans "Best consumed before" %} <span aria-hidden="true">*</span></label>
+                            <input type="datetime-local" id="id_expiry_time" name="expiry_time"
+                                   value="{% if form.is_bound %}{{ form.expiry_time.value|default:'' }}{% else %}{{ post.expiry_time|date:'Y-m-d\TH:i' }}{% endif %}"
+                                   aria-describedby="id_expiry_time_help{% if form.expiry_time.errors %} id_expiry_time_error{% endif %}"
+                                   {% if form.expiry_time.errors %}aria-invalid="true"{% endif %} required>
+                            <p class="form-hint" id="id_expiry_time_help">{% trans "Expiry must be in the future. If the food is no longer safe, do not extend this deadline." %}</p>
+                            {{ form.expiry_time.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label class="file-upload" for="id_image">
+                                <svg class="icon" aria-hidden="true"><use href="#i-box"/></svg>
+                                <span>
+                                    <strong>{% trans "Choose a replacement photo" %}</strong>
+                                    <small>{% trans "Optional · leave empty to keep the current photo" %}</small>
+                                </span>
+                                <input type="file" id="id_image" name="image" accept="image/*"
+                                       data-preview="previewImg" data-placeholder="previewPlaceholder"
+                                       aria-describedby="id_image_help{% if form.image.errors %} id_image_error{% endif %}"
+                                       {% if form.image.errors %}aria-invalid="true"{% endif %}>
+                            </label>
+                            <p class="form-hint form-upload-help" id="id_image_help">{% trans "Select a new image only if it better represents the current donation." %}</p>
+                            {{ form.image.errors }}
+                        </div>
+                    </section>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>{% trans "Save changes" %}
+                        </button>
+                        <a href="{% url 'donor_dashboard' %}" class="btn btn-ghost">{% trans "Cancel" %}</a>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <aside class="preview-panel">
+        <aside class="preview-panel" aria-label="{% trans "Current donation and guidance" %}">
             <div class="preview-box card">
-                <div id="previewPlaceholder" class="preview-placeholder {% if post.image %}hidden{% endif %}">Image preview appears here</div>
+                <div id="previewPlaceholder" class="preview-placeholder {% if post.image %}hidden{% endif %}">
+                    <span><svg class="icon icon-lg" aria-hidden="true"><use href="#i-box"/></svg>{% trans "No food photo is attached." %}</span>
+                </div>
                 {% if post.image %}
-                    <img id="previewImg" src="{{ post.image.url }}" alt="{{ post.title }}">
+                <img id="previewImg" src="{{ post.image.url }}" alt="{{ post.title }}">
                 {% else %}
-                    <img id="previewImg" class="hidden" alt="{{ post.title }}">
+                <img id="previewImg" class="hidden" alt="{% trans "Food preview" %}">
                 {% endif %}
             </div>
-
             <div class="card">
-                <h4>Status Overview</h4>
-                <p>
-                    {% if post.status == 'available' %}
-                        <span class="badge-available">Available</span>
-                    {% elif post.status == 'claimed' %}
-                        <span class="badge-claimed">Claimed</span>
-                    {% elif post.status == 'delivered' %}
-                        <span class="badge-delivered">Delivered</span>
-                    {% elif post.status == 'expired' %}
-                        <span class="badge-expired">Expired</span>
-                    {% endif %}
+                <div class="card-status-line">
+                    <h3>{% trans "Post status" %}</h3>
+                    <span class="badge badge-{{ post.status }}">{{ post.get_status_display }}</span>
+                </div>
+                <p class="current-image-note">
+                    <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+                    {% if post.is_expired %}{% trans "This post has expired and cannot be requested." %}{% else %}{% blocktrans with expiry=post.expiry_time|date:"d M Y, h:i A" %}Best consumed before {{ expiry }}.{% endblocktrans %}{% endif %}
                 </p>
-                <p class="food-meta">Time remaining: {{ post.time_remaining }}</p>
+                {% if post.image %}
+                <p class="current-image-note">
+                    <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>{% trans "The current photo stays unless you select a replacement." %}
+                </p>
+                {% endif %}
+            </div>
+            <div class="card form-tips">
+                <h3><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>{% trans "Keep it accurate" %}</h3>
+                <ul class="form-tip-list">
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>{% trans "Update the quantity if any food has already been collected." %}</span></li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>{% trans "Keep pickup instructions clear and current." %}</span></li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>{% trans "Never extend expiry beyond the food’s safe consumption window." %}</span></li>
+                </ul>
             </div>
         </aside>
     </div>
 </section>
+{% endblock %}
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var box = document.getElementById('locationMapPreview');
+    if (!box || !window.L) return;
+
+    var latitude = parseFloat(document.getElementById('id_latitude').value);
+    var longitude = parseFloat(document.getElementById('id_longitude').value);
+    var hasLocation = Number.isFinite(latitude) && Number.isFinite(longitude);
+
+    box.textContent = '';
+    var map = L.map(box, { scrollWheelZoom: false }).setView(
+        hasLocation ? [latitude, longitude] : [23.8103, 90.4125],
+        hasLocation ? 16 : 12
+    );
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var marker = hasLocation ? L.marker([latitude, longitude]).addTo(map) : null;
+    window.addEventListener('ahaar:location', function (event) {
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([event.detail.latitude, event.detail.longitude]).addTo(map);
+        map.setView([event.detail.latitude, event.detail.longitude], 16);
+    });
+    window.setTimeout(function () { map.invalidateSize(); }, 0);
+});
+</script>
 {% endblock %}
