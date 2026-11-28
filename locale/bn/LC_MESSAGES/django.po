@@ -305,6 +305,10 @@ msgstr "মানুষের বিশ্বাস পাওয়া এমন
 msgid "A rolling 12-month view of confirmed community deliveries"
 msgstr "কনফার্মড কমিউনিটি ডেলিভারির গত ১২ মাসের চিত্র"
 
+#: templates/home.html:177
+msgid "A volunteer accepts the task, collects the food, and confirms pickup with the donor's OTP."
+msgstr "ভলান্টিয়ার টাস্কটি নিয়ে খাবার সংগ্রহ করেন এবং ডোনারের OTP দিয়ে পিকআপ কনফার্ম করেন।"
+
 #: templates/ngo/my_requests.html:85
 msgid ""
 "A volunteer has not accepted this delivery yet. Keep the food ready for "
@@ -451,6 +455,10 @@ msgstr "এই তথ্য দিয়ে একটা অ্যাকাউ�
 #: users/forms.py:68
 msgid "An account with this email already exists."
 msgstr "এই ইমেইল দিয়ে একটা অ্যাকাউন্ট আগেই আছে।"
+
+#: templates/home.html:175
+msgid "An NGO finds a suitable post and sends a request to the donor."
+msgstr "এনজিও উপযুক্ত ফুড পোস্ট খুঁজে ডোনারের কাছে রিকোয়েস্ট পাঠায়।"
 
 #: templates/base.html:112
 msgid "Appearance"
@@ -2002,6 +2010,10 @@ msgstr "হোম"
 #: templates/home.html:117
 msgid "How accountability works"
 msgstr "জবাবদিহি কীভাবে কাজ করে"
+
+#: templates/home.html:172
+msgid "How does a donation move from post to delivery?"
+msgstr "ফুড পোস্ট থেকে ডেলিভারি পর্যন্ত পুরো প্রসেসটি কীভাবে চলে?"
 
 #: templates/home.html:168
 msgid "How is food safety handled?"
@@ -3595,6 +3607,14 @@ msgstr "কমিউনিটি প্রভাবটি দেখতে পা
 msgid "The current photo stays unless you select a replacement."
 msgstr "বদলানো ছবি না বেছে নিলে বর্তমান ছবিই থাকবে।"
 
+#: templates/home.html:174
+msgid "The donor posts surplus food with its quantity, pickup location, and expiry time."
+msgstr "ডোনার খাবারের পরিমাণ, পিকআপ লোকেশন ও এক্সপায়ারি সময়সহ ফুড পোস্ট করেন।"
+
+#: templates/home.html:176
+msgid "The donor approves the request, the food is reserved, and a delivery task with two OTPs is created."
+msgstr "ডোনার রিকোয়েস্ট অ্যাপ্রুভ করলে ফুডটি রিজার্ভ হয় এবং দুইটি OTP-সহ একটি ডেলিভারি টাস্ক তৈরি হয়।"
+
 #: templates/ngo/my_requests.html:71
 msgid ""
 "The donor has your request and note. You will see the status change here as "
@@ -3663,6 +3683,10 @@ msgstr ""
 msgid "The map is ready for its first donation."
 msgstr "মানচিত্রটি প্রথম ডোনেশনের জন্য প্রস্তুত।"
 
+#: templates/home.html:179
+msgid "The request is completed, trust scores increase, and the delivery updates the leaderboard and transparency dashboard."
+msgstr "রিকোয়েস্টটি সম্পন্ন হয়, ট্রাস্ট স্কোর বাড়ে এবং ডেলিভারিটি লিডারবোর্ড ও ট্রান্সপারেন্সি ড্যাশবোর্ডে আপডেট হয়।"
+
 #: templates/auth/password_reset_confirm.html:42
 msgid ""
 "The reset link is invalid or has already been used. Request a new link to "
@@ -3675,6 +3699,10 @@ msgid ""
 "The volunteer confirmed the handover. This request will move to completed."
 msgstr ""
 "ভলান্টিয়ার হ্যান্ডওভার কনফার্ম করেছেন। এই রিকোয়েস্টটি এখন সম্পন্ন হবে।"
+
+#: templates/home.html:178
+msgid "The volunteer hands the food to the NGO and confirms delivery with the NGO's OTP."
+msgstr "ভলান্টিয়ার খাবার এনজিওর কাছে পৌঁছে দিয়ে এনজিওর OTP দিয়ে ডেলিভারি কনফার্ম করেন।"
 
 #: templates/403.html:4
 msgid "This area needs a different role."
@@ -4407,8 +4435,8 @@ msgid "FAQ"
 msgstr "সচরাচর জিজ্ঞাসা"
 
 #: templates/base.html
-msgid "Footer resources"
-msgstr "ফুটারের লিংক"
+msgid "Resources"
+msgstr "রিসোর্স"
 
 #: templates/base.html templates/privacy.html
 msgid "Privacy Policy"
