@@ -1,459 +1,288 @@
 {% extends 'base.html' %}
-{% block page_title %}Food Map - AhaarBonton{% endblock %}
+{% load i18n %}
+{% block page_title %}{% trans "Food map" %} - {{ brand_name }}{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""/>
-<style>
-/* ── Map Page Layout ─────────────────────────── */
-.map-page-header 
-{
-    text-align: center;
-    margin-bottom: 28px;
-}
-.map-page-header h2 
-{
-    font-family: var(--font-head);
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--green-700);
-    margin-bottom: 4px;
-}
-[data-theme="dark"] .map-page-header h2 
-{
-    color: var(--green-400);
-}
-.map-page-header p 
-{
-    font-size: 0.95rem;
-    color: var(--text-muted);
-}
-
-.map-layout 
-{
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 24px;
-    align-items: start;
-}
-
-/* ── Map Container ───────────────────────────── */
-.map-container 
-{
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border);
-}
-#foodMap 
-{
-    height: 620px;
-    width: 100%;
-    background: var(--bg-surface);
-}
-
-/* ── Sidebar ─────────────────────────────────── */
-.map-sidebar 
-{
-    background: var(--bg-surface);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
-    overflow: hidden;
-}
-.map-sidebar-header 
-{
-    padding: 20px 20px 14px;
-    border-bottom: 1px solid var(--border);
-}
-.map-sidebar-header h3 
-{
-    font-family: var(--font-head);
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 2px;
-}
-.map-sidebar-header p 
-{
-    font-size: 0.82rem;
-    color: var(--text-muted);
-}
-
-#mapSidebar 
-{
-    overflow-y: auto;
-    max-height: 560px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-md) transparent;
-}
-#mapSidebar::-webkit-scrollbar 
-{
-    width: 6px;
-}
-#mapSidebar::-webkit-scrollbar-thumb 
-{
-    background: var(--border-md);
-    border-radius: 3px;
-}
-
-.map-post-item 
-{
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: var(--transition);
-}
-.map-post-item:last-child 
-{
-    border-bottom: none;
-}
-.map-post-item:hover 
-{
-    background: var(--green-50);
-}
-.map-post-item.active 
-{
-    background: var(--green-100);
-    border-left: 3px solid var(--green-700);
-}
-[data-theme="dark"] .map-post-item:hover 
-{
-    background: rgba(77, 200, 135, 0.08);
-}
-[data-theme="dark"] .map-post-item.active 
-{
-    background: rgba(77, 200, 135, 0.14);
-    border-left-color: var(--green-400);
-}
-.map-post-item h4 
-{
-    font-family: var(--font-head);
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 5px;
-    line-height: 1.3;
-}
-.map-post-item .post-meta {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    margin-bottom: 2px;
-}
-.map-post-item .post-expiry {
-    font-size: 0.78rem;
-    color: var(--amber-700);
-    font-weight: 600;
-}
-[data-theme="dark"] .map-post-item .post-expiry {
-    color: var(--amber-400);
-}
-.map-post-item .post-location {
-    font-size: 0.76rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* ── Empty State ─────────────────────────────── */
-.map-empty {
-    padding: 40px 20px;
-    text-align: center;
-}
-.map-empty .empty-icon {
-    font-size: 3rem;
-    margin-bottom: 12px;
-    opacity: 0.5;
-}
-.map-empty h4 {
-    font-family: var(--font-head);
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 4px;
-}
-.map-empty p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-/* ── Leaflet Popup Overrides ─────────────────── */
-.leaflet-popup-content-wrapper {
-    border-radius: 12px !important;
-    box-shadow: var(--shadow-md) !important;
-    padding: 0 !important;
-}
-.leaflet-popup-content {
-    margin: 0 !important;
-    min-width: 220px;
-}
-.map-popup {
-    font-family: var(--font-body);
-    padding: 16px;
-}
-.map-popup h4 {
-    font-family: var(--font-head);
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin: 0 0 8px;
-    line-height: 1.3;
-}
-.map-popup .popup-row {
-    font-size: 0.82rem;
-    color: #4B5563;
-    margin: 4px 0;
-    line-height: 1.4;
-}
-.map-popup .popup-expiry {
-    color: #B45309;
-    font-weight: 600;
-}
-.map-popup .popup-donor {
-    color: #6B7280;
-    font-size: 0.78rem;
-}
-.map-popup .popup-btn {
-    display: block;
-    margin-top: 12px;
-    padding: 9px 14px;
-    border-radius: 10px;
-    text-align: center;
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.82rem;
-    text-decoration: none;
-    transition: filter 0.2s;
-}
-.map-popup .popup-btn:hover {
-    filter: brightness(1.1);
-}
-
-/* ── Custom Marker ───────────────────────────── */
-.custom-marker {
-    background: none !important;
-    border: none !important;
-}
-.marker-pin {
-    width: 36px;
-    height: 36px;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    border: 3px solid #fff;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-    position: relative;
-}
-.marker-pin::after {
-    content: '';
-    width: 10px;
-    height: 10px;
-    background: rgba(255,255,255,0.7);
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* ── Stats Strip ─────────────────────────────── */
-.map-stats-strip {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-.map-stat-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-full);
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--text-main);
-    box-shadow: var(--shadow-sm);
-}
-.map-stat-chip .chip-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-/* ── Responsive ──────────────────────────────── */
-@media (max-width: 900px) {
-    .map-layout {
-        grid-template-columns: 1fr;
-    }
-    #foodMap {
-        height: 400px;
-    }
-    #mapSidebar {
-        max-height: 340px;
-    }
-}
-</style>
+      crossorigin="anonymous">
 {% endblock %}
 
 {% block content %}
-<section class="container">
-    <div class="map-page-header">
-        <h2>🗺️ Available Food Map</h2>
-        <p>{{ total }} food post{{ total|pluralize }} available near you</p>
-    </div>
-
-    <!-- Category Legend -->
-    <div class="map-stats-strip">
-        <span class="map-stat-chip">
-            <span class="chip-dot" style="background:#1A7A4A;"></span> Cooked Food
-        </span>
-        <span class="map-stat-chip">
-            <span class="chip-dot" style="background:#0D7377;"></span> Raw Ingredients
-        </span>
-        <span class="map-stat-chip">
-            <span class="chip-dot" style="background:#B45309;"></span> Packaged Food
-        </span>
-        <span class="map-stat-chip">
-            <span class="chip-dot" style="background:#854F0B;"></span> Bakery Items
-        </span>
-    </div>
+<section class="container page-section map-page">
+    <header class="page-header">
+        <div>
+            <span class="eyebrow">{% trans "Find food nearby" %}</span>
+            <h1>{% trans "Good food, mapped." %}</h1>
+            <p>{% blocktrans count counter=total %}Explore {{ counter }} available donation and connect surplus food with the community.{% plural %}Explore {{ counter }} available donations and connect surplus food with the community.{% endblocktrans %}</p>
+        </div>
+        <div class="form-actions mt-2">
+            {% if can_request %}
+                <a href="{% url 'ngo_my_requests' %}" class="btn btn-secondary"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>{% trans "My requests" %}</a>
+            {% elif request.user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>{% trans "Dashboard" %}</a>
+            {% else %}
+                <a href="{% url 'login' %}?next={{ request.path|urlencode }}" class="btn btn-secondary"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>{% trans "Log in to request" %}</a>
+            {% endif %}
+            <a href="{% url 'heatmap' %}" class="btn btn-ghost"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg>{% trans "Community heatmap" %}</a>
+        </div>
+    </header>
 
     <div class="map-layout">
-        <!-- LEFT — Map -->
-        <div class="map-container">
-            <div id="foodMap"></div>
-        </div>
-
-        <!-- RIGHT — Sidebar -->
-        <div class="map-sidebar">
-            <div class="map-sidebar-header">
-                <h3>📋 Available Food</h3>
-                <p>Click a marker to see details</p>
+        <aside class="map-sidebar" aria-label="{% trans "Available food posts" %}">
+            <h2>{% trans "Available food" %}</h2>
+            <p>{% blocktrans count counter=total %}<span id="mapResultCount" aria-live="polite">{{ counter }} mapped donation</span>, ordered by expiry.{% plural %}<span id="mapResultCount" aria-live="polite">{{ counter }} mapped donations</span>, ordered by expiry.{% endblocktrans %}</p>
+            <label for="mapSearch" class="form-hint">{% trans "Search by food, category, donor, or location" %}</label>
+            <div class="map-search">
+                <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                <input type="search" id="mapSearch" placeholder="{% trans "Search donations…" %}" autocomplete="off">
             </div>
-            <div id="mapSidebar">
-                {% if posts %}
-                    {% for post in posts %}
-                    <div class="map-post-item" data-id="{{ post.pk }}">
-                        <h4>{{ post.title }}</h4>
-                        <p class="post-meta">📦 {{ post.quantity }} · {{ post.get_category_display }}</p>
-                        <p class="post-expiry">⏱ {{ post.time_remaining }}</p>
-                        <p class="post-location">📍 {{ post.location|truncatechars:40 }}</p>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="map-empty">
-                        <div class="empty-icon">🗺️</div>
-                        <h4>No posts on the map</h4>
-                        <p>No geolocated food posts are available right now.</p>
-                    </div>
-                {% endif %}
+            <div class="map-legend" aria-label="{% trans "Food category legend" %}">
+                <span><i class="legend-dot legend-cooked" aria-hidden="true"></i>{% trans "Cooked" %}</span>
+                <span><i class="legend-dot legend-raw" aria-hidden="true"></i>{% trans "Raw" %}</span>
+                <span><i class="legend-dot legend-packaged" aria-hidden="true"></i>{% trans "Packaged" %}</span>
+                <span><i class="legend-dot legend-bakery" aria-hidden="true"></i>{% trans "Bakery" %}</span>
+            </div>
+            <div class="map-list mt-2" id="mapList">
+                {% for post in posts %}
+                    <button type="button" class="map-list-item" data-map-id="{{ post.pk }}">
+                        <strong>{{ post.title }}</strong>
+                        <span>{% blocktrans count counter=post.quantity %}{{ counter }} serving{% plural %}{{ counter }} servings{% endblocktrans %} · {{ post.get_category_display }}</span>
+                        <small>{{ post.location|truncatechars:48 }}</small>
+                        <span class="{% if post.expires_within_six_hours %}expiry-red{% else %}expiry-green{% endif %}" data-expiry="{{ post.expiry_time|date:'c' }}">{{ post.time_remaining_display }}</span>
+                    </button>
+                {% empty %}
+                    <div class="map-list-empty"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-pin"/></svg><strong>{% trans "No mapped donations yet" %}</strong><span>{% trans "New locations will appear here as donors share food." %}</span></div>
+                {% endfor %}
+            </div>
+            <div class="map-list-empty hidden" id="mapNoResults" role="status">
+                <svg class="icon icon-lg" aria-hidden="true"><use href="#i-search"/></svg>
+                <strong>{% trans "No matching donations" %}</strong>
+                <span>{% trans "Try a different food name, category, donor, or location." %}</span>
+            </div>
+        </aside>
+
+        <div class="map-main">
+            <div id="foodMap" role="region" aria-label="{% trans "Interactive map of available food donations" %}"></div>
+            <div class="map-message" id="mapMessage"{% if posts %} hidden{% endif %}>
+                <div class="map-empty-card">
+                    <div class="map-empty-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-map"/></svg></div>
+                    <h2 id="mapMessageTitle">{% trans "The map is ready for its first donation." %}</h2>
+                    <p id="mapMessageText">{% trans "No mapped donations are available right now. New locations will appear as soon as donors share food." %}</p>
+                    <a id="mapMessageAction" href="{% url 'transparency' %}" class="btn btn-ghost">{% trans "See community impact" %} <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                </div>
             </div>
         </div>
     </div>
+
+    <p class="privacy-note mt-3">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-shield"/></svg>
+        {% trans "Public map pins are rounded for privacy. Pickup addresses and landmarks are shown as donors choose to share them, so include only the detail your community needs." %}
+    </p>
+    <noscript><p class="alert alert-warning mt-3">{% trans "Enable JavaScript to use the interactive map. The donation list remains available above." %}</p></noscript>
 </section>
+
+{{ posts_data|json_script:"food-map-data" }}
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
+        crossorigin="anonymous"></script>
 <script>
-(function() {
-    const postsData = {{ posts_json|safe }};
+(function () {
+    const dataNode = document.getElementById('food-map-data');
+    if (!dataNode) return;
 
-    // Initialize map centered on Dhaka
-    const map = L.map('foodMap').setView([23.8103, 90.4125], 12);
+    const mapElement = document.getElementById('foodMap');
+    const mapMessage = document.getElementById('mapMessage');
+    const searchInput = document.getElementById('mapSearch');
+    const resultCount = document.getElementById('mapResultCount');
+    const noResults = document.getElementById('mapNoResults');
+    const listItems = new Map(Array.from(document.querySelectorAll('.map-list-item')).map(function (item) {
+        return [item.dataset.mapId, item];
+    }));
 
-    // OpenStreetMap tiles (free, no API key)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18,
-    }).addTo(map);
-
-    // Category → color mapping
-    const categoryColors = {
-        'Cooked Food':     '#1A7A4A',
-        'Raw Ingredients': '#0D7377',
-        'Packaged Food':   '#B45309',
-        'Bakery Items':    '#854F0B',
-    };
-
-    // Add markers
-    const markers = {};
-    postsData.forEach(post => {
-        const color = categoryColors[post.category] || '#1A7A4A';
-
-        const icon = L.divIcon({
-            className: 'custom-marker',
-            html: `<div class="marker-pin" style="background:${color};"></div>`,
-            iconSize:   [36, 36],
-            iconAnchor: [18, 36],
-            popupAnchor: [0, -36],
-        });
-
-        const marker = L.marker([post.lat, post.lng], { icon }).addTo(map);
-
-        // Rich popup
-        marker.bindPopup(`
-            <div class="map-popup">
-                <h4 style="color:${color};">${post.title}</h4>
-                <p class="popup-row">📦 ${post.quantity}</p>
-                <p class="popup-row">🏷️ ${post.category}</p>
-                <p class="popup-row">📍 ${post.location}</p>
-                <p class="popup-row popup-expiry">⏱ ${post.expiry}</p>
-                <p class="popup-row popup-donor">👤 ${post.donor}</p>
-                <a href="${post.request_url}"
-                   class="popup-btn"
-                   style="background:${color};">
-                    Request This Food
-                </a>
-            </div>
-        `, { maxWidth: 280 });
-
-        // Highlight sidebar item on marker click
-        marker.on('click', () => {
-            document.querySelectorAll('.map-post-item')
-                .forEach(el => el.classList.remove('active'));
-            const item = document.querySelector(
-                `.map-post-item[data-id="${post.id}"]`
-            );
-            if (item) {
-                item.classList.add('active');
-                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        });
-
-        markers[post.id] = marker;
-    });
-
-    // Click sidebar → pan to marker and open popup
-    document.querySelectorAll('.map-post-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const id = item.dataset.id;
-            const marker = markers[id];
-            if (marker) {
-                map.setView(marker.getLatLng(), 15, { animate: true });
-                marker.openPopup();
-
-                document.querySelectorAll('.map-post-item')
-                    .forEach(el => el.classList.remove('active'));
-                item.classList.add('active');
-            }
-        });
-    });
-
-    // Fit map to all markers if any exist
-    if (postsData.length > 0) {
-        const bounds = postsData.map(p => [p.lat, p.lng]);
-        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    function showMapMessage(title, message, showAction) {
+        if (!mapMessage) return;
+        const titleNode = document.getElementById('mapMessageTitle');
+        const textNode = document.getElementById('mapMessageText');
+        const actionNode = document.getElementById('mapMessageAction');
+        if (titleNode) titleNode.textContent = title;
+        if (textNode) textNode.textContent = message;
+        if (actionNode) actionNode.hidden = showAction === false;
+        mapMessage.hidden = false;
     }
 
-    // Fix Leaflet sizing when container might not be visible initially
-    setTimeout(() => { map.invalidateSize(); }, 200);
+    function disableMapActions() {
+        listItems.forEach(function (item) {
+            item.disabled = true;
+            item.title = gettext('Interactive map unavailable');
+        });
+        if (searchInput) {
+            searchInput.disabled = true;
+            searchInput.placeholder = gettext('Map search unavailable');
+        }
+    }
+
+    let posts = [];
+    try { posts = JSON.parse(dataNode.textContent); } catch (error) {
+        showMapMessage(gettext('Donation data is unavailable.'), gettext('Refresh the page to try again. The latest server-rendered donation list is still shown.'), false);
+        disableMapActions();
+        return;
+    }
+
+    if (typeof L === 'undefined') {
+        showMapMessage(gettext('The map could not be loaded.'), gettext('Check your connection and refresh. The latest server-rendered donation list is still shown.'), false);
+        disableMapActions();
+        return;
+    }
+
+    const map = L.map('foodMap', { scrollWheelZoom: false }).setView([23.8103, 90.4125], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
+    }).addTo(map);
+
+    const categoryColors = {
+        'cooked': '#23865a',
+        'raw': '#167477',
+        'packaged': '#a4660b',
+        'bakery': '#80500b'
+    };
+    const markers = new Map();
+
+    function setActive(id) {
+        document.querySelectorAll('.map-list-item').forEach(function (item) {
+            const active = item.dataset.mapId === String(id);
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-current', String(active));
+        });
+    }
+
+    function addMeta(container, iconId, text) {
+        const row = document.createElement('p');
+        row.className = 'popup-meta';
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'icon icon-sm');
+        svg.setAttribute('aria-hidden', 'true');
+        const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+        use.setAttribute('href', iconId);
+        svg.appendChild(use);
+        row.appendChild(svg);
+        row.appendChild(document.createTextNode(text));
+        container.appendChild(row);
+    }
+
+    function buildPopup(post) {
+        const content = document.createElement('div');
+        content.className = 'map-popup';
+
+        if (post.image_url) {
+            const image = document.createElement('img');
+            image.src = post.image_url;
+            image.alt = post.title;
+            image.loading = 'lazy';
+            content.appendChild(image);
+        }
+
+        const title = document.createElement('h3');
+        title.textContent = post.title;
+        content.appendChild(title);
+        const servings = window.ahaarInterpolate(ngettext('%(count)s serving', '%(count)s servings', Number(post.quantity)), { count: post.quantity });
+        addMeta(content, '#i-box', servings + ' · ' + post.category_label);
+        addMeta(content, '#i-pin', post.location);
+        const expiry = new Date(post.expiry).toLocaleString(document.documentElement.lang || undefined, {
+            day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit'
+        });
+        addMeta(content, '#i-clock', window.ahaarInterpolate(gettext('Expires %(date)s'), { date: expiry }));
+        addMeta(content, '#i-user', window.ahaarInterpolate(gettext('Shared by %(name)s'), { name: post.donor }));
+
+        const actions = document.createElement('div');
+        actions.className = 'popup-actions';
+        const profileLink = document.createElement('a');
+        profileLink.className = 'btn btn-ghost btn-sm';
+        profileLink.href = post.profile_url;
+        profileLink.textContent = gettext('View donor');
+        actions.appendChild(profileLink);
+
+        if (post.request_url) {
+            const requestLink = document.createElement('a');
+            requestLink.className = 'btn btn-primary btn-sm';
+            requestLink.href = post.request_url;
+            requestLink.textContent = gettext('Request food');
+            actions.appendChild(requestLink);
+        }
+        content.appendChild(actions);
+        return content;
+    }
+
+    posts.forEach(function (post) {
+        const color = categoryColors[post.category] || '#23865a';
+        const icon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div class="marker-pin" style="background:' + color + ';"></div>',
+            iconSize: [34, 34],
+            iconAnchor: [17, 34],
+            popupAnchor: [0, -34]
+        });
+        const marker = L.marker([post.lat, post.lng], { icon: icon, title: post.title, alt: post.title }).addTo(map);
+        marker.bindPopup(buildPopup(post), { maxWidth: 290 });
+        marker.on('click', function () {
+            setActive(post.id);
+            const item = listItems.get(String(post.id));
+            if (item) item.scrollIntoView({
+                behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+                block: 'nearest'
+            });
+        });
+        markers.set(String(post.id), marker);
+    });
+
+    listItems.forEach(function (item, id) {
+        item.addEventListener('click', function () {
+            const marker = markers.get(id);
+            if (!marker) return;
+            setActive(id);
+            map.setView(marker.getLatLng(), 15, {
+                animate: !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            });
+            marker.openPopup();
+        });
+    });
+
+    function filterList() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visible = 0;
+        posts.forEach(function (post) {
+            const searchable = [post.title, post.category, post.category_label, post.location, post.donor].join(' ').toLowerCase();
+            const matches = !query || searchable.includes(query);
+            const item = listItems.get(String(post.id));
+            const marker = markers.get(String(post.id));
+            if (item) item.hidden = !matches;
+            if (matches) {
+                if (!map.hasLayer(marker)) marker.addTo(map);
+                visible += 1;
+            } else if (map.hasLayer(marker)) {
+                map.removeLayer(marker);
+            }
+        });
+        resultCount.textContent = window.ahaarInterpolate(ngettext('%(count)s mapped donation', '%(count)s mapped donations', visible), { count: visible });
+        noResults.classList.toggle('hidden', posts.length === 0 || visible !== 0);
+    }
+
+    searchInput.addEventListener('input', filterList);
+    filterList();
+
+    if (posts.length === 1) {
+        map.setView([posts[0].lat, posts[0].lng], 15);
+    } else if (posts.length > 1) {
+        map.fitBounds(posts.map(function (post) { return [post.lat, post.lng]; }), {
+            padding: [45, 45], maxZoom: 15
+        });
+    }
+    window.setTimeout(function () { map.invalidateSize(); }, 200);
 })();
 </script>
 {% endblock %}
