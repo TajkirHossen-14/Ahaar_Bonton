@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-{% load static %}
-{% block page_title %}Join AhaarBonton{% endblock %}
+{% load static i18n %}
+{% block page_title %}{% trans "Join AhaarBonton" %}{% endblock %}
 {% block body_class %}auth-page{% endblock %}
 
 {% block content %}
 <section class="auth-wrapper">
     <div class="auth-shell">
-        <aside class="auth-story" aria-label="Ways to participate">
-            <a href="{% url 'home' %}" class="brand" aria-label="AhaarBonton home">
+        <aside class="auth-story" aria-label="{% trans 'Ways to participate' %}">
+            <a href="{% url 'home' %}" class="brand" aria-label="{% trans 'AhaarBonton home' %}">
                 <span class="brand-mark"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></span>
-                <span class="brand-name">Ahaar<span>Bonton</span></span>
+                <span class="brand-name">{% blocktrans %}Ahaar<span>Bonton</span>{% endblocktrans %}</span>
             </a>
             <div class="auth-network" aria-hidden="true">
                 <svg class="auth-network-lines" viewBox="0 0 520 340" fill="none">
@@ -19,28 +19,29 @@
                     <path d="M92 254C190 254 184 170 260 170S330 86 428 86"/>
                 </svg>
                 <div class="auth-network-center"><img src="{% static 'img/AhaarBonton Logo [PNG].png' %}" alt=""></div>
-                <div class="auth-network-node node-donor"><svg class="icon"><use href="#i-box"/></svg><span>Donor</span></div>
-                <div class="auth-network-node node-ngo"><svg class="icon"><use href="#i-building"/></svg><span>NGO</span></div>
-                <div class="auth-network-node node-volunteer"><svg class="icon"><use href="#i-truck"/></svg><span>Volunteer</span></div>
+                <div class="auth-network-node node-donor"><svg class="icon"><use href="#i-box"/></svg><span>{% trans "Donor" %}</span></div>
+                <div class="auth-network-node node-ngo"><svg class="icon"><use href="#i-building"/></svg><span>{% trans "NGO" %}</span></div>
+                <div class="auth-network-node node-volunteer"><svg class="icon"><use href="#i-truck"/></svg><span>{% trans "Volunteer" %}</span></div>
             </div>
             <div class="auth-story-copy">
-                <span class="auth-story-eyebrow">Find your place</span>
-                <h2>Choose how you’ll make a difference.</h2>
-                <p>One account gives you the tools to participate clearly, safely, and with a real view of your impact.</p>
+                <span class="auth-story-eyebrow">{% trans "Find your place" %}</span>
+                <h2>{% trans "Choose how you’ll make a difference." %}</h2>
+                <p>{% trans "One account gives you the tools to participate clearly, safely, and with a real view of your impact." %}</p>
                 <ul class="auth-story-list">
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg>Share surplus food as a donor</li>
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg>Request support as an NGO</li>
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Complete deliveries as a volunteer</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg>{% trans "Share surplus food as a donor" %}</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg>{% trans "Request support as an NGO" %}</li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>{% trans "Complete deliveries as a volunteer" %}</li>
                 </ul>
-                <div class="auth-story-proof"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>One community. Many ways to help.</div>
+                <div class="auth-story-proof"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>{% trans "One community. Many ways to help." %}</div>
             </div>
         </aside>
 
         <div class="auth-card auth-card-wide">
             <header class="auth-header">
                 <div class="auth-logo"><svg aria-hidden="true"><use href="#i-heart"/></svg></div>
-                <h1>Get Started</h1>
-                <p>Create your account and help good food reach more people.</p>
+                <h1>{% trans "Get Started" %}</h1>
+                <p>{% trans "Create your account and help good food reach more people." %}</p>
+                {% include 'partials/language_switcher.html' %}
             </header>
             <form method="post" action="{% url 'register' %}" enctype="multipart/form-data" novalidate data-enhanced-form>
                 {% csrf_token %}
@@ -50,52 +51,52 @@
                 {% endif %}
 
                 <fieldset class="form-section form-section-first">
-                    <legend class="form-section-title">I want to join as</legend>
+                    <legend class="form-section-title">{% trans "I want to join as" %}</legend>
                     <div class="role-selector">
-                        <label class="role-choice"><input type="radio" name="role" value="donor" {% if form.role.value == 'donor' or not form.role.value %}checked{% endif %}><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg><strong>Donor</strong><small>Share surplus food</small><span class="role-choice-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
-                        <label class="role-choice"><input type="radio" name="role" value="ngo" {% if form.role.value == 'ngo' %}checked{% endif %}><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg><strong>NGO</strong><small>Request food</small><span class="role-choice-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
-                        <label class="role-choice"><input type="radio" name="role" value="volunteer" {% if form.role.value == 'volunteer' %}checked{% endif %}><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg><strong>Volunteer</strong><small>Deliver food</small><span class="role-choice-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+                        <label class="role-choice"><input type="radio" name="role" value="donor" {% if form.role.value == 'donor' or not form.role.value %}checked{% endif %}><svg class="icon" aria-hidden="true"><use href="#i-box"/></svg><strong>{% trans "Donor" %}</strong><small>{% trans "Share surplus food" %}</small><span class="role-choice-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+                        <label class="role-choice"><input type="radio" name="role" value="ngo" {% if form.role.value == 'ngo' %}checked{% endif %}><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg><strong>{% trans "NGO" %}</strong><small>{% trans "Request food" %}</small><span class="role-choice-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+                        <label class="role-choice"><input type="radio" name="role" value="volunteer" {% if form.role.value == 'volunteer' %}checked{% endif %}><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg><strong>{% trans "Volunteer" %}</strong><small>{% trans "Deliver food" %}</small><span class="role-choice-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
                     </div>
                     {{ form.role.errors }}
                     <p id="roleDescription" class="form-hint" aria-live="polite"></p>
                 </fieldset>
 
                 <div class="form-section">
-                    <div class="form-section-title"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span>Your details<small>Used for account access and reliable coordination.</small></span></div>
+                    <div class="form-section-title"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span>{% trans "Your details" %}<small>{% trans "Used for account access and reliable coordination." %}</small></span></div>
                     <div class="form-row">
-                        <div class="form-group"><label for="id_full_name">Full name</label><input type="text" id="id_full_name" name="full_name" value="{{ form.full_name.value|default:'' }}" autocomplete="name" placeholder="Your full name" required>{{ form.full_name.errors }}</div>
-                        <div class="form-group"><label for="id_email">Email address</label><input type="email" id="id_email" name="email" value="{{ form.email.value|default:'' }}" autocomplete="email" placeholder="you@example.com" required>{{ form.email.errors }}</div>
+                        <div class="form-group"><label for="id_full_name">{% trans "Full name" %}</label><input type="text" id="id_full_name" name="full_name" value="{{ form.full_name.value|default:'' }}" autocomplete="name" placeholder="{% trans 'Your full name' %}" required>{{ form.full_name.errors }}</div>
+                        <div class="form-group"><label for="id_email">{% trans "Email address" %}</label><input type="email" id="id_email" name="email" value="{{ form.email.value|default:'' }}" autocomplete="email" placeholder="you@example.com" required>{{ form.email.errors }}</div>
                     </div>
-                    <div class="form-group"><label for="id_phone_number">Phone number <span class="optional">(optional)</span></label><input type="tel" id="id_phone_number" name="phone_number" value="{{ form.phone_number.value|default:'' }}" autocomplete="tel" placeholder="+8801XXXXXXXXX">{{ form.phone_number.errors }}</div>
+                    <div class="form-group"><label for="id_phone_number">{% trans "Phone number" %} <span class="optional">({% trans "optional" %})</span></label><input type="tel" id="id_phone_number" name="phone_number" value="{{ form.phone_number.value|default:'' }}" autocomplete="tel" placeholder="+8801XXXXXXXXX">{{ form.phone_number.errors }}</div>
                 </div>
 
                 <div class="form-section">
-                    <div class="form-section-title"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span>Secure your account<small>Use a strong password that you do not use elsewhere.</small></span></div>
+                    <div class="form-section-title"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span>{% trans "Secure your account" %}<small>{% trans "Use a strong password that you do not use elsewhere." %}</small></span></div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="id_password1">Create password</label>
-                            <div class="password-field"><input type="password" id="id_password1" name="password1" autocomplete="new-password" aria-describedby="passwordHint" required><button type="button" class="password-toggle" data-target="id_password1" aria-label="Show password" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></button></div>
-                            <p id="passwordHint" class="form-hint">Use at least 8 characters. A mix of letters, numbers, and symbols is recommended.</p>
+                            <label for="id_password1">{% trans "Create password" %}</label>
+                            <div class="password-field"><input type="password" id="id_password1" name="password1" autocomplete="new-password" aria-describedby="passwordHint" required><button type="button" class="password-toggle" data-target="id_password1" aria-label="{% trans 'Show password' %}" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></button></div>
+                            <p id="passwordHint" class="form-hint">{% trans "Use at least 8 characters. A mix of letters, numbers, and symbols is recommended." %}</p>
                             {{ form.password1.errors }}
                         </div>
-                        <div class="form-group"><label for="id_password2">Confirm password</label><div class="password-field"><input type="password" id="id_password2" name="password2" autocomplete="new-password" required><button type="button" class="password-toggle" data-target="id_password2" aria-label="Show password" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></button></div>{{ form.password2.errors }}</div>
+                        <div class="form-group"><label for="id_password2">{% trans "Confirm password" %}</label><div class="password-field"><input type="password" id="id_password2" name="password2" autocomplete="new-password" required><button type="button" class="password-toggle" data-target="id_password2" aria-label="{% trans 'Show password' %}" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye-off"/></svg></button></div>{{ form.password2.errors }}</div>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <div class="form-section-title"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span>Add a face to your profile<small>This step is optional and can be changed later.</small></span></div>
+                    <div class="form-section-title"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span>{% trans "Add a face to your profile" %}<small>{% trans "This step is optional and can be changed later." %}</small></span></div>
                     <label class="file-upload" for="id_profile_pic">
                         <svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>
-                        <span><strong>Choose a profile photo</strong><small>JPG, PNG, or WebP · optional</small></span>
+                        <span><strong>{% trans "Choose a profile photo" %}</strong><small>{% trans "JPG, PNG, or WebP · optional" %}</small></span>
                         <input type="file" id="id_profile_pic" name="profile_pic" accept="image/*">
                     </label>
                     {{ form.profile_pic.errors }}
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg btn-full">Create my account <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-                <p class="auth-assurance"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Your contact details are used for account access and coordination. Public profiles do not display your email or phone number.</p>
+                <button type="submit" class="btn btn-primary btn-lg btn-full">{% trans "Create my account" %} <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+                <p class="auth-assurance"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>{% trans "Your contact details are used for account access and coordination. Public profiles do not display your email or phone number." %}</p>
             </form>
-            <footer class="auth-footer">Already a member? <a href="{% url 'login' %}">Log in</a></footer>
+            <footer class="auth-footer">{% trans "Already a member?" %} <a href="{% url 'login' %}">{% trans "Log in" %}</a></footer>
         </div>
     </div>
 </section>
