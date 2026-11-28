@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
-{% block page_title %}Profile settings - AhaarBonton{% endblock %}
+{% load i18n %}
+{% block page_title %}{% trans "Profile settings" %} - {{ brand_name }}{% endblock %}
 
 {% block content %}
 <section class="container page-section">
     <header class="page-header">
         <div>
-            <span class="eyebrow">Your account</span>
-            <h1>Profile settings</h1>
-            <p>Keep your details current so donors, NGOs, and volunteers can coordinate with confidence.</p>
+            <span class="eyebrow">{% trans "Your account" %}</span>
+            <h1>{% trans "Profile settings" %}</h1>
+            <p>{% trans "Keep your details current so donors, NGOs, and volunteers can coordinate with confidence." %}</p>
         </div>
-        <a href="{% url 'dashboard' %}" class="btn btn-ghost"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Back to dashboard</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-ghost"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>{% trans "Back to dashboard" %}</a>
     </header>
 
     <div class="settings-layout">
@@ -17,17 +18,17 @@
             <article class="card settings-card">
                 <div class="settings-photo-row">
                     {% if request.user.profile_pic %}
-                        <img id="profilePhotoPreview" src="{{ request.user.profile_pic.url }}" alt="Current profile photo" class="avatar avatar-lg">
+                        <img id="profilePhotoPreview" src="{{ request.user.profile_pic.url }}" alt="{% trans "Current profile photo" %}" class="avatar avatar-lg">
                         <span id="profilePhotoPlaceholder" class="avatar avatar-lg hidden">{{ request.user.full_name|default:request.user.email|slice:":1"|upper }}</span>
                     {% else %}
                         <span id="profilePhotoPlaceholder" class="avatar avatar-lg">{{ request.user.full_name|default:request.user.email|slice:":1"|upper }}</span>
-                        <img id="profilePhotoPreview" alt="Selected profile photo preview" class="avatar avatar-lg hidden">
+                        <img id="profilePhotoPreview" alt="{% trans "Selected profile photo preview" %}" class="avatar avatar-lg hidden">
                     {% endif %}
                     <div class="settings-photo-copy">
                         <h2>{{ request.user.full_name }}</h2>
-                        <p>{{ request.user.get_role_display }} account · Member since {{ request.user.date_joined|date:"F Y" }}</p>
+                        <p>{% blocktrans with role=request.user.get_role_display joined=request.user.date_joined|date:"F Y" %}{{ role }} account · Member since {{ joined }}{% endblocktrans %}</p>
                     </div>
-                    <a href="{% url 'user_profile' request.user.pk %}" class="btn btn-ghost btn-sm"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-user"/></svg>View public profile</a>
+                    <a href="{% url 'user_profile' request.user.pk %}" class="btn btn-ghost btn-sm"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-user"/></svg>{% trans "View public profile" %}</a>
                 </div>
 
                 <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data" novalidate data-enhanced-form>
@@ -40,71 +41,71 @@
                     <div class="settings-card-head">
                         <span class="settings-head-icon"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></span>
                         <div>
-                            <h2>Personal details</h2>
-                            <p>Your public profile shows your name, role, ratings, and completed activity – not your contact information.</p>
+                            <h2>{% trans "Personal details" %}</h2>
+                            <p>{% trans "Your public profile shows your name, role, ratings, and completed activity – not your contact information." %}</p>
                         </div>
                     </div>
                     <div class="settings-card-body">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="id_full_name">Full name</label>
+                                <label for="id_full_name">{% trans "Full name" %}</label>
                                 <input type="text" id="id_full_name" name="full_name" value="{{ form.full_name.value|default:'' }}" autocomplete="name" minlength="2" maxlength="255" required>
                                 {{ form.full_name.errors }}
                             </div>
                             <div class="form-group">
-                                <label for="id_phone_number">Phone number <span class="optional">(optional)</span></label>
+                                <label for="id_phone_number">{% trans "Phone number" %} <span class="optional">({% trans "optional" %})</span></label>
                                 <input type="tel" id="id_phone_number" name="phone_number" value="{{ form.phone_number.value|default:'' }}" autocomplete="tel" placeholder="+8801XXXXXXXXX" maxlength="20" aria-describedby="phoneHint">
-                                <p id="phoneHint" class="form-hint">Use 7–15 digits, optionally beginning with +.</p>
+                                <p id="phoneHint" class="form-hint">{% trans "Use 7–15 digits, optionally beginning with +." %}</p>
                                 {{ form.phone_number.errors }}
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="id_email_display">Email address</label>
+                            <label for="id_email_display">{% trans "Email address" %}</label>
                             <input type="email" id="id_email_display" value="{{ request.user.email }}" readonly aria-describedby="emailHint">
-                            <p id="emailHint" class="form-hint">Your email is used for sign-in and delivery notifications. Contact support if it needs to change.</p>
+                            <p id="emailHint" class="form-hint">{% trans "Your email is used for sign-in and delivery notifications. Contact support if it needs to change." %}</p>
                         </div>
 
                         <div class="profile-photo-fields">
                             <label class="file-upload" for="id_profile_pic">
                                 <svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>
-                                <span><strong>Choose a new profile photo</strong><small>JPG, PNG, or WebP · optional</small></span>
+                                <span><strong>{% trans "Choose a new profile photo" %}</strong><small>{% trans "JPG, PNG, or WebP · optional" %}</small></span>
                                 <input type="file" id="id_profile_pic" name="profile_pic" accept="image/*" data-preview="profilePhotoPreview" data-placeholder="profilePhotoPlaceholder">
                             </label>
                             {{ form.profile_pic.errors }}
                             {% if request.user.profile_pic %}
-                                <label class="profile-remove mt-2"><input type="checkbox" name="remove_profile_pic" id="id_remove_profile_pic">Remove my current photo</label>
+                                <label class="profile-remove mt-2"><input type="checkbox" name="remove_profile_pic" id="id_remove_profile_pic">{% trans "Remove my current photo" %}</label>
                             {% endif %}
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary btn-lg"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Save changes</button>
-                            <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancel</a>
+                            <button type="submit" class="btn btn-primary btn-lg"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>{% trans "Save changes" %}</button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-ghost">{% trans "Cancel" %}</a>
                         </div>
                     </div>
                 </form>
             </article>
         </div>
 
-        <aside class="settings-aside" aria-label="Profile guidance">
+        <aside class="settings-aside" aria-label="{% trans "Profile guidance" %}">
             <article class="card settings-help">
-                <h2>A profile people can trust</h2>
-                <p>A few thoughtful details make every food handover easier and safer.</p>
+                <h2>{% trans "A profile people can trust" %}</h2>
+                <p>{% trans "A few thoughtful details make every food handover easier and safer." %}</p>
                 <ul class="settings-help-list">
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span><strong>Use your real name</strong>Other participants should know who they are coordinating with.</span></li>
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span><strong>Keep contact details private</strong>Your email and phone number never appear on your public profile.</span></li>
-                    <li><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span><strong>Build trust through actions</strong>Verified deliveries and participant ratings shape your reputation.</span></li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span><strong>{% trans "Use your real name" %}</strong>{% trans "Other participants should know who they are coordinating with." %}</span></li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span><strong>{% trans "Keep contact details private" %}</strong>{% trans "Your email and phone number never appear on your public profile." %}</span></li>
+                    <li><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span><strong>{% trans "Build trust through actions" %}</strong>{% trans "Verified deliveries and participant ratings shape your reputation." %}</span></li>
                 </ul>
             </article>
 
             <article class="card settings-account-card">
-                <span class="eyebrow">Your public identity</span>
-                <h2>See what the community sees.</h2>
+                <span class="eyebrow">{% trans "Your public identity" %}</span>
+                <h2>{% trans "See what the community sees." %}</h2>
                 <div class="profile-facts mt-3">
-                    <div><span>Role</span><strong>{{ request.user.get_role_display }}</strong></div>
-                    <div><span>Member since</span><strong>{{ request.user.date_joined|date:"M Y" }}</strong></div>
-                    <div><span>Contact details</span><strong>Private</strong></div>
+                    <div><span>{% trans "Role" %}</span><strong>{{ request.user.get_role_display }}</strong></div>
+                    <div><span>{% trans "Member since" %}</span><strong>{{ request.user.date_joined|date:"M Y" }}</strong></div>
+                    <div><span>{% trans "Contact details" %}</span><strong>{% trans "Private" %}</strong></div>
                 </div>
-                <a href="{% url 'user_profile' request.user.pk %}" class="btn btn-secondary btn-full">Open my public profile <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                <a href="{% url 'user_profile' request.user.pk %}" class="btn btn-secondary btn-full">{% trans "Open my public profile" %} <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </article>
         </aside>
     </div>
